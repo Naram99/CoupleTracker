@@ -1,11 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
+import colors from "../constants/colors";
 
 const RootLayout = () => {
+    const colorScheme = useColorScheme();
+    const theme = colors[colorScheme ?? "blue"]; // Default blue theme
+
     return (
         <View>
-            <Stack>
+            <Stack
+                screenOptions={{
+                    headerStyle: { backgroundColor: theme.mainBackground },
+                    headerTintColor: theme.mainColor,
+                }}>
                 <Stack.Screen name="index" options={{ title: "Home", headerShown: false }} />
                 <Stack.Screen name="settings" options={{ title: "Settings" }} />
                 <Stack.Screen name="about" options={{ title: "About" }} />
