@@ -4,27 +4,18 @@ const colors: { [index: string]: ColorScheme } = {
         secondaryColor: "#E195AB",
         mainBackground: "#413F42",
         secondaryBackground: "#7F8487",
-        mainHover: "",
-        secondaryHover: "",
-        title: "",
     },
     light: {
         mainColor: "#EC7FA9",
         secondaryColor: "#BE5985",
         mainBackground: "#FFEDFA",
         secondaryBackground: "#FFB8E0",
-        mainHover: "",
-        secondaryHover: "",
-        title: "",
     },
     blue: {
         mainColor: "#",
         secondaryColor: "#",
         mainBackground: "#",
         secondaryBackground: "#",
-        mainHover: "",
-        secondaryHover: "",
-        title: "",
     },
 };
 
@@ -35,7 +26,4 @@ type ColorScheme = {
     secondaryColor: string;
     mainBackground: string;
     secondaryBackground: string;
-    mainHover: string;
-    secondaryHover: string;
-    title: string;
 };
