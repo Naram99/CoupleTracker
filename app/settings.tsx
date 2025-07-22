@@ -71,6 +71,11 @@ const Settings = () => {
                 style={styles.input}
                 onChangeText={setUsername}
             />
+            <TextInput
+                value={partnername ?? ""}
+                style={styles.input}
+                onChangeText={setPartnername}
+            />
             <Button title="Save" onPress={handleSubmit} />
             <Link href={"/"} style={styles.link}>
                 Main page
