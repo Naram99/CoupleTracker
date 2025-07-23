@@ -1,6 +1,6 @@
 {
-  "name": "beentogether",
-  "description": "Been Together clone app",
+  "name": "couple-tracker",
+  "description": "Couple Tracker app",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
@@ -21,7 +21,8 @@
     "react-native": "0.79.5",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
-    "expo-notifications": "~0.31.4"
+    "expo-notifications": "~0.31.4",
+    "expo-image-picker": "~16.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

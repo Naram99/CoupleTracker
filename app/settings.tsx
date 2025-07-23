@@ -4,7 +4,6 @@ import {
     Pressable,
     StyleSheet,
     Text,
-    TextInput,
     View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -13,6 +12,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNDateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
+import * as ImagePicker from "expo-image-picker";
+import ImagePickerField from "./settings/ImagePickerField";
+import SettingsInputField from "./settings/SettingsInputField";
+import DatePickerField from "./settings/DatePickerField";
 
 const Settings = () => {
     const router = useRouter();
@@ -24,6 +27,8 @@ const Settings = () => {
     const [partnername, setPartnername] = useState<string | null>(null);
     const [date, setDate] = useState<Date | null>(null);
     const [showDate, setShowDate] = useState<boolean>(false);
+    const [userImage, setUserImage] = useState<string | null>(null);
+    const [partnerImage, setPartnerImage] = useState<string | null>(null);
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -51,9 +56,25 @@ const Settings = () => {
             }
         }
 
+        async function getUserImageFromStorage() {
+            try {
+                setUserImage(await AsyncStorage.getItem("userImage"));
+            } catch {
+                setUserImage(null);
+            }
+        }
+        async function getPartnerImageFromStorage() {
+            try {
+                setPartnerImage(await AsyncStorage.getItem("partnerImage"));
+            } catch {
+                setPartnerImage(null);
+            }
+        }
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
+        getUserImageFromStorage();
+        getPartnerImageFromStorage();
     }, []);
 
     async function setUsernameToStorage() {
@@ -68,11 +89,19 @@ const Settings = () => {
         if (date) await AsyncStorage.setItem("date", date.toISOString());
     }
 
+    async function setUserImageToStorage() {
+        if (userImage) await AsyncStorage.setItem("userImage", userImage);
+    }
+    async function setPartnerImageToStorage() {
+        if (partnerImage) await AsyncStorage.setItem("partnerImage", partnerImage);
+    }
+
     async function handleSubmit() {
         await setUsernameToStorage();
         await setPartnernameToStorage();
         await setDateToStorage();
-
+        await setUserImageToStorage();
+        await setPartnerImageToStorage();
         router.replace("/")
     }
 
@@ -87,56 +116,71 @@ const Settings = () => {
         setDate(currentDate)
     }
 
+    async function pickUserImage() {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setUserImage(result.assets[0].uri);
+        }
+    }
+    async function pickPartnerImage() {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setPartnerImage(result.assets[0].uri);
+        }
+    }
+
     return (
-        <View style={styles.container}>
-            <View style={styles.inputGroup}>
-                <Text style={{...styles.settingsLabel, color: theme.mainColor}}>Your name:</Text>
-                <TextInput
-                    value={username ?? ""}
-                    style={
-                        {...styles.input, 
-                            color: theme.secondaryColor,
-                            borderBottomColor: theme.secondaryColor
-                        }
-                    }
-                    onChangeText={setUsername}
-                />
-            </View>
-
-            <View style={styles.inputGroup}>
-                <Text style={{...styles.settingsLabel, color: theme.mainColor}}>Partner name:</Text>
-                <TextInput
-                    value={partnername ?? ""}
-                    style={
-                        {...styles.input, 
-                            color: theme.secondaryColor, 
-                            borderBottomColor: theme.secondaryColor
-                        }
-                    }
-                    onChangeText={setPartnername}
-                />
-            </View>
-
-            <View style={styles.inputGroup}>
-                <Text style={{...styles.settingsLabel, color: theme.mainColor}}>
-                    Selected date:
-                </Text>
-                <Pressable onPress={openDate} style={styles.pressableStyle}>
-                    <TextInput 
-                        value={date?.toDateString() ?? new Date().toDateString()}
-                        editable={false}
-                        pointerEvents="none"
-                        style={
-                            {...styles.pressableInput, 
-                                color: theme.secondaryColor,
-                                borderBottomColor: theme.secondaryColor
-                            }
-                        } 
-                    />
-                </Pressable>
-            </View>
-
-            {/* <Button title="Set date" onPress={openDate} /> */}
+        <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
+            <SettingsInputField
+                label="Your name:"
+                value={username ?? ""}
+                onChangeText={setUsername}
+                theme={theme}
+            />
+            <ImagePickerField
+                label="Your photo:"
+                imageUri={userImage}
+                onPick={pickUserImage}
+                theme={theme}
+            />
+            <SettingsInputField
+                label="Partner name:"
+                value={partnername ?? ""}
+                onChangeText={setPartnername}
+                theme={theme}
+            />
+            <ImagePickerField
+                label="Partner photo:"
+                imageUri={partnerImage}
+                onPick={pickPartnerImage}
+                theme={theme}
+            />
+            <DatePickerField
+                label="Selected date:"
+                date={date}
+                onOpen={openDate}
+                theme={theme}
+            />
             {showDate && <RNDateTimePicker 
                 value={date ?? new Date()}
                 mode="date"
@@ -153,9 +197,6 @@ const Settings = () => {
                     }
                 }>Save</Text>
             </Pressable>
-            {/* <Link href={"/"} style={styles.link}>
-                Main page
-            </Link> */}
         </View>
     );
 };
@@ -166,38 +207,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
-    link: {
-        textDecorationStyle: "solid",
-    },
-    inputGroup: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 10
-    },
-    input: {
-        borderBottomWidth: 1,
-        fontWeight: "bold",
-        width: "50%",
-        textAlign: "center"
-    },
-    pressableStyle: {
-        width: "50%"
-    },
-    pressableInput: {
-        width: "100%",
-        fontWeight: "bold",
-        textAlign: "center",
-        borderBottomWidth: 1
-    },
-    settingsLabel: {
-        padding: 10,
-        fontWeight: "bold"
-    },
     saveBtn: {
         fontWeight: "bold",
         fontSize: 20,
         textAlign: "center",
         textTransform: "uppercase",
         padding: 5
-    }
+    },
+    imagePickerGroup: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+        justifyContent: "space-between"
+    },
+    imagePressable: {
+        width: 80,
+        height: 80,
+        justifyContent: "center",
+        alignItems: "center",
+    },
 });

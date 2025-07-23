@@ -2,11 +2,15 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme } from "../context/ThemeContext";
+import colors from "../constants/colors";
 
 const Home = () => {
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
     const [date, setDate] = useState<Date | null>(null);
+    const colorTheme = useTheme();
+    const theme = colors[colorTheme];
 
     const [dateToggle, setDateToggle] = useState(0)
 
@@ -42,12 +46,12 @@ const Home = () => {
     }, []);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Been Together app</Text>
-            <Link href={"/settings"} style={styles.link}>
+        <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
+            <Text style={{...styles.title, color: theme.mainColor}}>Couple Tracker app</Text>
+            <Link href={"/settings"} style={{...styles.link, color: theme.secondaryColor}}>
                 Settings
             </Link>
-            <Text style={styles.footerText}>Made by Naram99</Text>;
+            <Text style={styles.footerText}>Made by Naram99</Text>
         </View>
     );
 };

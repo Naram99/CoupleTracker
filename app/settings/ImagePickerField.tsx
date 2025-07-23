@@ -1,0 +1,57 @@
+import React from "react";
+import { Pressable, Text, View, Image, StyleSheet } from "react-native";
+
+interface ImagePickerFieldProps {
+  label: string;
+  imageUri: string | null;
+  onPick: () => void;
+  theme: any;
+}
+
+const ImagePickerField: React.FC<ImagePickerFieldProps> = ({ label, imageUri, onPick, theme }) => (
+  <View style={styles.imagePickerGroup}>
+    <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>{label}</Text>
+    <Pressable onPress={onPick} style={styles.imagePressable}>
+      {imageUri ? (
+        <Image source={{ uri: imageUri }} style={{...styles.avatar, borderColor: theme.secondaryColor}} />
+      ) : (
+        <View style={[styles.avatar, styles.avatarPlaceholder]}>
+          <Text style={{ color: theme.secondaryColor }}>Pick Image</Text>
+        </View>
+      )}
+    </Pressable>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  imagePickerGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    justifyContent: "space-between"
+  },
+  imagePressable: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 2,
+    resizeMode: "cover",
+  },
+  avatarPlaceholder: {
+    backgroundColor: "#eee",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  settingsLabel: {
+    padding: 10,
+    fontWeight: "bold"
+  },
+});
+
+export default ImagePickerField; 
