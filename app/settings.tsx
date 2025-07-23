@@ -1,19 +1,29 @@
 import {
     Button,
+    Platform,
+    Pressable,
     StyleSheet,
     Text,
     TextInput,
-    TextInputComponent,
     View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNDateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import { useTheme } from "../context/ThemeContext";
+import colors from "../constants/colors";
 
 const Settings = () => {
+    const router = useRouter();
+
+    const colorTheme = useTheme();
+    const theme = colors[colorTheme];
+
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
-    const [date, setDate] = useState<string | null>(null);
+    const [date, setDate] = useState<Date | null>(null);
+    const [showDate, setShowDate] = useState<boolean>(false);
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -34,7 +44,8 @@ const Settings = () => {
 
         async function getDateFromStorage() {
             try {
-                setDate(await AsyncStorage.getItem("date"));
+                const storedDate = await AsyncStorage.getItem("date") ?? new Date().toISOString()
+                setDate(new Date(storedDate));
             } catch {
                 setDate(null);
             }
@@ -54,32 +65,97 @@ const Settings = () => {
     }
 
     async function setDateToStorage() {
-        if (date) await AsyncStorage.setItem("date", date);
+        if (date) await AsyncStorage.setItem("date", date.toISOString());
     }
 
-    function handleSubmit() {
-        setUsernameToStorage();
-        setPartnernameToStorage();
-        setDateToStorage();
+    async function handleSubmit() {
+        await setUsernameToStorage();
+        await setPartnernameToStorage();
+        await setDateToStorage();
+
+        router.replace("/")
+    }
+
+    function openDate() {
+        setShowDate(true)
+    }
+
+    function onDateChange(event: DateTimePickerEvent, selectedDate: Date | undefined) {
+        // console.log(event)
+        const currentDate = selectedDate || date;
+        setShowDate(Platform.OS === 'ios')
+        setDate(currentDate)
     }
 
     return (
-        <View>
-            <Text>Settings</Text>
-            <TextInput
-                value={username ?? ""}
-                style={styles.input}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                value={partnername ?? ""}
-                style={styles.input}
-                onChangeText={setPartnername}
-            />
-            <Button title="Save" onPress={handleSubmit} />
-            <Link href={"/"} style={styles.link}>
+        <View style={styles.container}>
+            <View style={styles.inputGroup}>
+                <Text style={{...styles.settingsLabel, color: theme.mainColor}}>Your name:</Text>
+                <TextInput
+                    value={username ?? ""}
+                    style={
+                        {...styles.input, 
+                            color: theme.secondaryColor,
+                            borderBottomColor: theme.secondaryColor
+                        }
+                    }
+                    onChangeText={setUsername}
+                />
+            </View>
+
+            <View style={styles.inputGroup}>
+                <Text style={{...styles.settingsLabel, color: theme.mainColor}}>Partner name:</Text>
+                <TextInput
+                    value={partnername ?? ""}
+                    style={
+                        {...styles.input, 
+                            color: theme.secondaryColor, 
+                            borderBottomColor: theme.secondaryColor
+                        }
+                    }
+                    onChangeText={setPartnername}
+                />
+            </View>
+
+            <View style={styles.inputGroup}>
+                <Text style={{...styles.settingsLabel, color: theme.mainColor}}>
+                    Selected date:
+                </Text>
+                <Pressable onPress={openDate} style={styles.pressableStyle}>
+                    <TextInput 
+                        value={date?.toDateString() ?? new Date().toDateString()}
+                        editable={false}
+                        pointerEvents="none"
+                        style={
+                            {...styles.pressableInput, 
+                                color: theme.secondaryColor,
+                                borderBottomColor: theme.secondaryColor
+                            }
+                        } 
+                    />
+                </Pressable>
+            </View>
+
+            {/* <Button title="Set date" onPress={openDate} /> */}
+            {showDate && <RNDateTimePicker 
+                value={date ?? new Date()}
+                mode="date"
+                display="default"
+                onChange={onDateChange}
+            />}
+            <Pressable
+                onPress={handleSubmit}  
+            >
+                <Text style={
+                    {...styles.saveBtn, 
+                        color: theme.mainBackground, 
+                        backgroundColor: theme.secondaryColor
+                    }
+                }>Save</Text>
+            </Pressable>
+            {/* <Link href={"/"} style={styles.link}>
                 Main page
-            </Link>
+            </Link> */}
         </View>
     );
 };
@@ -87,8 +163,41 @@ const Settings = () => {
 export default Settings;
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     link: {
         textDecorationStyle: "solid",
     },
-    input: {},
+    inputGroup: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 10
+    },
+    input: {
+        borderBottomWidth: 1,
+        fontWeight: "bold",
+        width: "50%",
+        textAlign: "center"
+    },
+    pressableStyle: {
+        width: "50%"
+    },
+    pressableInput: {
+        width: "100%",
+        fontWeight: "bold",
+        textAlign: "center",
+        borderBottomWidth: 1
+    },
+    settingsLabel: {
+        padding: 10,
+        fontWeight: "bold"
+    },
+    saveBtn: {
+        fontWeight: "bold",
+        fontSize: 20,
+        textAlign: "center",
+        textTransform: "uppercase",
+        padding: 5
+    }
 });

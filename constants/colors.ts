@@ -11,12 +11,12 @@ const colors: { [index: string]: ColorScheme } = {
         mainBackground: "#FFEDFA",
         secondaryBackground: "#FFB8E0",
     },
-    blue: {
-        mainColor: "#",
-        secondaryColor: "#",
-        mainBackground: "#",
-        secondaryBackground: "#",
-    },
+    // blue: {
+    //     mainColor: "#EC7FA9",
+    //     secondaryColor: "#BE5985",
+    //     mainBackground: "#FFEDFA",
+    //     secondaryBackground: "#FFB8E0",
+    // },
 };
 
 export default colors;
