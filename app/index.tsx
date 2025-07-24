@@ -1,16 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const Home = () => {
+    const colorTheme = useTheme();
+    const theme = colors[colorTheme];
+
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
     const [date, setDate] = useState<Date | null>(null);
-    const colorTheme = useTheme();
-    const theme = colors[colorTheme];
+    
+    const [userImage, setUserImage] = useState<string | null>(null);
+    const [partnerImage, setPartnerImage] = useState<string | null>(null);
 
     const [dateToggle, setDateToggle] = useState(0)
 
@@ -40,19 +45,79 @@ const Home = () => {
             }
         }
 
+        async function getUserImageFromStorage() {
+            try {
+                setUserImage(await AsyncStorage.getItem("userImage"));
+            } catch {
+                setUserImage(null);
+            }
+        }
+        async function getPartnerImageFromStorage() {
+            try {
+                setPartnerImage(await AsyncStorage.getItem("partnerImage"));
+            } catch {
+                setPartnerImage(null);
+            }
+        }
+
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
+        getUserImageFromStorage();
+        getPartnerImageFromStorage();
     }, []);
 
+    function toggleDateDiff() {
+        setDateToggle(dateToggle === 0 ? 1 : 0)
+    }
+
+    const dateDiff = Math.round((new Date().getTime() - (date ?? new Date()).getTime()) / (1000 * 60 * 60 * 24))
+
     return (
-        <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
-            <Text style={{...styles.title, color: theme.mainColor}}>Couple Tracker app</Text>
-            <Link href={"/settings"} style={{...styles.link, color: theme.secondaryColor}}>
-                Settings
-            </Link>
-            <Text style={styles.footerText}>Made by Naram99</Text>
-        </View>
+        <SafeAreaProvider>
+            <SafeAreaView style={{...styles.container, backgroundColor: theme.mainBackground}}>
+                <View style={styles.header}>
+                    <Text style={{...styles.title, color: theme.mainColor}}>Couple Tracker app</Text>
+                    <Link href={"/settings"} style={{...styles.link, color: theme.secondaryColor}}>
+                        Settings
+                    </Link>
+                </View>
+                <View style={styles.mainCt}>
+                    {/* <View style={styles.coverImgCt}></View> */}
+                    <View style={styles.personsCt}>
+                        <View style={styles.personCt}>
+                            <Image 
+                                source={{ uri: userImage ?? "../assets/avatar.jpg" }} 
+                                style={{...styles.avatar, borderColor: theme.secondaryColor}} 
+                            />
+                            <Text style={{...styles.personName, color: theme.mainColor}}>
+                                {username ?? "Name"}
+                            </Text>
+                        </View>
+                        <View style={styles.personCt}>
+                            <Image 
+                                source={{ uri: partnerImage ?? "../assets/avatar.jpg" }} 
+                                style={{...styles.avatar, borderColor: theme.secondaryColor}} 
+                            />
+                            <Text style={{...styles.personName, color: theme.mainColor}}>
+                                {partnername ?? "Name"}
+                            </Text>
+                        </View>
+                    </View>
+                    <Pressable onPress={toggleDateDiff}>
+                        <View style={styles.dateDiffCt}>
+                            <Text style={{...styles.dateDiffText, color: theme.secondaryColor}}>
+                                {dateToggle === 0 
+                                    ? `${dateDiff} days` 
+                                    : `${Math.floor(dateDiff / 365)} years ${dateDiff % 365} days`
+                                }
+                            </Text>
+                        </View>
+                    </Pressable>
+                </View>
+                <Text style={styles.footerText}>Made by Naram99</Text>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 };
 
@@ -63,7 +128,14 @@ const styles = StyleSheet.create({
         flex: 1,
         display: "flex",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
+    },
+    header: {
+        width: "100%",
+        padding: 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
     },
     title: {
         fontWeight: "bold",
@@ -72,8 +144,48 @@ const styles = StyleSheet.create({
     link: {
         textDecorationStyle: "solid",
     },
+    mainCt: {
+        flex: 1,
+        padding: 20,
+        width: "100%"
+    },
+    coverImgCt: {
+        flex: 1,
+    },
+    personsCt: {
+        flexDirection: "row",
+        flex: 1,
+        justifyContent: "space-around",
+        width: "100%"
+    },
+    personCt: {
+        gap: 10
+    },
+    dateDiffCt: {
+        width: "100%",
+        textAlign: "center",
+    },
+    dateDiffText: {
+        width: "100%",
+        textAlign: "center",
+        fontWeight: "bold",
+        fontSize: 20
+    },
     footerText: {
         fontSize: 10,
         textAlign: "right",
     },
+    avatar: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 2,
+        resizeMode: "cover",
+    },
+    personName: {
+        fontSize: 15,
+        fontWeight: "bold",
+        width: "100%",
+        textAlign: "center"
+    }
 });

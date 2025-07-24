@@ -14,7 +14,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({ label, date, onOpen, 
     <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>{label}</Text>
     <Pressable onPress={onOpen} style={styles.pressableStyle}>
       <TextInput
-        value={date?.toDateString() ?? new Date().toDateString()}
+        value={date?.toLocaleDateString() ?? new Date().toLocaleDateString()}
         editable={false}
         pointerEvents="none"
         style={{

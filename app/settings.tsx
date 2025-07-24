@@ -29,6 +29,7 @@ const Settings = () => {
     const [showDate, setShowDate] = useState<boolean>(false);
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
+    // TODO: Cover image
 
     useEffect(() => {
         async function getUsernameFromStorage() {

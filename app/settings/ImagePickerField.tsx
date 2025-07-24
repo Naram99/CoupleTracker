@@ -15,8 +15,8 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({ label, imageUri, on
       {imageUri ? (
         <Image source={{ uri: imageUri }} style={{...styles.avatar, borderColor: theme.secondaryColor}} />
       ) : (
-        <View style={[styles.avatar, styles.avatarPlaceholder]}>
-          <Text style={{ color: theme.secondaryColor }}>Pick Image</Text>
+        <View style={{...[styles.avatar, styles.avatarPlaceholder], borderColor: theme.secondaryColor}}>
+          <Text style={{...styles.placeholderText, color: theme.secondaryColor }}>Pick Image</Text>
         </View>
       )}
     </Pressable>
@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   avatarPlaceholder: {
-    backgroundColor: "#eee",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -52,6 +51,9 @@ const styles = StyleSheet.create({
     padding: 10,
     fontWeight: "bold"
   },
+  placeholderText: {
+    textAlign: "center"
+  }
 });
 
 export default ImagePickerField; 
