@@ -71,13 +71,35 @@ const Home = () => {
         setDateToggle(dateToggle === 0 ? 1 : 0)
     }
 
-    const dateDiff = Math.round((new Date().getTime() - (date ?? new Date()).getTime()) / (1000 * 60 * 60 * 24))
+    function calculateYMDDiff(from: Date, to: Date): {[index: string]: number} {
+        let years = to.getFullYear() - from.getFullYear();
+        let months = to.getMonth() - from.getMonth();
+        let days = to.getDate() - from.getDate();
+
+        if (days < 0) {
+            months -= 1;
+            // Vegyük az előző hónap utolsó napját
+            const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0);
+            days += prevMonth.getDate();
+        }
+
+        if (months < 0) {
+            years -= 1;
+            months += 12;
+        }
+
+        return { years, months, days };
+    }
+
+    const ymdDifference = calculateYMDDiff(date ?? new Date(), new Date())
 
     return (
         <SafeAreaProvider>
             <SafeAreaView style={{...styles.container, backgroundColor: theme.mainBackground}}>
                 <View style={styles.header}>
-                    <Text style={{...styles.title, color: theme.mainColor}}>Couple Tracker app</Text>
+                    <Text style={{...styles.title, color: theme.mainColor}}>
+                        Couple Tracker
+                    </Text>
                     <Link href={"/settings"} style={{...styles.link, color: theme.secondaryColor}}>
                         Settings
                     </Link>
@@ -108,8 +130,8 @@ const Home = () => {
                         <View style={styles.dateDiffCt}>
                             <Text style={{...styles.dateDiffText, color: theme.secondaryColor}}>
                                 {dateToggle === 0 
-                                    ? `${dateDiff} days` 
-                                    : `${Math.floor(dateDiff / 365)} years ${dateDiff % 365} days`
+                                    ? `${Math.floor((new Date().getTime() - (date ?? new Date()).getTime()) / (1000 * 60 * 60 * 24))} days` 
+                                    : `${ymdDifference.years} years ${ymdDifference.months} months ${ymdDifference.days} days`
                                 }
                             </Text>
                         </View>
@@ -147,14 +169,16 @@ const styles = StyleSheet.create({
     mainCt: {
         flex: 1,
         padding: 20,
-        width: "100%"
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 30,
     },
     coverImgCt: {
         flex: 1,
     },
     personsCt: {
         flexDirection: "row",
-        flex: 1,
         justifyContent: "space-around",
         width: "100%"
     },
