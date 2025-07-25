@@ -13,6 +13,7 @@ import RNDateTimePicker, { DateTimePickerEvent } from "@react-native-community/d
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
+import * as Notifications from "expo-notifications"
 import ImagePickerField from "./settings/ImagePickerField";
 import SettingsInputField from "./settings/SettingsInputField";
 import DatePickerField from "./settings/DatePickerField";
@@ -71,11 +72,23 @@ const Settings = () => {
                 setPartnerImage(null);
             }
         }
+        
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
         getUserImageFromStorage();
         getPartnerImageFromStorage();
+    }, []);
+
+    useEffect(() => {
+        const requestPermissions = async () => {
+            const settings = await Notifications.requestPermissionsAsync();
+            if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+                console.log('Engedély megadva az értesítésekhez.');
+            }
+        };
+
+        requestPermissions();
     }, []);
 
     async function setUsernameToStorage() {
@@ -150,6 +163,22 @@ const Settings = () => {
         }
     }
 
+    async function setupAlert() {
+        const triggerDate = new Date("2025-07-25 10:05:00")
+
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Test notification",
+                body: "Local notification test",
+            },
+            trigger: {
+                seconds: 60, 
+                repeats: false,
+                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
+            }
+        })
+    }
+
     return (
         <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
             <SettingsInputField
@@ -197,6 +226,16 @@ const Settings = () => {
                         backgroundColor: theme.secondaryColor
                     }
                 }>Save</Text>
+            </Pressable>
+            <Pressable
+                onPress={setupAlert}  
+            >
+                <Text style={
+                    {...styles.saveBtn, 
+                        color: theme.mainBackground, 
+                        backgroundColor: theme.secondaryColor
+                    }
+                }>Alert</Text>
             </Pressable>
         </View>
     );
