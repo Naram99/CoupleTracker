@@ -17,6 +17,7 @@ import * as Notifications from "expo-notifications"
 import ImagePickerField from "./settings/ImagePickerField";
 import SettingsInputField from "./settings/SettingsInputField";
 import DatePickerField from "./settings/DatePickerField";
+import SwitchInputField from "./settings/SwitchInputField";
 
 const Settings = () => {
     const router = useRouter();
@@ -30,6 +31,7 @@ const Settings = () => {
     const [showDate, setShowDate] = useState<boolean>(false);
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
+    const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
     // TODO: Cover image
 
     useEffect(() => {
@@ -65,11 +67,20 @@ const Settings = () => {
                 setUserImage(null);
             }
         }
+
         async function getPartnerImageFromStorage() {
             try {
                 setPartnerImage(await AsyncStorage.getItem("partnerImage"));
             } catch {
                 setPartnerImage(null);
+            }
+        }
+
+        async function getNotificationEnabled() {
+            try {
+                setIsNotificationEnabled(await AsyncStorage.getItem("notificationEnabled") === "true");
+            } catch {
+                setIsNotificationEnabled(false);
             }
         }
         
@@ -78,6 +89,7 @@ const Settings = () => {
         getDateFromStorage();
         getUserImageFromStorage();
         getPartnerImageFromStorage();
+        getNotificationEnabled();
     }, []);
 
     useEffect(() => {
@@ -106,8 +118,13 @@ const Settings = () => {
     async function setUserImageToStorage() {
         if (userImage) await AsyncStorage.setItem("userImage", userImage);
     }
+
     async function setPartnerImageToStorage() {
         if (partnerImage) await AsyncStorage.setItem("partnerImage", partnerImage);
+    }
+
+    async function setNotificationEnabled() {
+        await AsyncStorage.setItem("notificationEnabled", `${isNotificationEnabled}`)
     }
 
     async function handleSubmit() {
@@ -116,6 +133,7 @@ const Settings = () => {
         await setDateToStorage();
         await setUserImageToStorage();
         await setPartnerImageToStorage();
+        await setNotificationEnabled();
         router.replace("/")
     }
 
@@ -161,6 +179,10 @@ const Settings = () => {
         if (!result.canceled && result.assets && result.assets.length > 0) {
             setPartnerImage(result.assets[0].uri);
         }
+    }
+
+    function toggleNotification() {
+        setIsNotificationEnabled(!isNotificationEnabled)
     }
 
     async function setupAlert() {
@@ -217,6 +239,12 @@ const Settings = () => {
                 display="default"
                 onChange={onDateChange}
             />}
+            <SwitchInputField 
+                label="Enable notifications:"
+                value={isNotificationEnabled}
+                onChangeValue={toggleNotification}
+                theme={theme}
+            />
             <Pressable
                 onPress={handleSubmit}  
             >
