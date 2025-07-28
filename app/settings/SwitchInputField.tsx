@@ -19,8 +19,8 @@ const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
             {label}
         </Text>
         <Switch 
-            trackColor={{false: theme.secondaryColor, true: theme.mainColor}}
-            thumbColor={value ? theme.secondaryColor : theme.mainColor} // TODO: Switched off colors
+            trackColor={{true: theme.mainColor, false: theme.secondaryColor}}
+            thumbColor={value ? theme.mainColor : theme.secondaryColor} // TODO: Switched off colors
             onValueChange={onChangeValue}
             value={value}
         />
