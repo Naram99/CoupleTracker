@@ -31,6 +31,7 @@ const Settings = () => {
     const [showDate, setShowDate] = useState<boolean>(false);
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
+    const [coverImage, setCoverImage] = useState<string | null>(null);
     const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
     // TODO: Cover image
 
@@ -76,6 +77,14 @@ const Settings = () => {
             }
         }
 
+        async function getCoverImageFromStorage() {
+            try {
+                setCoverImage(await AsyncStorage.getItem("coverImage"));
+            } catch {
+                setCoverImage(null);
+            }
+        }
+
         async function getNotificationEnabled() {
             try {
                 setIsNotificationEnabled(await AsyncStorage.getItem("notificationEnabled") === "true");
@@ -89,6 +98,7 @@ const Settings = () => {
         getDateFromStorage();
         getUserImageFromStorage();
         getPartnerImageFromStorage();
+        getCoverImageFromStorage();
         getNotificationEnabled();
     }, []);
 
@@ -123,6 +133,10 @@ const Settings = () => {
         if (partnerImage) await AsyncStorage.setItem("partnerImage", partnerImage);
     }
 
+    async function setCoverImageToStorage() {
+        if (coverImage) await AsyncStorage.setItem("coverImage", coverImage);
+    }
+
     async function setNotificationEnabled() {
         await AsyncStorage.setItem("notificationEnabled", `${isNotificationEnabled}`)
     }
@@ -133,6 +147,7 @@ const Settings = () => {
         await setDateToStorage();
         await setUserImageToStorage();
         await setPartnerImageToStorage();
+        await setCoverImageToStorage();
         await setNotificationEnabled();
         router.replace("/")
     }
@@ -164,6 +179,7 @@ const Settings = () => {
             setUserImage(result.assets[0].uri);
         }
     }
+
     async function pickPartnerImage() {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
@@ -178,6 +194,23 @@ const Settings = () => {
         });
         if (!result.canceled && result.assets && result.assets.length > 0) {
             setPartnerImage(result.assets[0].uri);
+        }
+    }
+    
+    async function pickCoverImage() {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setCoverImage(result.assets[0].uri);
         }
     }
 
@@ -239,6 +272,12 @@ const Settings = () => {
                 display="default"
                 onChange={onDateChange}
             />}
+            <ImagePickerField 
+                label="Cover image:"
+                imageUri={coverImage}
+                onPick={pickCoverImage}
+                theme={theme}
+            />
             <SwitchInputField 
                 label="Enable notifications:"
                 value={isNotificationEnabled}

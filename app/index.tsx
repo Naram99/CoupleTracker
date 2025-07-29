@@ -16,6 +16,7 @@ const Home = () => {
     
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
+    const [coverImage, setCoverImage] = useState<string | null>(null);
 
     const [dateToggle, setDateToggle] = useState(0)
 
@@ -52,6 +53,7 @@ const Home = () => {
                 setUserImage(null);
             }
         }
+
         async function getPartnerImageFromStorage() {
             try {
                 setPartnerImage(await AsyncStorage.getItem("partnerImage"));
@@ -60,11 +62,20 @@ const Home = () => {
             }
         }
 
+        async function getCoverImageFromStorage() {
+            try {
+                setCoverImage(await AsyncStorage.getItem("coverImage"));
+            } catch {
+                setCoverImage(null);
+            }
+        }
+
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
         getUserImageFromStorage();
         getPartnerImageFromStorage();
+        getCoverImageFromStorage();
     }, []);
 
     function toggleDateDiff() {
@@ -105,7 +116,12 @@ const Home = () => {
                     </Link>
                 </View>
                 <View style={styles.mainCt}>
-                    {/* <View style={styles.coverImgCt}></View> */}
+                    <View style={styles.coverImgCt}>
+                        <Image 
+                            source={{ uri: coverImage ?? "../assets/avatar.jpg" }} 
+                            style={styles.coverImg} 
+                        />
+                    </View>
                     <View style={styles.personsCt}>
                         <View style={styles.personCt}>
                             <Image 
@@ -175,7 +191,10 @@ const styles = StyleSheet.create({
         gap: 30,
     },
     coverImgCt: {
-        flex: 1,
+        width: "100%",
+    },
+    coverImg: {
+        width: "100%"
     },
     personsCt: {
         flexDirection: "row",
