@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Home = () => {
     const colorTheme = useTheme();
@@ -119,7 +120,11 @@ const Home = () => {
                     <View style={styles.coverImgCt}>
                         <Image 
                             source={{ uri: coverImage ?? "../assets/avatar.jpg" }} 
-                            style={styles.coverImg} 
+                            style={styles.coverImg}
+                        />
+                        <LinearGradient 
+                            colors={["transparent", theme.mainBackground]}
+                            style={styles.gradient}
                         />
                     </View>
                     <View style={styles.personsCt}>
@@ -183,6 +188,7 @@ const styles = StyleSheet.create({
         textDecorationStyle: "solid",
     },
     mainCt: {
+        position: "relative",
         flex: 1,
         padding: 20,
         width: "100%",
@@ -191,9 +197,17 @@ const styles = StyleSheet.create({
         gap: 30,
     },
     coverImgCt: {
+        position: "absolute",
+        top: 0,
+        left: 0,
         width: "100%",
+        height: "50%"
     },
     coverImg: {
+        width: "100%",
+        height: "100%"
+    },
+    gradient: {
         width: "100%"
     },
     personsCt: {
