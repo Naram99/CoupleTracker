@@ -102,16 +102,16 @@ const Settings = () => {
         getNotificationEnabled();
     }, []);
 
-    useEffect(() => {
-        const requestPermissions = async () => {
-            const settings = await Notifications.requestPermissionsAsync();
-            if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
-                console.log('Engedély megadva az értesítésekhez.');
-            }
-        };
+    // useEffect(() => {
+    //     const requestPermissions = async () => {
+    //         const settings = await Notifications.requestPermissionsAsync();
+    //         if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+    //             console.log('Engedély megadva az értesítésekhez.');
+    //         }
+    //     };
 
-        requestPermissions();
-    }, []);
+    //     requestPermissions();
+    // }, []);
 
     async function setUsernameToStorage() {
         if (username) await AsyncStorage.setItem("username", username);
@@ -218,21 +218,21 @@ const Settings = () => {
         setIsNotificationEnabled(!isNotificationEnabled)
     }
 
-    async function setupAlert() {
-        const triggerDate = new Date("2025-07-25 10:05:00")
+    // async function setupAlert() {
+    //     const triggerDate = new Date("2025-07-25 10:05:00")
 
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "Test notification",
-                body: "Local notification test",
-            },
-            trigger: {
-                seconds: 60, 
-                repeats: false,
-                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
-            }
-        })
-    }
+    //     await Notifications.scheduleNotificationAsync({
+    //         content: {
+    //             title: "Test notification",
+    //             body: "Local notification test",
+    //         },
+    //         trigger: {
+    //             seconds: 60, 
+    //             repeats: false,
+    //             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
+    //         }
+    //     })
+    // }
 
     return (
         <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
@@ -294,7 +294,7 @@ const Settings = () => {
                     }
                 }>Save</Text>
             </Pressable>
-            <Pressable
+            {/* <Pressable
                 onPress={setupAlert}  
             >
                 <Text style={
@@ -303,7 +303,7 @@ const Settings = () => {
                         backgroundColor: theme.secondaryColor
                     }
                 }>Alert</Text>
-            </Pressable>
+            </Pressable> */}
         </View>
     );
 };

@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
     mainCt: {
         position: "relative",
         flex: 1,
-        padding: 20,
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
@@ -204,8 +203,8 @@ const styles = StyleSheet.create({
         height: "50%"
     },
     coverImg: {
-        width: "100%",
-        height: "100%"
+        flex: 1,
+        resizeMode: "cover",
     },
     gradient: {
         width: "100%"
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
     personsCt: {
         flexDirection: "row",
         justifyContent: "space-around",
-        width: "100%"
+        width: "100%",
     },
     personCt: {
         gap: 10
