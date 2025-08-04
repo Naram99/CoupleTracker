@@ -6,6 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 
 const Home = () => {
     const colorTheme = useTheme();
@@ -112,8 +113,8 @@ const Home = () => {
                     <Text style={{...styles.title, color: theme.mainColor}}>
                         Couple Tracker
                     </Text>
-                    <Link href={"/settings"} style={{...styles.link, color: theme.secondaryColor}}>
-                        Settings
+                    <Link href={"/settings"}>
+                        <FontAwesome6 name="gear" iconStyle="solid" style={{...styles.link, color: theme.secondaryColor}}/>
                     </Link>
                 </View>
                 <View style={styles.mainCt}>
@@ -123,7 +124,8 @@ const Home = () => {
                             style={styles.coverImg}
                         />
                         <LinearGradient 
-                            colors={["transparent", theme.mainBackground]}
+                            colors={[theme.mainBackground, "transparent", "transparent", theme.mainBackground]}
+                            locations={[0, 0.1, 0.75, 1]}
                             style={styles.gradient}
                         />
                     </View>
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     link: {
-        textDecorationStyle: "solid",
+        fontSize: 25
     },
     mainCt: {
         position: "relative",
@@ -205,21 +207,33 @@ const styles = StyleSheet.create({
     coverImg: {
         flex: 1,
         resizeMode: "cover",
+        zIndex: 1,
     },
     gradient: {
-        width: "100%"
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 2
     },
     personsCt: {
         flexDirection: "row",
         justifyContent: "space-around",
         width: "100%",
+        zIndex: 3,
     },
     personCt: {
         gap: 10
     },
+    heartCt: {
+        height: "100%",
+        justifyContent: "center"
+    },
     dateDiffCt: {
         width: "100%",
         textAlign: "center",
+        zIndex: 3,
     },
     dateDiffText: {
         width: "100%",

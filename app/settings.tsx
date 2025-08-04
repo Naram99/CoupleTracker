@@ -18,6 +18,7 @@ import ImagePickerField from "./settings/ImagePickerField";
 import SettingsInputField from "./settings/SettingsInputField";
 import DatePickerField from "./settings/DatePickerField";
 import SwitchInputField from "./settings/SwitchInputField";
+import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 
 const Settings = () => {
     const router = useRouter();
@@ -288,11 +289,14 @@ const Settings = () => {
                 onPress={handleSubmit}  
             >
                 <Text style={
-                    {...styles.saveBtn, 
+                    {...styles.saveBtn,
                         color: theme.mainBackground, 
                         backgroundColor: theme.secondaryColor
                     }
-                }>Save</Text>
+                }>
+                    <FontAwesome6 name="floppy-disk" iconStyle="solid" style={{color: theme.mainBackground, fontSize: 20}} />&nbsp;
+                    Save
+                </Text>
             </Pressable>
             {/* <Pressable
                 onPress={setupAlert}  
@@ -319,7 +323,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: "center",
         textTransform: "uppercase",
-        padding: 5
+        padding: 5,
     },
     imagePickerGroup: {
         flexDirection: "row",
