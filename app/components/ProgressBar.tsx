@@ -25,9 +25,9 @@ const ProgressBar = ({
     const [percent, setPercent] = useState(0)
 
     useEffect(() => {
-        if (progressType === 0) setYearProgress()
-        if (progressType === 1) set100DaysProgress()
-    }, [progressType])
+        if (progressType === 0) setYearProgress();
+        if (progressType === 1) set100DaysProgress();
+    }, [progressType, selectedDate, yearDiff, dayDiff])
 
     function toggleProgressType() {
         setProgressType(progressType === 1 ? 0 : 1)
@@ -46,11 +46,11 @@ const ProgressBar = ({
         setFrom(`${yearDiff} years`)
         setTo(`${yearDiff + 1} years`)
 
-        const nextYear = getNeededYear(selectedDate)
-        const nextYearDate = new Date(`${nextYear}-${selectedDate.getMonth() + 1}- ${selectedDate.getDate()}`)
-        const lastYearDate = new Date(`${nextYear - 1}-${selectedDate.getMonth() + 1}- ${selectedDate.getDate()}`)
+        const nextYear = getNeededYear(selectedDate);
+        const nextYearDate = new Date(`${nextYear}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`);
+        const lastYearDate = new Date(`${nextYear - 1}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`);
 
-        setPercent(Math.round((nextYearDate.getTime() - lastYearDate.getTime()) / (365 * 24 * 60 * 60 * 1000) * 100))
+        setPercent(Math.round((nextYearDate.getTime() - currentDate.getTime()) / (365 * 24 * 60 * 60 * 1000) * 100));
     }
 
     function getNeededYear(selectedDate: Date): number {
@@ -63,11 +63,11 @@ const ProgressBar = ({
     return (
         <Pressable onPress={toggleProgressType} style={styles.barSection}>
             <Text style={{...styles.barText, color: theme.mainColor}}>{from}</Text>
-            <View style={{...styles.barCt, backgroundColor: theme.secondaryBackground}}>
+            <View style={{...styles.barCt, backgroundColor: theme.secondaryColor}}>
                 <View style={{
                     ...styles.bar, 
                     right: `${percent}%`, 
-                    backgroundColor: theme.mainBackground
+                    backgroundColor: theme.mainColor
                 }}></View>
             </View>
             <Text style={{...styles.barText, color: theme.mainColor}}>{to}</Text>
@@ -80,17 +80,24 @@ export default ProgressBar
 const styles = StyleSheet.create({
     barSection: {
         width: "100%",
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center"
     },
     barText: {
         fontWeight: "bold",
         fontSize: 20
     },
-    barCt: {},
+    barCt: {
+        height: 20,
+        width: 150,
+        borderRadius: 10
+    },
     bar: {
         position: "absolute",
         top: 0,
         left: 0,
-        bottom: 0
+        bottom: 0,
+        borderRadius: 10
     }
 })
