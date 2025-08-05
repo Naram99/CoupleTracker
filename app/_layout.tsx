@@ -14,8 +14,12 @@ const RootLayout = () => {
                 screenOptions={{
                     headerStyle: { backgroundColor: theme.mainBackground },
                     headerTintColor: theme.mainColor,
-                }}>
-                <Stack.Screen name="index" options={{ title: "Home", headerShown: false }} />
+                }}
+            >
+                <Stack.Screen
+                    name="index"
+                    options={{ title: "Home", headerShown: false }}
+                />
                 <Stack.Screen name="settings" options={{ title: "Settings" }} />
                 <Stack.Screen name="about" options={{ title: "About" }} />
             </Stack>

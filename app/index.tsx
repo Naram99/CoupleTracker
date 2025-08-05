@@ -10,10 +10,10 @@ import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import ProgressBar from "./components/ProgressBar";
 
 type YMDDifference = {
-    years: number,
-    months: number,
-    days: number
-}
+    years: number;
+    months: number;
+    days: number;
+};
 
 const Home = () => {
     const colorTheme = useTheme();
@@ -22,18 +22,18 @@ const Home = () => {
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
     const [date, setDate] = useState<Date | null>(null);
-    
+
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
     const [coverImage, setCoverImage] = useState<string | null>(null);
 
-    const [dateToggle, setDateToggle] = useState(0)
-    const [dayDiff, setDayDiff] = useState(0)
+    const [dateToggle, setDateToggle] = useState(0);
+    const [dayDiff, setDayDiff] = useState(0);
     const [YMDDiff, setYMDDiff] = useState<YMDDifference>({
         years: 0,
         months: 0,
-        days: 0
-    })
+        days: 0,
+    });
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -54,7 +54,9 @@ const Home = () => {
 
         async function getDateFromStorage() {
             try {
-                const storedDate = await AsyncStorage.getItem("date") ?? new Date().toISOString()
+                const storedDate =
+                    (await AsyncStorage.getItem("date")) ??
+                    new Date().toISOString();
                 setDate(new Date(storedDate));
             } catch {
                 setDate(null);
@@ -94,12 +96,17 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        setYMDDiff(calculateYMDDiff(date ?? new Date(), new Date()))
-        setDayDiff(Math.floor((new Date().getTime() - (date ?? new Date()).getTime()) / (1000 * 60 * 60 * 24)))
-    }, [date])
+        setYMDDiff(calculateYMDDiff(date ?? new Date(), new Date()));
+        setDayDiff(
+            Math.floor(
+                (new Date().getTime() - (date ?? new Date()).getTime()) /
+                    (1000 * 60 * 60 * 24)
+            )
+        );
+    }, [date]);
 
     function toggleDateDiff() {
-        setDateToggle(dateToggle === 0 ? 1 : 0)
+        setDateToggle(dateToggle === 0 ? 1 : 0);
     }
 
     function calculateYMDDiff(from: Date, to: Date): YMDDifference {
@@ -124,59 +131,102 @@ const Home = () => {
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={{...styles.container, backgroundColor: theme.mainBackground}}>
+            <SafeAreaView
+                style={{
+                    ...styles.container,
+                    backgroundColor: theme.mainBackground,
+                }}
+            >
                 <View style={styles.header}>
-                    <Text style={{...styles.title, color: theme.mainColor}}>
+                    <Text style={{ ...styles.title, color: theme.mainColor }}>
                         Couple Tracker
                     </Text>
                     <Link href={"/settings"}>
-                        <FontAwesome6 name="gear" iconStyle="solid" style={{...styles.link, color: theme.secondaryColor}}/>
+                        <FontAwesome6
+                            name="gear"
+                            iconStyle="solid"
+                            style={{
+                                ...styles.link,
+                                color: theme.secondaryColor,
+                            }}
+                        />
                     </Link>
                 </View>
                 <View style={styles.mainCt}>
                     <View style={styles.coverImgCt}>
-                        <Image 
-                            source={{ uri: coverImage ?? "../assets/avatar.jpg" }} 
+                        <Image
+                            source={{
+                                uri: coverImage ?? "../assets/avatar.jpg",
+                            }}
                             style={styles.coverImg}
                         />
-                        <LinearGradient 
-                            colors={[theme.mainBackground, "transparent", "transparent", theme.mainBackground]}
+                        <LinearGradient
+                            colors={[
+                                theme.mainBackground,
+                                "transparent",
+                                "transparent",
+                                theme.mainBackground,
+                            ]}
                             locations={[0, 0.1, 0.75, 1]}
                             style={styles.gradient}
                         />
                     </View>
                     <View style={styles.personsCt}>
                         <View style={styles.personCt}>
-                            <Image 
-                                source={{ uri: userImage ?? "../assets/avatar.jpg" }} 
-                                style={{...styles.avatar, borderColor: theme.secondaryColor}} 
+                            <Image
+                                source={{
+                                    uri: userImage ?? "../assets/avatar.jpg",
+                                }}
+                                style={{
+                                    ...styles.avatar,
+                                    borderColor: theme.secondaryColor,
+                                }}
                             />
-                            <Text style={{...styles.personName, color: theme.mainColor}}>
+                            <Text
+                                style={{
+                                    ...styles.personName,
+                                    color: theme.mainColor,
+                                }}
+                            >
                                 {username ?? "Name"}
                             </Text>
                         </View>
                         <View style={styles.personCt}>
-                            <Image 
-                                source={{ uri: partnerImage ?? "../assets/avatar.jpg" }} 
-                                style={{...styles.avatar, borderColor: theme.secondaryColor}} 
+                            <Image
+                                source={{
+                                    uri: partnerImage ?? "../assets/avatar.jpg",
+                                }}
+                                style={{
+                                    ...styles.avatar,
+                                    borderColor: theme.secondaryColor,
+                                }}
                             />
-                            <Text style={{...styles.personName, color: theme.mainColor}}>
+                            <Text
+                                style={{
+                                    ...styles.personName,
+                                    color: theme.mainColor,
+                                }}
+                            >
                                 {partnername ?? "Name"}
                             </Text>
                         </View>
                     </View>
                     <Pressable onPress={toggleDateDiff}>
                         <View style={styles.dateDiffCt}>
-                            <Text style={{...styles.dateDiffText, color: theme.secondaryColor}}>
-                                {dateToggle === 0 
-                                    ? `${dayDiff} days` 
-                                    : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`
-                                }
+                            <Text
+                                style={{
+                                    ...styles.dateDiffText,
+                                    color: theme.secondaryColor,
+                                }}
+                            >
+                                {dateToggle === 0
+                                    ? `${dayDiff} days`
+                                    : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
                             </Text>
                         </View>
                     </Pressable>
-                    <ProgressBar 
-                        selectedDate={date ?? new Date()} 
+                    <ProgressBar
+                        selectedDate={date ?? new Date()}
                         dayDiff={dayDiff}
                         yearDiff={YMDDiff.years}
                     />
@@ -201,14 +251,14 @@ const styles = StyleSheet.create({
         padding: 20,
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
     },
     title: {
         fontWeight: "bold",
         fontSize: 20,
     },
     link: {
-        fontSize: 25
+        fontSize: 25,
     },
     mainCt: {
         position: "relative",
@@ -223,7 +273,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         width: "100%",
-        height: "50%"
+        height: "50%",
     },
     coverImg: {
         flex: 1,
@@ -236,7 +286,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 2
+        zIndex: 2,
     },
     personsCt: {
         flexDirection: "row",
@@ -245,11 +295,11 @@ const styles = StyleSheet.create({
         zIndex: 3,
     },
     personCt: {
-        gap: 10
+        gap: 10,
     },
     heartCt: {
         height: "100%",
-        justifyContent: "center"
+        justifyContent: "center",
     },
     dateDiffCt: {
         width: "100%",
@@ -260,7 +310,7 @@ const styles = StyleSheet.create({
         width: "100%",
         textAlign: "center",
         fontWeight: "bold",
-        fontSize: 20
+        fontSize: 20,
     },
     footerText: {
         fontSize: 10,
@@ -277,6 +327,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
         width: "100%",
-        textAlign: "center"
-    }
+        textAlign: "center",
+    },
 });

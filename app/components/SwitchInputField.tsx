@@ -18,8 +18,8 @@ const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
         <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>
             {label}
         </Text>
-        <Switch 
-            trackColor={{true: theme.mainColor, false: theme.secondaryColor}}
+        <Switch
+            trackColor={{ true: theme.mainColor, false: theme.secondaryColor }}
             thumbColor={value ? theme.mainColor : theme.secondaryColor} // TODO: Switched off colors
             onValueChange={onChangeValue}
             value={value}

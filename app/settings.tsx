@@ -1,18 +1,14 @@
-import {
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNDateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import RNDateTimePicker, {
+    DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
-import * as Notifications from "expo-notifications"
+import * as Notifications from "expo-notifications";
 import ImagePickerField from "./components/ImagePickerField";
 import SettingsInputField from "./components/SettingsInputField";
 import DatePickerField from "./components/DatePickerField";
@@ -32,7 +28,8 @@ const Settings = () => {
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
     const [coverImage, setCoverImage] = useState<string | null>(null);
-    const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
+    const [isNotificationEnabled, setIsNotificationEnabled] =
+        useState<boolean>(false);
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -53,7 +50,9 @@ const Settings = () => {
 
         async function getDateFromStorage() {
             try {
-                const storedDate = await AsyncStorage.getItem("date") ?? new Date().toISOString()
+                const storedDate =
+                    (await AsyncStorage.getItem("date")) ??
+                    new Date().toISOString();
                 setDate(new Date(storedDate));
             } catch {
                 setDate(null);
@@ -86,12 +85,15 @@ const Settings = () => {
 
         async function getNotificationEnabled() {
             try {
-                setIsNotificationEnabled(await AsyncStorage.getItem("notificationEnabled") === "true");
+                setIsNotificationEnabled(
+                    (await AsyncStorage.getItem("notificationEnabled")) ===
+                        "true"
+                );
             } catch {
                 setIsNotificationEnabled(false);
             }
         }
-        
+
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
@@ -104,8 +106,12 @@ const Settings = () => {
     useEffect(() => {
         const requestPermissions = async () => {
             const settings = await Notifications.requestPermissionsAsync();
-            if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
-                console.log('Engedély megadva az értesítésekhez.');
+            if (
+                settings.granted ||
+                settings.ios?.status ===
+                    Notifications.IosAuthorizationStatus.PROVISIONAL
+            ) {
+                console.log("Engedély megadva az értesítésekhez.");
             }
 
             Notifications.setNotificationHandler({
@@ -114,9 +120,9 @@ const Settings = () => {
                     // shouldShowAlert: true,
                     shouldSetBadge: true,
                     shouldShowBanner: true,
-                    shouldShowList: true
-                })
-            })
+                    shouldShowList: true,
+                }),
+            });
         };
 
         requestPermissions();
@@ -139,7 +145,8 @@ const Settings = () => {
     }
 
     async function setPartnerImageToStorage() {
-        if (partnerImage) await AsyncStorage.setItem("partnerImage", partnerImage);
+        if (partnerImage)
+            await AsyncStorage.setItem("partnerImage", partnerImage);
     }
 
     async function setCoverImageToStorage() {
@@ -147,7 +154,10 @@ const Settings = () => {
     }
 
     async function setNotificationEnabled() {
-        await AsyncStorage.setItem("notificationEnabled", `${isNotificationEnabled}`)
+        await AsyncStorage.setItem(
+            "notificationEnabled",
+            `${isNotificationEnabled}`
+        );
     }
 
     async function handleSubmit() {
@@ -158,22 +168,26 @@ const Settings = () => {
         await setPartnerImageToStorage();
         await setCoverImageToStorage();
         await setNotificationEnabled();
-        router.replace("/")
+        router.replace("/");
     }
 
     function openDate() {
-        setShowDate(true)
+        setShowDate(true);
     }
 
-    function onDateChange(event: DateTimePickerEvent, selectedDate: Date | undefined) {
+    function onDateChange(
+        event: DateTimePickerEvent,
+        selectedDate: Date | undefined
+    ) {
         // console.log(event)
         const currentDate = selectedDate || date;
-        setShowDate(Platform.OS === 'ios')
-        setDate(currentDate)
+        setShowDate(Platform.OS === "ios");
+        setDate(currentDate);
     }
 
     async function pickUserImage() {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
             alert("Permission to access camera roll is required!");
             return;
@@ -190,7 +204,8 @@ const Settings = () => {
     }
 
     async function pickPartnerImage() {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
             alert("Permission to access camera roll is required!");
             return;
@@ -205,9 +220,10 @@ const Settings = () => {
             setPartnerImage(result.assets[0].uri);
         }
     }
-    
+
     async function pickCoverImage() {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
             alert("Permission to access camera roll is required!");
             return;
@@ -224,11 +240,11 @@ const Settings = () => {
     }
 
     function toggleNotification() {
-        setIsNotificationEnabled(!isNotificationEnabled)
+        setIsNotificationEnabled(!isNotificationEnabled);
     }
 
     async function setupAlert() {
-        const triggerDate = new Date("2025-07-25 10:05:00")
+        const triggerDate = new Date("2025-07-25 10:05:00");
 
         await Notifications.scheduleNotificationAsync({
             content: {
@@ -237,13 +253,18 @@ const Settings = () => {
             },
             trigger: {
                 seconds: 5,
-                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
-            }
-        })
+                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            },
+        });
     }
 
     return (
-        <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
+        <View
+            style={{
+                ...styles.container,
+                backgroundColor: theme.mainBackground,
+            }}
+        >
             <SettingsInputField
                 label="Your name:"
                 value={username ?? ""}
@@ -274,46 +295,52 @@ const Settings = () => {
                 onOpen={openDate}
                 theme={theme}
             />
-            {showDate && <RNDateTimePicker 
-                value={date ?? new Date()}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-            />}
-            <ImagePickerField 
+            {showDate && (
+                <RNDateTimePicker
+                    value={date ?? new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                />
+            )}
+            <ImagePickerField
                 label="Cover image:"
                 imageUri={coverImage}
                 onPick={pickCoverImage}
                 theme={theme}
             />
-            <SwitchInputField 
+            <SwitchInputField
                 label="Enable notifications:"
                 value={isNotificationEnabled}
                 onChangeValue={toggleNotification}
                 theme={theme}
             />
-            <Pressable
-                onPress={handleSubmit}  
-            >
-                <Text style={
-                    {...styles.saveBtn,
-                        color: theme.mainBackground, 
-                        backgroundColor: theme.secondaryColor
-                    }
-                }>
-                    <FontAwesome6 name="floppy-disk" iconStyle="solid" style={{color: theme.mainBackground, fontSize: 20}} />&nbsp;
-                    Save
+            <Pressable onPress={handleSubmit}>
+                <Text
+                    style={{
+                        ...styles.saveBtn,
+                        color: theme.mainBackground,
+                        backgroundColor: theme.secondaryColor,
+                    }}
+                >
+                    <FontAwesome6
+                        name="floppy-disk"
+                        iconStyle="solid"
+                        style={{ color: theme.mainBackground, fontSize: 20 }}
+                    />
+                    &nbsp; Save
                 </Text>
             </Pressable>
-            <Pressable
-                onPress={setupAlert}  
-            >
-                <Text style={
-                    {...styles.saveBtn, 
-                        color: theme.mainBackground, 
-                        backgroundColor: theme.secondaryColor
-                    }
-                }>Alert</Text>
+            <Pressable onPress={setupAlert}>
+                <Text
+                    style={{
+                        ...styles.saveBtn,
+                        color: theme.mainBackground,
+                        backgroundColor: theme.secondaryColor,
+                    }}
+                >
+                    Alert
+                </Text>
             </Pressable>
         </View>
     );
@@ -323,7 +350,7 @@ export default Settings;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     saveBtn: {
         fontWeight: "bold",
@@ -336,7 +363,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 10,
-        justifyContent: "space-between"
+        justifyContent: "space-between",
     },
     imagePressable: {
         width: 80,
