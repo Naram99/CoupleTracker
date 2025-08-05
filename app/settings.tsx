@@ -1,5 +1,4 @@
 import {
-    Button,
     Platform,
     Pressable,
     StyleSheet,
@@ -14,10 +13,10 @@ import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
 import * as Notifications from "expo-notifications"
-import ImagePickerField from "./settings/ImagePickerField";
-import SettingsInputField from "./settings/SettingsInputField";
-import DatePickerField from "./settings/DatePickerField";
-import SwitchInputField from "./settings/SwitchInputField";
+import ImagePickerField from "./components/ImagePickerField";
+import SettingsInputField from "./components/SettingsInputField";
+import DatePickerField from "./components/DatePickerField";
+import SwitchInputField from "./components/SwitchInputField";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 
 const Settings = () => {
@@ -34,7 +33,6 @@ const Settings = () => {
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
     const [coverImage, setCoverImage] = useState<string | null>(null);
     const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
-    // TODO: Cover image
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -103,16 +101,26 @@ const Settings = () => {
         getNotificationEnabled();
     }, []);
 
-    // useEffect(() => {
-    //     const requestPermissions = async () => {
-    //         const settings = await Notifications.requestPermissionsAsync();
-    //         if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
-    //             console.log('Engedély megadva az értesítésekhez.');
-    //         }
-    //     };
+    useEffect(() => {
+        const requestPermissions = async () => {
+            const settings = await Notifications.requestPermissionsAsync();
+            if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+                console.log('Engedély megadva az értesítésekhez.');
+            }
 
-    //     requestPermissions();
-    // }, []);
+            Notifications.setNotificationHandler({
+                handleNotification: async () => ({
+                    shouldPlaySound: true,
+                    // shouldShowAlert: true,
+                    shouldSetBadge: true,
+                    shouldShowBanner: true,
+                    shouldShowList: true
+                })
+            })
+        };
+
+        requestPermissions();
+    }, []);
 
     async function setUsernameToStorage() {
         if (username) await AsyncStorage.setItem("username", username);
@@ -219,21 +227,20 @@ const Settings = () => {
         setIsNotificationEnabled(!isNotificationEnabled)
     }
 
-    // async function setupAlert() {
-    //     const triggerDate = new Date("2025-07-25 10:05:00")
+    async function setupAlert() {
+        const triggerDate = new Date("2025-07-25 10:05:00")
 
-    //     await Notifications.scheduleNotificationAsync({
-    //         content: {
-    //             title: "Test notification",
-    //             body: "Local notification test",
-    //         },
-    //         trigger: {
-    //             seconds: 60, 
-    //             repeats: false,
-    //             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
-    //         }
-    //     })
-    // }
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Test notification",
+                body: "Local notification test",
+            },
+            trigger: {
+                seconds: 5,
+                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
+            }
+        })
+    }
 
     return (
         <View style={{...styles.container, backgroundColor: theme.mainBackground}}>
@@ -298,7 +305,7 @@ const Settings = () => {
                     Save
                 </Text>
             </Pressable>
-            {/* <Pressable
+            <Pressable
                 onPress={setupAlert}  
             >
                 <Text style={
@@ -307,7 +314,7 @@ const Settings = () => {
                         backgroundColor: theme.secondaryColor
                     }
                 }>Alert</Text>
-            </Pressable> */}
+            </Pressable>
         </View>
     );
 };

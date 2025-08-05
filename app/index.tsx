@@ -7,6 +7,13 @@ import colors from "../constants/colors";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import ProgressBar from "./components/ProgressBar";
+
+type YMDDifference = {
+    years: number,
+    months: number,
+    days: number
+}
 
 const Home = () => {
     const colorTheme = useTheme();
@@ -21,6 +28,12 @@ const Home = () => {
     const [coverImage, setCoverImage] = useState<string | null>(null);
 
     const [dateToggle, setDateToggle] = useState(0)
+    const [dayDiff, setDayDiff] = useState(0)
+    const [YMDDiff, setYMDDiff] = useState<YMDDifference>({
+        years: 0,
+        months: 0,
+        days: 0
+    })
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -80,11 +93,16 @@ const Home = () => {
         getCoverImageFromStorage();
     }, []);
 
+    useEffect(() => {
+        setYMDDiff(calculateYMDDiff(date ?? new Date(), new Date()))
+        setDayDiff(Math.floor((new Date().getTime() - (date ?? new Date()).getTime()) / (1000 * 60 * 60 * 24)))
+    }, [date])
+
     function toggleDateDiff() {
         setDateToggle(dateToggle === 0 ? 1 : 0)
     }
 
-    function calculateYMDDiff(from: Date, to: Date): {[index: string]: number} {
+    function calculateYMDDiff(from: Date, to: Date): YMDDifference {
         let years = to.getFullYear() - from.getFullYear();
         let months = to.getMonth() - from.getMonth();
         let days = to.getDate() - from.getDate();
@@ -103,8 +121,6 @@ const Home = () => {
 
         return { years, months, days };
     }
-
-    const ymdDifference = calculateYMDDiff(date ?? new Date(), new Date())
 
     return (
         <SafeAreaProvider>
@@ -153,12 +169,17 @@ const Home = () => {
                         <View style={styles.dateDiffCt}>
                             <Text style={{...styles.dateDiffText, color: theme.secondaryColor}}>
                                 {dateToggle === 0 
-                                    ? `${Math.floor((new Date().getTime() - (date ?? new Date()).getTime()) / (1000 * 60 * 60 * 24))} days` 
-                                    : `${ymdDifference.years} years ${ymdDifference.months} months ${ymdDifference.days} days`
+                                    ? `${dayDiff} days` 
+                                    : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`
                                 }
                             </Text>
                         </View>
                     </Pressable>
+                    <ProgressBar 
+                        selectedDate={date ?? new Date()} 
+                        dayDiff={dayDiff}
+                        yearDiff={YMDDiff.years}
+                    />
                 </View>
                 <Text style={styles.footerText}>Made by Naram99</Text>
             </SafeAreaView>
