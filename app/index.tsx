@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         width: "100%",
+        marginTop: "25%",
         zIndex: 3,
     },
     personCt: {
