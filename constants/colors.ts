@@ -21,7 +21,7 @@ const colors: { [index: string]: ColorScheme } = {
 
 export default colors;
 
-type ColorScheme = {
+export type ColorScheme = {
     mainColor: string;
     secondaryColor: string;
     mainBackground: string;

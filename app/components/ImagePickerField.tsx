@@ -2,13 +2,15 @@ import React from "react";
 import { Pressable, Text, View, Image, StyleSheet } from "react-native";
 
 interface ImagePickerFieldProps {
-    label: string;
+    type: string;
+    label?: string,
     imageUri: string | null;
-    onPick: () => void;
+    onPick: (imgType: string) => void;
     theme: any;
 }
 
 const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
+    type,
     label,
     imageUri,
     onPick,
@@ -16,9 +18,9 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
 }) => (
     <View style={styles.imagePickerGroup}>
         <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>
-            {label}
+            {label ? label : type} image:
         </Text>
-        <Pressable onPress={onPick} style={styles.imagePressable}>
+        <Pressable onPress={() => onPick(type)} style={styles.imagePressable}>
             {imageUri ? (
                 <Image
                     source={{ uri: imageUri }}

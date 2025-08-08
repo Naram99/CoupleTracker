@@ -8,12 +8,11 @@ import RNDateTimePicker, {
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
-import * as Notifications from "expo-notifications";
 import ImagePickerField from "./components/ImagePickerField";
 import SettingsInputField from "./components/SettingsInputField";
 import DatePickerField from "./components/DatePickerField";
-import SwitchInputField from "./components/SwitchInputField";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import NotificationsSwitch from "./components/NotificationsSwitch";
 
 const Settings = () => {
     const router = useRouter();
@@ -103,31 +102,6 @@ const Settings = () => {
         getNotificationEnabled();
     }, []);
 
-    useEffect(() => {
-        const requestPermissions = async () => {
-            const settings = await Notifications.requestPermissionsAsync();
-            if (
-                settings.granted ||
-                settings.ios?.status ===
-                    Notifications.IosAuthorizationStatus.PROVISIONAL
-            ) {
-                console.log("Engedély megadva az értesítésekhez.");
-            }
-
-            Notifications.setNotificationHandler({
-                handleNotification: async () => ({
-                    shouldPlaySound: true,
-                    // shouldShowAlert: true,
-                    shouldSetBadge: true,
-                    shouldShowBanner: true,
-                    shouldShowList: true,
-                }),
-            });
-        };
-
-        requestPermissions();
-    }, []);
-
     async function setUsernameToStorage() {
         if (username) await AsyncStorage.setItem("username", username);
     }
@@ -185,77 +159,33 @@ const Settings = () => {
         setDate(currentDate);
     }
 
-    async function pickUserImage() {
-        const permissionResult =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
+    // TODO: Image picking összevonása!
+    async function pickImage(imgType: string) {
+        const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!permissionResult.granted) {
+                alert("Permission to access camera roll is required!");
+                return;
+            }
         }
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            setUserImage(result.assets[0].uri);
-        }
-    }
 
-    async function pickPartnerImage() {
-        const permissionResult =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
-        }
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images"],
             allowsEditing: true,
             aspect: [1, 1],
             quality: 1,
         });
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            setPartnerImage(result.assets[0].uri);
-        }
-    }
 
-    async function pickCoverImage() {
-        const permissionResult =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
-            return;
-        }
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
         if (!result.canceled && result.assets && result.assets.length > 0) {
-            setCoverImage(result.assets[0].uri);
+            if (imgType === "User") setUserImage(result.assets[0].uri);
+            if (imgType === "Partner") setPartnerImage(result.assets[0].uri);
+            if (imgType === "Cover") setCoverImage(result.assets[0].uri);
         }
     }
 
     function toggleNotification() {
         setIsNotificationEnabled(!isNotificationEnabled);
-    }
-
-    async function setupAlert() {
-        const triggerDate = new Date("2025-07-25 10:05:00");
-
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "Test notification",
-                body: "Local notification test",
-            },
-            trigger: {
-                seconds: 5,
-                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-            },
-        });
     }
 
     return (
@@ -272,9 +202,10 @@ const Settings = () => {
                 theme={theme}
             />
             <ImagePickerField
-                label="Your photo:"
+                type="User"
+                label="Your"
                 imageUri={userImage}
-                onPick={pickUserImage}
+                onPick={pickImage}
                 theme={theme}
             />
             <SettingsInputField
@@ -284,9 +215,9 @@ const Settings = () => {
                 theme={theme}
             />
             <ImagePickerField
-                label="Partner photo:"
+                type="Partner"
                 imageUri={partnerImage}
-                onPick={pickPartnerImage}
+                onPick={pickImage}
                 theme={theme}
             />
             <DatePickerField
@@ -304,15 +235,14 @@ const Settings = () => {
                 />
             )}
             <ImagePickerField
-                label="Cover image:"
+                type="Cover"
                 imageUri={coverImage}
-                onPick={pickCoverImage}
+                onPick={pickImage}
                 theme={theme}
             />
-            <SwitchInputField
-                label="Enable notifications:"
-                value={isNotificationEnabled}
-                onChangeValue={toggleNotification}
+            <NotificationsSwitch 
+                enabled={isNotificationEnabled}
+                onChange={toggleNotification}
                 theme={theme}
             />
             <Pressable onPress={handleSubmit}>
@@ -331,7 +261,7 @@ const Settings = () => {
                     &nbsp; Save
                 </Text>
             </Pressable>
-            <Pressable onPress={setupAlert}>
+            {/* <Pressable onPress={setupAlert}>
                 <Text
                     style={{
                         ...styles.saveBtn,
@@ -341,7 +271,7 @@ const Settings = () => {
                 >
                     Alert
                 </Text>
-            </Pressable>
+            </Pressable> */}
         </View>
     );
 };
