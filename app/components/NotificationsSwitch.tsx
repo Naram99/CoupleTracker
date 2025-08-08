@@ -34,8 +34,10 @@ const NotificationsSwitch = ({
                 }),
             });
         };
-
         requestPermissions();
+
+        if (enabled) setupAlert(); // TODO: Schedule notifications for 100 days, 1 years
+        if (!enabled) Notifications.cancelAllScheduledNotificationsAsync();
     }, [enabled]);
 
     async function setupAlert() {
