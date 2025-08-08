@@ -29,8 +29,7 @@
       "permissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.NOTIFICATIONS",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.NOTIFICATIONS"
       ],
       "package": "naram99.coupletracker"
     },
