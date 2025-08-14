@@ -46,13 +46,21 @@ const NotificationsSwitch = ({
     }, [enabled]);
 
     async function setupAllAlerts() {
-        const next100days = calcNext100Days(date)
-        const next100daysDate = new Date(date.getTime() + (next100days * 1000 * 60 * 60 * 24))
-        await setupAlert(user, partner, next100daysDate, next100days, "days")
+        const needed = await checkIfNotificationsAreScheduled()
 
-        const nextYear = calcNextYear(date)
-        const nextYearDate = new Date(`${date.getFullYear() + nextYear}-${date.getMonth() + 1}-${date.getDate()}`)
-        await setupAlert(user, partner, nextYearDate, nextYear, "year")
+        if (needed.days) {
+            const next100days = calcNext100Days(date)
+            const next100daysDate = new Date(date.getTime() + (next100days * 1000 * 60 * 60 * 24))
+            console.log(next100days, next100daysDate.toDateString())
+            await setupAlert(user, partner, next100daysDate, next100days, "days")
+        }
+        
+        if (needed.years) {
+            const nextYear = calcNextYear(date)
+            const nextYearDate = new Date(`${date.getFullYear() + nextYear}-${date.getMonth() + 1}-${date.getDate()}`)
+            console.log(nextYear, nextYearDate.toDateString())
+            await setupAlert(user, partner, nextYearDate, nextYear, "year")
+        }
     }
 
     // TODO: no alert when data is missing
@@ -80,6 +88,18 @@ const NotificationsSwitch = ({
         });
     }
 
+    async function checkIfNotificationsAreScheduled() {
+        const needed = { years: true, days: true }
+        const scheduled = await Notifications.getAllScheduledNotificationsAsync()
+
+        scheduled.forEach(data => {
+            if (data.content.title?.includes("year")) needed.years = false
+            if (data.content.title?.includes("days")) needed.days = false
+        })
+
+        return needed
+    }
+
     function calcNext100Days(date: Date): number {
         const currDays = Math.floor((new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
         return (Math.floor(currDays / 100) + 1) * 100
@@ -87,8 +107,10 @@ const NotificationsSwitch = ({
 
     function calcNextYear(date: Date): number {
         const currYear = new Date().getFullYear()
+        const givenYear = date.getFullYear()
         const thisYearDate = new Date(`${currYear}-${date.getMonth() + 1}-${date.getDate()}`)
-        return thisYearDate.getTime() < new Date().getTime() ? currYear + 1 : currYear
+        const yearDiff = currYear - givenYear
+        return thisYearDate.getTime() < new Date().getTime() ? yearDiff + 1 : yearDiff
     }
 
     return (
