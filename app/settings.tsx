@@ -159,7 +159,6 @@ const Settings = () => {
         setDate(currentDate);
     }
 
-    // TODO: Image picking összevonása!
     async function pickImage(imgType: string) {
         const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
@@ -243,6 +242,9 @@ const Settings = () => {
             <NotificationsSwitch 
                 enabled={isNotificationEnabled}
                 onChange={toggleNotification}
+                user={username}
+                partner={partnername}
+                date={date ?? new Date()}
                 theme={theme}
             />
             <Pressable onPress={handleSubmit}>
