@@ -71,7 +71,8 @@ const NotificationsSwitch = ({
         elapsed: number,
         timeType: "year" | "days"
     ) {
-        // const triggerDate = new Date("2025-07-25 10:05:00");
+        triggerDate.setHours(9, 0, 0, 0);
+        // triggerDate = new Date("2025-07-25 10:05:00");
 
         if (elapsed > 1 && timeType === "year") timeType += "s";
 
@@ -80,10 +81,9 @@ const NotificationsSwitch = ({
                 title: `${elapsed} ${timeType}!`,
                 body: `Hey ${user ?? "{user}"}, celebrate your ${elapsed} ${timeType} together with ${partner ?? "{partner}"}!`,
             },
-            // TODO: Date trigger!
             trigger: {
-                seconds: 5,
-                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+                date: triggerDate,
+                type: Notifications.SchedulableTriggerInputTypes.DATE,
             },
         });
     }
