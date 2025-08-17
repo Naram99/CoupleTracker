@@ -72,7 +72,6 @@ const NotificationsSwitch = ({
         timeType: "year" | "days"
     ) {
         triggerDate.setHours(9, 0, 0, 0);
-        // triggerDate = new Date("2025-07-25 10:05:00");
 
         if (elapsed > 1 && timeType === "year") timeType += "s";
 
