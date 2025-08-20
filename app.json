@@ -32,7 +32,9 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.NOTIFICATIONS"
       ],
-      "package": "naram99.coupletracker"
+      "package": "com.naram99.coupletracker",
+      "versionCode": 1,
+      "versionName": "1.0.1"
     },
     "web": {
       "favicon": "./assets/favicon.png"
