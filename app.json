@@ -3,13 +3,13 @@
     "name": "CoupleTracker",
     "slug": "CoupleTracker",
     "scheme": "coupletracker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/HeartHourglass.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/HeartHourglass.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,12 +18,13 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "A képek kiválasztásához a fotógalériából.",
         "NSUserTrackingUsageDescription": "Szükséges az értesítésekhez."
-      }
+      },
+      "icon": "./assets/icon.png"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
