@@ -5,7 +5,7 @@
         "scheme": "coupletracker",
         "version": "1.0.1",
         "orientation": "portrait",
-        "icon": "./assets/icon.png",
+        "icon": "./assets/testicon.png",
         "userInterfaceStyle": "light",
         "newArchEnabled": true,
         "splash": {
@@ -24,7 +24,7 @@
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon-main.png",
-                "backgroundColor": "#c2b280"
+                "backgroundColor": "#ffffff"
             },
             "edgeToEdgeEnabled": true,
             "permissions": [
@@ -37,7 +37,7 @@
             "versionName": "1.0.1"
         },
         "web": {
-            "favicon": "./assets/favicon.png"
+            "favicon": "./assets/testicon.png"
         },
         "plugins": ["expo-router", "expo-image-picker", "expo-notifications"],
         "extra": {
