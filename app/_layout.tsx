@@ -21,7 +21,7 @@ const RootLayout = () => {
                     options={{ title: "Home", headerShown: false }}
                 />
                 <Stack.Screen name="settings" options={{ title: "Settings" }} />
-                <Stack.Screen name="about" options={{ title: "About" }} />
+                {/* <Stack.Screen name="about" options={{ title: "About" }} /> */}
             </Stack>
         </ThemeContext.Provider>
     );

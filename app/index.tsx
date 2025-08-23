@@ -1,6 +1,6 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import { Image, Pressable, StyleSheet, Text, View, AppState, AppStateStatus } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { Link, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
@@ -34,6 +34,22 @@ const Home = () => {
         months: 0,
         days: 0,
     });
+
+    const appState = useRef(AppState.currentState);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Function to calculate and update date differences
+    const updateDateDifferences = () => {
+        if (date) {
+            setYMDDiff(calculateYMDDiff(date, new Date()));
+            setDayDiff(
+                Math.floor(
+                    (new Date().getTime() - date.getTime()) /
+                        (1000 * 60 * 60 * 24)
+                )
+            );
+        }
+    };
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -96,14 +112,40 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        setYMDDiff(calculateYMDDiff(date ?? new Date(), new Date()));
-        setDayDiff(
-            Math.floor(
-                (new Date().getTime() - (date ?? new Date()).getTime()) /
-                    (1000 * 60 * 60 * 24)
-            )
-        );
+        updateDateDifferences();
+        const interval = setInterval(updateDateDifferences, 1000); // Update every second
+        intervalRef.current = interval;
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
     }, [date]);
+
+    // Handle app state changes (foreground/background)
+    useEffect(() => {
+        const handleAppStateChange = (nextAppState: AppStateStatus) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                // App has come to the foreground
+                updateDateDifferences();
+            }
+            appState.current = nextAppState;
+        };
+
+        const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+        return () => {
+            subscription?.remove();
+        };
+    }, [date]);
+
+    // Recalculate when screen comes into focus (e.g., navigating back from settings)
+    useFocusEffect(
+        React.useCallback(() => {
+            updateDateDifferences();
+        }, [date])
+    );
 
     function toggleDateDiff() {
         setDateToggle(dateToggle === 0 ? 1 : 0);
