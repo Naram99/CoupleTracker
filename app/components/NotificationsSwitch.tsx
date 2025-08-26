@@ -43,7 +43,7 @@ const NotificationsSwitch = ({
 
         if (enabled) setupAllAlerts();
         if (!enabled) Notifications.cancelAllScheduledNotificationsAsync();
-    }, [enabled]);
+    }, [user, partner, date, enabled]);
 
     async function setupAllAlerts() {
         const needed = await checkIfNotificationsAreScheduled()
