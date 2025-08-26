@@ -34,8 +34,8 @@ const ProgressBar = ({
     }
 
     function set100DaysProgress() {
-        setFrom(`${roundDownToNearest(dayDiff, 100)} days`);
-        setTo(`${roundUpToNearest(dayDiff, 100)} days`);
+        setFrom(`${roundDownToNearest(dayDiff, 100)} day${dayDiff > 1 ? "s" : ""}`);
+        setTo(`${roundUpToNearest(dayDiff, 100)} day${dayDiff > 1 ? "s" : ""}`);
         setPercent(100 - (dayDiff % 100));
     }
 
@@ -47,8 +47,8 @@ const ProgressBar = ({
     }
 
     function setYearProgress() {
-        setFrom(`${yearDiff} years`);
-        setTo(`${yearDiff + 1} years`);
+        setFrom(`${yearDiff} year${yearDiff > 1 ? "s": ""}`);
+        setTo(`${yearDiff + 1} year${yearDiff > 0 ? "s": ""}`);
 
         const nextYear = getNeededYear(selectedDate);
         const nextYearDate = new Date(
