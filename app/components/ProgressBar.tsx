@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
         height: 20,
         width: 150,
         borderRadius: 10,
+        overflow: "hidden"
     },
     bar: {
         position: "absolute",
