@@ -44,8 +44,17 @@ const Home = () => {
             setYMDDiff(calculateYMDDiff(date, new Date()));
             setDayDiff(
                 Math.floor(
-                    (new Date().getTime() - date.getTime()) /
-                        (1000 * 60 * 60 * 24)
+                    // (new Date().getTime() - date.getTime()) /
+                    //     (1000 * 60 * 60 * 24)
+                    (Date.UTC(
+                        new Date().getFullYear(), 
+                        new Date().getMonth(), 
+                        new Date().getDate()
+                    ) - Date.UTC(
+                        date.getFullYear(), 
+                        date.getMonth(), 
+                        date.getDate()
+                    )) / (1000 * 60 * 60 * 24)
                 )
             );
         }

@@ -51,14 +51,14 @@ const NotificationsSwitch = ({
         if (needed.days) {
             const next100days = calcNext100Days(date)
             const next100daysDate = new Date(date.getTime() + (next100days * 1000 * 60 * 60 * 24))
-            console.log(next100days, next100daysDate.toDateString())
+            // console.log(next100days, next100daysDate.toDateString())
             await setupAlert(user, partner, next100daysDate, next100days, "days")
         }
         
         if (needed.years) {
             const nextYear = calcNextYear(date)
             const nextYearDate = new Date(`${date.getFullYear() + nextYear}-${date.getMonth() + 1}-${date.getDate()}`)
-            console.log(nextYear, nextYearDate.toDateString())
+            // console.log(nextYear, nextYearDate.toDateString())
             await setupAlert(user, partner, nextYearDate, nextYear, "year")
         }
     }

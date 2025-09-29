@@ -34,7 +34,7 @@
             ],
             "package": "com.naram99.coupletracker",
             "versionCode": 1,
-            "versionName": "1.0.1"
+            "versionName": "1.0.2"
         },
         "web": {
             "favicon": "./assets/testicon.png"
