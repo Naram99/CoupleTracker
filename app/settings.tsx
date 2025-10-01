@@ -51,8 +51,8 @@ const Settings = () => {
             try {
                 const storedDate =
                     (await AsyncStorage.getItem("date")) ??
-                    new Date().toISOString();
-                setDate(new Date(storedDate));
+                    new Date().getTime().toString();
+                setDate(new Date(parseInt(storedDate)));
             } catch {
                 setDate(null);
             }
@@ -111,7 +111,7 @@ const Settings = () => {
     }
 
     async function setDateToStorage() {
-        if (date) await AsyncStorage.setItem("date", date.toISOString());
+        if (date) await AsyncStorage.setItem("date", date.getTime().toString());
     }
 
     async function setUserImageToStorage() {
@@ -156,7 +156,7 @@ const Settings = () => {
         // console.log(event)
         const currentDate = selectedDate || date;
         setShowDate(Platform.OS === "ios");
-        setDate(currentDate);
+        setDate(currentDate ? new Date(Date.UTC(currentDate?.getFullYear(), currentDate?.getMonth(), currentDate?.getDate())) : null);
     }
 
     async function pickImage(imgType: string) {
