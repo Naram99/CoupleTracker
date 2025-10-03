@@ -5,6 +5,7 @@ import { SchemeName } from "../constants/colors";
 
 interface ThemeContextType {
     theme: SchemeName;
+    savedTheme: SchemeName | "default";
     setTheme: (theme: SchemeName | "default") => Promise<void>;
     isLoading: boolean;
 }
@@ -25,6 +26,7 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const [theme, setThemeState] = useState<SchemeName>("light");
+    const [savedTheme, setSavedTheme] = useState<SchemeName | "default">("default");
     const [isLoading, setIsLoading] = useState(true);
     const systemColorScheme = useColorScheme();
 
@@ -34,15 +36,18 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     const loadTheme = async () => {
         try {
-            const savedTheme = await AsyncStorage.getItem("theme");
-            if (savedTheme === "default" || savedTheme === null) {
+            const storedTheme = await AsyncStorage.getItem("theme");
+            if (storedTheme === "default" || storedTheme === null) {
                 // Use system default
+                setSavedTheme("default");
                 setThemeState(systemColorScheme === "dark" ? "dark" : "light");
             } else {
-                setThemeState(savedTheme as SchemeName);
+                setSavedTheme(storedTheme as SchemeName | "default");
+                setThemeState(storedTheme as SchemeName);
             }
         } catch (error) {
             console.error("Error loading theme:", error);
+            setSavedTheme("default");
             setThemeState("light");
         } finally {
             setIsLoading(false);
@@ -52,6 +57,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const setTheme = async (newTheme: SchemeName | "default") => {
         try {
             await AsyncStorage.setItem("theme", newTheme);
+            setSavedTheme(newTheme);
             if (newTheme === "default") {
                 setThemeState(systemColorScheme === "dark" ? "dark" : "light");
             } else {
@@ -63,7 +69,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme, isLoading }}>
+        <ThemeContext.Provider value={{ theme, savedTheme, setTheme, isLoading }}>
             {children}
         </ThemeContext.Provider>
     );
