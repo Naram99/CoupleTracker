@@ -33,8 +33,7 @@
                 "android.permission.NOTIFICATIONS"
             ],
             "package": "com.naram99.coupletracker",
-            "versionCode": 1,
-            "versionName": "1.0.2"
+            "versionCode": 1
         },
         "web": {
             "favicon": "./assets/testicon.png"
