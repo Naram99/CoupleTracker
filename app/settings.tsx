@@ -1,6 +1,6 @@
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNDateTimePicker, {
     DateTimePickerEvent,
@@ -17,8 +17,8 @@ import NotificationsSwitch from "./components/NotificationsSwitch";
 const Settings = () => {
     const router = useRouter();
 
-    const colorTheme = useTheme();
-    const theme = colors[colorTheme];
+    const { theme } = useTheme();
+    const currentTheme = colors[theme];
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -191,39 +191,39 @@ const Settings = () => {
         <View
             style={{
                 ...styles.container,
-                backgroundColor: theme.mainBackground,
+                backgroundColor: currentTheme.mainBackground,
             }}
         >
             <SettingsInputField
                 label="Your name:"
                 value={username ?? ""}
                 onChangeText={setUsername}
-                theme={theme}
+                theme={currentTheme}
             />
             <ImagePickerField
                 type="User"
                 label="Your"
                 imageUri={userImage}
                 onPick={pickImage}
-                theme={theme}
+                theme={currentTheme}
             />
             <SettingsInputField
                 label="Partner name:"
                 value={partnername ?? ""}
                 onChangeText={setPartnername}
-                theme={theme}
+                theme={currentTheme}
             />
             <ImagePickerField
                 type="Partner"
                 imageUri={partnerImage}
                 onPick={pickImage}
-                theme={theme}
+                theme={currentTheme}
             />
             <DatePickerField
                 label="Selected date:"
                 date={date}
                 onOpen={openDate}
-                theme={theme}
+                theme={currentTheme}
             />
             {showDate && (
                 <RNDateTimePicker
@@ -237,7 +237,7 @@ const Settings = () => {
                 type="Cover"
                 imageUri={coverImage}
                 onPick={pickImage}
-                theme={theme}
+                theme={currentTheme}
             />
             <NotificationsSwitch 
                 enabled={isNotificationEnabled}
@@ -245,20 +245,25 @@ const Settings = () => {
                 user={username}
                 partner={partnername}
                 date={date ?? new Date()}
-                theme={theme}
+                theme={currentTheme}
             />
+            <View style={styles.inputGroup}>
+                <Link href="/themes" style={styles.linkContainer}>
+                    <Text style={{ ...styles.settingsLabel, color: currentTheme.mainColor }}>Themes</Text>
+                </Link>
+            </View>
             <Pressable onPress={handleSubmit}>
                 <Text
                     style={{
                         ...styles.saveBtn,
-                        color: theme.mainBackground,
-                        backgroundColor: theme.secondaryColor,
+                        color: currentTheme.mainBackground,
+                        backgroundColor: currentTheme.secondaryColor,
                     }}
                 >
                     <FontAwesome6
                         name="floppy-disk"
                         iconStyle="solid"
-                        style={{ color: theme.mainBackground, fontSize: 20 }}
+                        style={{ color: currentTheme.mainBackground, fontSize: 20 }}
                     />
                     &nbsp; Save
                 </Text>
@@ -302,5 +307,16 @@ const styles = StyleSheet.create({
         height: 80,
         justifyContent: "center",
         alignItems: "center",
+    },
+    inputGroup: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+    linkContainer: {
+        padding: 10,
+    },
+    settingsLabel: {
+        fontWeight: "bold",
     },
 });

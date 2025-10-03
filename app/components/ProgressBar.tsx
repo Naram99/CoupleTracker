@@ -12,8 +12,8 @@ const ProgressBar = ({
     dayDiff: number;
     yearDiff: number;
 }) => {
-    const colorTheme = useTheme();
-    const theme = colors[colorTheme];
+    const {theme} = useTheme();
+    const currentTheme = colors[theme];
     const currentDate = new Date();
 
     // Progress types: 0: Years, 1: 100 days
@@ -84,24 +84,24 @@ const ProgressBar = ({
 
     return (
         <Pressable onPress={toggleProgressType} style={styles.barSection}>
-            <Text style={{ ...styles.barText, color: theme.mainColor }}>
+            <Text style={{ ...styles.barText, color: currentTheme.mainColor }}>
                 {from}
             </Text>
             <View
                 style={{
                     ...styles.barCt,
-                    backgroundColor: theme.secondaryColor,
+                    backgroundColor: currentTheme.secondaryColor,
                 }}
             >
                 <View
                     style={{
                         ...styles.bar,
                         right: `${percent}%`,
-                        backgroundColor: theme.mainColor,
+                        backgroundColor: currentTheme.mainColor,
                     }}
                 ></View>
             </View>
-            <Text style={{ ...styles.barText, color: theme.mainColor }}>
+            <Text style={{ ...styles.barText, color: currentTheme.mainColor }}>
                 {to}
             </Text>
         </Pressable>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     barCt: {
         height: 20,
         width: 150,
-        borderRadius: 10,
+        borderRadius: 100,
         overflow: "hidden"
     },
     bar: {
@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         bottom: 0,
-        borderRadius: 10,
+        borderRadius: 100,
     },
 });

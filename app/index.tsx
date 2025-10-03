@@ -16,8 +16,8 @@ type YMDDifference = {
 };
 
 const Home = () => {
-    const colorTheme = useTheme();
-    const theme = colors[colorTheme];
+    const { theme } = useTheme();
+    const currentTheme = colors[theme];
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -185,11 +185,11 @@ const Home = () => {
             <SafeAreaView
                 style={{
                     ...styles.container,
-                    backgroundColor: theme.mainBackground,
+                    backgroundColor: currentTheme.mainBackground,
                 }}
             >
                 <View style={styles.header}>
-                    <Text style={{ ...styles.title, color: theme.mainColor }}>
+                    <Text style={{ ...styles.title, color: currentTheme.mainColor }}>
                         Couple Tracker
                     </Text>
                     <Link href={"/settings"}>
@@ -198,7 +198,7 @@ const Home = () => {
                             iconStyle="solid"
                             style={{
                                 ...styles.link,
-                                color: theme.secondaryColor,
+                                color: currentTheme.secondaryColor,
                             }}
                         />
                     </Link>
@@ -213,10 +213,10 @@ const Home = () => {
                         />
                         <LinearGradient
                             colors={[
-                                theme.mainBackground,
+                                currentTheme.mainBackground,
                                 "transparent",
                                 "transparent",
-                                theme.mainBackground,
+                                currentTheme.mainBackground,
                             ]}
                             locations={[0, 0.1, 0.75, 1]}
                             style={styles.gradient}
@@ -230,13 +230,13 @@ const Home = () => {
                                 }}
                                 style={{
                                     ...styles.avatar,
-                                    borderColor: theme.secondaryColor,
+                                    borderColor: currentTheme.secondaryColor,
                                 }}
                             />
                             <Text
                                 style={{
                                     ...styles.personName,
-                                    color: theme.mainColor,
+                                    color: currentTheme.mainColor,
                                 }}
                             >
                                 {username ?? "Name"}
@@ -249,13 +249,13 @@ const Home = () => {
                                 }}
                                 style={{
                                     ...styles.avatar,
-                                    borderColor: theme.secondaryColor,
+                                    borderColor: currentTheme.secondaryColor,
                                 }}
                             />
                             <Text
                                 style={{
                                     ...styles.personName,
-                                    color: theme.mainColor,
+                                    color: currentTheme.mainColor,
                                 }}
                             >
                                 {partnername ?? "Name"}
@@ -267,7 +267,7 @@ const Home = () => {
                             <Text
                                 style={{
                                     ...styles.dateDiffText,
-                                    color: theme.secondaryColor,
+                                    color: currentTheme.secondaryColor,
                                 }}
                             >
                                 {dateToggle === 0
