@@ -3,11 +3,12 @@ import React from 'react';
 import colors from '../constants/colors';
 import { useTheme } from '../context/ThemeContext';
 import { SchemeName } from '../constants/colors';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const Themes = () => {
     const { theme, savedTheme, setTheme } = useTheme();
+    const router = useRouter();
     const currentTheme = colors[theme];
 
     async function handleThemeChange(newTheme: SchemeName | "default") {
