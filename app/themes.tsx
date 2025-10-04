@@ -13,7 +13,10 @@ const Themes = () => {
 
     async function handleThemeChange(newTheme: SchemeName | "default") {
         await setTheme(newTheme);
-        router.back();
+        // Small delay to ensure theme state is fully updated before navigation
+        setTimeout(() => {
+            router.back();
+        }, 100);
     }
 
   return (
