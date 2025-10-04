@@ -11,7 +11,7 @@ import {
 
 interface DatePickerFieldProps {
     label: string;
-    date: Date | null;
+    date: number | null;
     onOpen: () => void;
     theme: any;
     inputStyle?: ViewStyle | TextStyle;
@@ -30,10 +30,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         </Text>
         <Pressable onPress={onOpen} style={styles.pressableStyle}>
             <TextInput
-                value={
-                    date?.toLocaleDateString() ??
-                    new Date().toLocaleDateString()
-                }
+                value={date ? new Date(date).toLocaleDateString() : new Date().toLocaleDateString()}
                 editable={false}
                 pointerEvents="none"
                 style={{

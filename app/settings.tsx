@@ -22,7 +22,7 @@ const Settings = () => {
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
-    const [date, setDate] = useState<Date | null>(null);
+    const [date, setDate] = useState<number | null>(null);
     const [showDate, setShowDate] = useState<boolean>(false);
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
@@ -52,7 +52,7 @@ const Settings = () => {
                 const storedDate =
                     (await AsyncStorage.getItem("date")) ??
                     new Date().getTime().toString();
-                setDate(new Date(parseInt(storedDate)));
+                setDate(parseInt(storedDate));
             } catch {
                 setDate(null);
             }
@@ -111,7 +111,7 @@ const Settings = () => {
     }
 
     async function setDateToStorage() {
-        if (date) await AsyncStorage.setItem("date", date.getTime().toString());
+        if (date) await AsyncStorage.setItem("date", `${date}`);
     }
 
     async function setUserImageToStorage() {
@@ -154,9 +154,9 @@ const Settings = () => {
         selectedDate: Date | undefined
     ) {
         // console.log(event)
-        const currentDate = selectedDate || date;
+        const currentDate = selectedDate?.getTime() || date;
         setShowDate(Platform.OS === "ios");
-        setDate(currentDate ? new Date(Date.UTC(currentDate?.getFullYear(), currentDate?.getMonth(), currentDate?.getDate())) : null);
+        setDate(currentDate ? currentDate : null);
     }
 
     async function pickImage(imgType: string) {
@@ -227,7 +227,7 @@ const Settings = () => {
             />
             {showDate && (
                 <RNDateTimePicker
-                    value={date ?? new Date()}
+                    value={date ? new Date(date) : new Date()}
                     mode="date"
                     display="default"
                     onChange={onDateChange}
@@ -244,7 +244,7 @@ const Settings = () => {
                 onChange={toggleNotification}
                 user={username}
                 partner={partnername}
-                date={date ?? new Date()}
+                date={date ? new Date(date) : new Date()}
                 theme={currentTheme}
             />
             <View style={styles.inputGroup}>

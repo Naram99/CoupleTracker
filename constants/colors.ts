@@ -12,16 +12,22 @@ const colors: { [index in SchemeName]: ColorScheme } = {
         secondaryBackground: "#FFB8E0",
     },
     blue: {
-        mainColor: "hsl(212, 40%, 90%)",
-        secondaryColor: "hsl(212, 40%, 70%)",
+        mainColor: "hsl(212, 96%, 90%)",
+        secondaryColor: "hsl(212, 96%, 70%)",
         mainBackground: "hsl(212, 96%, 30%)",
         secondaryBackground: "hsl(212, 96%, 40%)",
+    },
+    lightblue: {
+        mainColor: "hsl(212, 96%, 30%)",
+        secondaryColor: "hsl(212, 96%, 50%)",
+        mainBackground: "hsl(212, 96%, 90%)",
+        secondaryBackground: "hsl(212, 96%, 70%)",
     },
 };
 
 export default colors;
 
-export type SchemeName = "dark" | "light" | "blue";
+export type SchemeName = "dark" | "light" | "blue" | "lightblue";
 
 export type ColorScheme = {
     mainColor: string;

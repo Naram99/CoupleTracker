@@ -21,7 +21,7 @@ const Home = () => {
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
-    const [date, setDate] = useState<Date | null>(null);
+    const [date, setDate] = useState<number | null>(null);
 
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
@@ -41,7 +41,7 @@ const Home = () => {
     // Function to calculate and update date differences
     const updateDateDifferences = () => {
         if (date) {
-            setYMDDiff(calculateYMDDiff(date, new Date()));
+            setYMDDiff(calculateYMDDiff(date, new Date().getTime()));
             setDayDiff(
                 Math.floor(
                     // (new Date().getTime() - date.getTime()) /
@@ -51,9 +51,9 @@ const Home = () => {
                         new Date().getMonth(), 
                         new Date().getDate()
                     ) - Date.UTC(
-                        date.getFullYear(), 
-                        date.getMonth(), 
-                        date.getDate()
+                        new Date(date).getFullYear(), 
+                        new Date(date).getMonth(), 
+                        new Date(date).getDate()
                     )) / (1000 * 60 * 60 * 24)
                 )
             );            
@@ -81,8 +81,8 @@ const Home = () => {
             try {
                 const storedDate =
                     (await AsyncStorage.getItem("date")) ??
-                    new Date().toISOString();
-                setDate(new Date(storedDate));
+                    new Date().getTime().toString();
+                setDate(parseInt(storedDate));
             } catch {
                 setDate(null);
             }
@@ -160,15 +160,17 @@ const Home = () => {
         setDateToggle(dateToggle === 0 ? 1 : 0);
     }
 
-    function calculateYMDDiff(from: Date, to: Date): YMDDifference {
-        let years = to.getFullYear() - from.getFullYear();
-        let months = to.getMonth() - from.getMonth();
-        let days = to.getDate() - from.getDate();
+    function calculateYMDDiff(from: number, to: number): YMDDifference {
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+        let years = toDate.getFullYear() - fromDate.getFullYear();
+        let months = toDate.getMonth() - fromDate.getMonth();
+        let days = toDate.getDate() - fromDate.getDate();
 
         if (days < 0) {
             months -= 1;
             // Vegyük az előző hónap utolsó napját
-            const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0);
+            const prevMonth = new Date(toDate.getFullYear(), toDate.getMonth(), 0);
             days += prevMonth.getDate();
         }
 
@@ -277,7 +279,7 @@ const Home = () => {
                         </View>
                     </Pressable>
                     <ProgressBar
-                        selectedDate={date ?? new Date()}
+                        selectedDate={date ? new Date(date) : new Date()}
                         dayDiff={dayDiff}
                         yearDiff={YMDDiff.years}
                     />
