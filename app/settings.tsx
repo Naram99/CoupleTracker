@@ -252,6 +252,11 @@ const Settings = () => {
                     <Text style={{ ...styles.settingsLabel, color: currentTheme.mainColor }}>Themes</Text>
                 </Link>
             </View>
+            <View style={styles.inputGroup}>
+                <Link href="/info" style={styles.linkContainer}>
+                    <Text style={{ ...styles.settingsLabel, color: currentTheme.mainColor }}>Info</Text>
+                </Link>
+            </View>
             <Pressable onPress={handleSubmit}>
                 <Text
                     style={{

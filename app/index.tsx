@@ -284,7 +284,7 @@ const Home = () => {
                         yearDiff={YMDDiff.years}
                     />
                 </View>
-                <Text style={styles.footerText}>Made by Naram99</Text>
+                
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -365,10 +365,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight: "bold",
         fontSize: 20,
-    },
-    footerText: {
-        fontSize: 10,
-        textAlign: "right",
     },
     avatar: {
         width: 100,
