@@ -7,14 +7,19 @@ const Info = () => {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    function openMail() {
-        Linking.canOpenURL("mailto:contact.coupletracker@gmail.com").then(supported => {
-            if (supported) {
-                Linking.openURL("mailto:contact.coupletracker@gmail.com?subject=CoupleTracker app feedback");
-            } else {
-                Alert.alert("Error", "No mailing app found on this device.");
+    const mailAddress = "contact.coupletracker@gmail.com";
+    const subject = "CoupleTracker app feedback";
+
+    async function openMail() {
+        try {
+            await Linking.openURL(`mailto:${encodeURIComponent(mailAddress)}?subject=${encodeURIComponent(subject)}`);
+        } catch (error) {
+            try {
+                Linking.openURL(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(mailAddress)}&su=${encodeURIComponent(subject)}`)
+            } catch {
+                Alert.alert("No mailing app found on this device. Please send your feedback to: contact.coupletracker@gmail.com")
             }
-        })
+        }
     }
 
     return (
@@ -30,7 +35,7 @@ const Info = () => {
                     This app contains no ads.
                 </Text>
                 <Text style={{ ...styles.text, color: currentTheme.mainColor }}>
-                    If you experience any issues or just want to give us feedback, feel free to contact us at:
+                    If you experience any issues, have any ideas to make this app better or just want to give us feedback, feel free to contact us at:
                 </Text>
                 <TouchableOpacity onPress={openMail}>
                     <Text style={{ ...styles.linkText, color: currentTheme.mainColor, textDecorationColor: currentTheme.mainColor }}>
