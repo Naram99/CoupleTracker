@@ -8,6 +8,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import ProgressBar from "./components/ProgressBar";
+import Tutorial from "./components/Tutorial";
 
 type YMDDifference = {
     years: number;
@@ -19,6 +20,8 @@ const Home = () => {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
+
+    const [tutorial, setTutorial] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
     const [date, setDate] = useState<number | null>(null);
@@ -60,7 +63,16 @@ const Home = () => {
         }
     };
 
+    // Async storage data loading
     useEffect(() => {
+        async function getTutorialFromStorage() {
+            try {
+                setTutorial(await AsyncStorage.getItem("tutorial"));
+            } catch {
+                setTutorial(null);
+            }
+        }
+
         async function getUsernameFromStorage() {
             try {
                 setUsername(await AsyncStorage.getItem("username"));
@@ -112,6 +124,7 @@ const Home = () => {
             }
         }
 
+        getTutorialFromStorage();
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
@@ -190,6 +203,7 @@ const Home = () => {
                     backgroundColor: currentTheme.mainBackground,
                 }}
             >
+                {!tutorial && (<Tutorial />)}
                 <View style={styles.header}>
                     <Text style={{ ...styles.title, color: currentTheme.mainColor }}>
                         Couple Tracker

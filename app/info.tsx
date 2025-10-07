@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline"
     },
     footerText: {
+        marginBottom: 15,
         fontSize: 10,
         textAlign: "center",
     }
