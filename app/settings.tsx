@@ -13,12 +13,16 @@ import SettingsInputField from "./components/SettingsInputField";
 import DatePickerField from "./components/DatePickerField";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import NotificationsSwitch from "./components/NotificationsSwitch";
+import { useTutorial } from "../context/TutorialContext";
+import SettingsTutorial from "./components/SettingsTutorial";
 
 const Settings = () => {
     const router = useRouter();
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
+
+    const tutorial = useTutorial();
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -161,8 +165,9 @@ const Settings = () => {
 
     async function pickImage(imgType: string) {
         const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            const permissionResult =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (!permissionResult.granted) {
                 alert("Permission to access camera roll is required!");
                 return;
@@ -194,6 +199,7 @@ const Settings = () => {
                 backgroundColor: currentTheme.mainBackground,
             }}
         >
+            {tutorial && <SettingsTutorial />}
             <SettingsInputField
                 label="Your name:"
                 value={username ?? ""}
@@ -241,7 +247,7 @@ const Settings = () => {
                 onPick={pickImage}
                 theme={currentTheme}
             />
-            <NotificationsSwitch 
+            <NotificationsSwitch
                 enabled={isNotificationEnabled}
                 onChange={toggleNotification}
                 user={username}
@@ -251,12 +257,26 @@ const Settings = () => {
             />
             <View style={styles.inputGroup}>
                 <Link href="/themes" style={styles.linkContainer}>
-                    <Text style={{ ...styles.settingsLabel, color: currentTheme.mainColor }}>Themes</Text>
+                    <Text
+                        style={{
+                            ...styles.settingsLabel,
+                            color: currentTheme.mainColor,
+                        }}
+                    >
+                        Themes
+                    </Text>
                 </Link>
             </View>
             <View style={styles.inputGroup}>
                 <Link href="/info" style={styles.linkContainer}>
-                    <Text style={{ ...styles.settingsLabel, color: currentTheme.mainColor }}>Info</Text>
+                    <Text
+                        style={{
+                            ...styles.settingsLabel,
+                            color: currentTheme.mainColor,
+                        }}
+                    >
+                        Info
+                    </Text>
                 </Link>
             </View>
             <Pressable onPress={handleSubmit}>
@@ -270,7 +290,10 @@ const Settings = () => {
                     <FontAwesome6
                         name="floppy-disk"
                         iconStyle="solid"
-                        style={{ color: currentTheme.mainBackground, fontSize: 20 }}
+                        style={{
+                            color: currentTheme.mainBackground,
+                            fontSize: 20,
+                        }}
                     />
                     &nbsp; Save
                 </Text>

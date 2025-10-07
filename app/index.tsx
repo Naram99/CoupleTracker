@@ -1,4 +1,12 @@
-import { Image, Pressable, StyleSheet, Text, View, AppState, AppStateStatus } from "react-native";
+import {
+    Image,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+    AppState,
+    AppStateStatus,
+} from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,6 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import ProgressBar from "./components/ProgressBar";
 import Tutorial from "./components/Tutorial";
+import { useTutorial } from "../context/TutorialContext";
 
 type YMDDifference = {
     years: number;
@@ -20,8 +29,8 @@ const Home = () => {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
+    const tutorial = useTutorial();
 
-    const [tutorial, setTutorial] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
     const [date, setDate] = useState<number | null>(null);
@@ -50,29 +59,23 @@ const Home = () => {
                     // (new Date().getTime() - date.getTime()) /
                     //     (1000 * 60 * 60 * 24)
                     (Date.UTC(
-                        new Date().getFullYear(), 
-                        new Date().getMonth(), 
+                        new Date().getFullYear(),
+                        new Date().getMonth(),
                         new Date().getDate()
-                    ) - Date.UTC(
-                        new Date(date).getFullYear(), 
-                        new Date(date).getMonth(), 
-                        new Date(date).getDate()
-                    )) / (1000 * 60 * 60 * 24)
+                    ) -
+                        Date.UTC(
+                            new Date(date).getFullYear(),
+                            new Date(date).getMonth(),
+                            new Date(date).getDate()
+                        )) /
+                        (1000 * 60 * 60 * 24)
                 )
-            );            
+            );
         }
     };
 
     // Async storage data loading
     useEffect(() => {
-        async function getTutorialFromStorage() {
-            try {
-                setTutorial(await AsyncStorage.getItem("tutorial"));
-            } catch {
-                setTutorial(null);
-            }
-        }
-
         async function getUsernameFromStorage() {
             try {
                 setUsername(await AsyncStorage.getItem("username"));
@@ -124,7 +127,6 @@ const Home = () => {
             }
         }
 
-        getTutorialFromStorage();
         getUsernameFromStorage();
         getPartnernameFromStorage();
         getDateFromStorage();
@@ -148,14 +150,20 @@ const Home = () => {
     // Handle app state changes (foreground/background)
     useEffect(() => {
         const handleAppStateChange = (nextAppState: AppStateStatus) => {
-            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+            if (
+                appState.current.match(/inactive|background/) &&
+                nextAppState === "active"
+            ) {
                 // App has come to the foreground
                 updateDateDifferences();
             }
             appState.current = nextAppState;
         };
 
-        const subscription = AppState.addEventListener('change', handleAppStateChange);
+        const subscription = AppState.addEventListener(
+            "change",
+            handleAppStateChange
+        );
 
         return () => {
             subscription?.remove();
@@ -183,7 +191,11 @@ const Home = () => {
         if (days < 0) {
             months -= 1;
             // Vegyük az előző hónap utolsó napját
-            const prevMonth = new Date(toDate.getFullYear(), toDate.getMonth(), 0);
+            const prevMonth = new Date(
+                toDate.getFullYear(),
+                toDate.getMonth(),
+                0
+            );
             days += prevMonth.getDate();
         }
 
@@ -203,9 +215,14 @@ const Home = () => {
                     backgroundColor: currentTheme.mainBackground,
                 }}
             >
-                {!tutorial && (<Tutorial />)}
+                {tutorial && <Tutorial />}
                 <View style={styles.header}>
-                    <Text style={{ ...styles.title, color: currentTheme.mainColor }}>
+                    <Text
+                        style={{
+                            ...styles.title,
+                            color: currentTheme.mainColor,
+                        }}
+                    >
                         Couple Tracker
                     </Text>
                     <Link href={"/settings"}>
@@ -298,7 +315,6 @@ const Home = () => {
                         yearDiff={YMDDiff.years}
                     />
                 </View>
-                
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -308,6 +324,7 @@ export default Home;
 
 const styles = StyleSheet.create({
     container: {
+        position: "relative",
         flex: 1,
         display: "flex",
         alignItems: "center",

@@ -3,11 +3,14 @@ import React from "react";
 import { Stack } from "expo-router";
 import colors from "../constants/colors";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { TutorialProvider } from "../context/TutorialContext";
 
 const RootLayout = () => {
     return (
         <ThemeProvider>
-            <AppContent />
+            <TutorialProvider>
+                <AppContent />
+            </TutorialProvider>
         </ThemeProvider>
     );
 };
@@ -18,7 +21,12 @@ const AppContent = () => {
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, backgroundColor: colors.light.mainBackground }}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: colors.light.mainBackground,
+                }}
+            >
                 {/* You can add a loading screen here if needed */}
             </View>
         );
