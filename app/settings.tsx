@@ -22,7 +22,7 @@ const Settings = () => {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    const tutorial = useTutorial();
+    const { tutorial } = useTutorial();
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);

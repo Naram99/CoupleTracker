@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
 import colors from "../../constants/colors";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTutorial } from "../../context/TutorialContext";
 
 type TutorialTextItem = {
     title: string;
@@ -30,9 +30,10 @@ const Tutorial = () => {
     const { theme } = useTheme();
     const colorTheme = colors[theme];
 
-    const [step, setStep] = useState(0);
-    const tutorialTexts: TutorialTextItem[] = [
-        {
+    const { step, nextStep, finish } = useTutorial();
+
+    const tutorialTexts: { [index: number]: TutorialTextItem } = {
+        0: {
             title: "Welcome to CoupleTracker!",
             subTitle: "Let us show you how the app works!",
             btnText: "Next step",
@@ -44,7 +45,7 @@ const Tutorial = () => {
                 right: 0,
             },
         },
-        {
+        1: {
             title: "First go to settings",
             subTitle: "Touch the gear icon at the top right.",
             btn: false,
@@ -56,15 +57,19 @@ const Tutorial = () => {
                 right: 0,
             },
         },
-    ];
+    };
 
     function handleNextStep() {
-        if (step + 1 < tutorialTexts.length) setStep(step + 1);
-        else console.log("finish"); // handleFinish();
-    }
-
-    async function handleFinish() {
-        await AsyncStorage.setItem("tutorial", "finished");
+        if (
+            step <
+            parseInt(
+                Object.keys(tutorialTexts)[
+                    Object.keys(tutorialTexts).length - 1
+                ]
+            )
+        )
+            nextStep(step);
+        else console.log("finish"); // finish();
     }
 
     return (

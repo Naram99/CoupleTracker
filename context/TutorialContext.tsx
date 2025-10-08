@@ -7,7 +7,16 @@ import {
     useState,
 } from "react";
 
-export const TutorialContext = createContext<boolean>(false);
+type TutorialContextType = {
+    tutorial: boolean;
+    step: number;
+    nextStep: (step: number) => void;
+    finish: () => Promise<void>;
+};
+
+export const TutorialContext = createContext<TutorialContextType | undefined>(
+    undefined
+);
 
 export function useTutorial() {
     const context = useContext(TutorialContext);
@@ -19,6 +28,7 @@ export function useTutorial() {
 
 export function TutorialProvider({ children }: { children: ReactNode }) {
     const [tutorial, setTutorial] = useState(false);
+    const [step, setStep] = useState(0);
 
     useEffect(() => {
         loadTutorial();
@@ -29,8 +39,16 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         setTutorial((await AsyncStorage.getItem("tutorial")) ? false : true);
     }
 
+    function nextStep(step: number) {
+        setStep(step + 1);
+    }
+
+    async function finish() {
+        await AsyncStorage.setItem("tutorial", "finished");
+    }
+
     return (
-        <TutorialContext.Provider value={tutorial}>
+        <TutorialContext.Provider value={{ tutorial, step, nextStep, finish }}>
             {children}
         </TutorialContext.Provider>
     );
