@@ -45,6 +45,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
     async function finish() {
         await AsyncStorage.setItem("tutorial", "finished");
+        setTutorial(false);
     }
 
     return (

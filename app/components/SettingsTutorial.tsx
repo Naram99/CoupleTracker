@@ -36,7 +36,7 @@ const SettingsTutorial = () => {
         1: {
             title: "This is the settings page.",
             subTitle:
-                "You can set your data here, as well as choosing a color theme and enabling notifications.",
+                "You can set your data here, as well as choosing a color theme or enabling notifications.",
             btnText: "Next step",
             btn: true,
             overlayPosition: {
@@ -47,7 +47,7 @@ const SettingsTutorial = () => {
             },
         },
         2: {
-            title: "Let's set some data!",
+            title: "",
             subTitle:
                 "Set as many things as you want and then save them to go back to the home page.",
             btn: false,
@@ -75,9 +75,11 @@ const SettingsTutorial = () => {
                 bottom: tutorialTexts[step].overlayPosition.bottom,
             }}
         >
-            <Text style={{ ...styles.title, color: colorTheme.mainColor }}>
-                {tutorialTexts[step].title}
-            </Text>
+            {tutorialTexts[step].title !== "" && (
+                <Text style={{ ...styles.title, color: colorTheme.mainColor }}>
+                    {tutorialTexts[step].title}
+                </Text>
+            )}
             <Text
                 style={{ ...styles.subtitle, color: colorTheme.secondaryColor }}
             >
@@ -110,7 +112,7 @@ export default SettingsTutorial;
 const styles = StyleSheet.create({
     overlay: {
         position: "absolute",
-        padding: 40,
+        padding: 5,
         gap: 40,
         backgroundColor: "#000B",
         zIndex: 10,

@@ -1,10 +1,11 @@
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNDateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
@@ -18,6 +19,7 @@ import SettingsTutorial from "./components/SettingsTutorial";
 
 const Settings = () => {
     const router = useRouter();
+    const navigation = useNavigation();
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
@@ -33,6 +35,32 @@ const Settings = () => {
     const [coverImage, setCoverImage] = useState<string | null>(null);
     const [isNotificationEnabled, setIsNotificationEnabled] =
         useState<boolean>(false);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: "Settings",
+            headerRight: () => (
+                <Pressable onPress={handleSubmit}>
+                    <Text
+                        style={{
+                            ...styles.saveBtn,
+                            color: currentTheme.mainColor,
+                        }}
+                    >
+                        <FontAwesome6
+                            name="floppy-disk"
+                            iconStyle="solid"
+                            style={{
+                                color: currentTheme.mainColor,
+                                fontSize: 20,
+                            }}
+                        />
+                        &nbsp; Save
+                    </Text>
+                </Pressable>
+            ),
+        });
+    });
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -279,36 +307,6 @@ const Settings = () => {
                     </Text>
                 </Link>
             </View>
-            <Pressable onPress={handleSubmit}>
-                <Text
-                    style={{
-                        ...styles.saveBtn,
-                        color: currentTheme.mainBackground,
-                        backgroundColor: currentTheme.secondaryColor,
-                    }}
-                >
-                    <FontAwesome6
-                        name="floppy-disk"
-                        iconStyle="solid"
-                        style={{
-                            color: currentTheme.mainBackground,
-                            fontSize: 20,
-                        }}
-                    />
-                    &nbsp; Save
-                </Text>
-            </Pressable>
-            {/* <Pressable onPress={setupAlert}>
-                <Text
-                    style={{
-                        ...styles.saveBtn,
-                        color: theme.mainBackground,
-                        backgroundColor: theme.secondaryColor,
-                    }}
-                >
-                    Alert
-                </Text>
-            </Pressable> */}
         </View>
     );
 };
@@ -320,10 +318,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     saveBtn: {
-        fontWeight: "bold",
+        fontWeight: "medium",
         fontSize: 20,
-        textAlign: "center",
-        textTransform: "uppercase",
         padding: 5,
     },
     imagePickerGroup: {

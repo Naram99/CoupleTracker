@@ -51,7 +51,32 @@ const Tutorial = () => {
             btn: false,
             btnText: "",
             overlayPosition: {
-                top: "12%",
+                top: "20%",
+                bottom: 0,
+                left: 0,
+                right: 0,
+            },
+        },
+        2: {
+            title: "",
+            subTitle:
+                "On the home page you can see the names and pictures you set.\nYou can tap the shown day counter to switch between only days or years, months and days shown, and you can tap the progress bar to switch between years or 100 days progress.",
+            btn: true,
+            btnText: "Next step",
+            overlayPosition: {
+                top: 0,
+                bottom: "60%",
+                left: 0,
+                right: 0,
+            },
+        },
+        3: {
+            title: "Have fun!",
+            subTitle: "",
+            btn: true,
+            btnText: "Finish tutorial",
+            overlayPosition: {
+                top: 0,
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -69,7 +94,7 @@ const Tutorial = () => {
             )
         )
             nextStep(step);
-        else console.log("finish"); // finish();
+        else finish();
     }
 
     return (
