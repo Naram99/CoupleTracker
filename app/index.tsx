@@ -300,7 +300,7 @@ const Home = () => {
                             <Text
                                 style={{
                                     ...styles.dateDiffText,
-                                    color: currentTheme.secondaryColor,
+                                    color: currentTheme.mainColor,
                                 }}
                             >
                                 {dateToggle === 0
