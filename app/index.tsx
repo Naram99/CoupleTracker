@@ -47,6 +47,9 @@ const Home = () => {
         days: 0,
     });
 
+    const [imgPopupOpen, setImgPopupOpen] = useState(false);
+    const [imgPopupSrc, setImgPopupSrc] = useState<string | null>(null);
+
     const appState = useRef(AppState.currentState);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -207,6 +210,17 @@ const Home = () => {
         return { years, months, days };
     }
 
+    function showPicture(picture: string | null) {
+        if (picture) {
+            setImgPopupSrc(picture);
+            setImgPopupOpen(true);
+        }
+    }
+
+    function hidePicture() {
+        setImgPopupOpen(false);
+    }
+
     return (
         <SafeAreaProvider>
             <SafeAreaView
@@ -256,7 +270,10 @@ const Home = () => {
                         />
                     </View>
                     <View style={styles.personsCt}>
-                        <View style={styles.personCt}>
+                        <Pressable 
+                            style={styles.personCt} 
+                            onPress={() => showPicture(userImage)}
+                        >
                             <Image
                                 source={{
                                     uri: userImage ?? "../assets/avatar.jpg",
@@ -274,8 +291,11 @@ const Home = () => {
                             >
                                 {username ?? "Name"}
                             </Text>
-                        </View>
-                        <View style={styles.personCt}>
+                        </Pressable>
+                        <Pressable 
+                            style={styles.personCt} 
+                            onPress={() => showPicture(partnerImage)}
+                        >
                             <Image
                                 source={{
                                     uri: partnerImage ?? "../assets/avatar.jpg",
@@ -293,7 +313,7 @@ const Home = () => {
                             >
                                 {partnername ?? "Name"}
                             </Text>
-                        </View>
+                        </Pressable>
                     </View>
                     <Pressable onPress={toggleDateDiff}>
                         <View style={styles.dateDiffCt}>
@@ -315,6 +335,14 @@ const Home = () => {
                         yearDiff={YMDDiff.years}
                     />
                 </View>
+                {imgPopupOpen && imgPopupSrc && 
+                    <Pressable style={styles.imgPopupCt} onPress={hidePicture}>
+                        <Image 
+                            style={styles.imgPopup} 
+                            source={{uri: imgPopupSrc}} 
+                        />
+                    </Pressable>
+                }
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -410,4 +438,20 @@ const styles = StyleSheet.create({
         width: "100%",
         textAlign: "center",
     },
+    imgPopupCt: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "#0008",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10
+    },
+    imgPopup: {
+        width: "100%",
+        height: "auto",
+        aspectRatio: "1 / 1"
+    }
 });
