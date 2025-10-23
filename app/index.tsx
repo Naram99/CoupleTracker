@@ -270,8 +270,8 @@ const Home = () => {
                         />
                     </View>
                     <View style={styles.personsCt}>
-                        <Pressable 
-                            style={styles.personCt} 
+                        <Pressable
+                            style={styles.personCt}
                             onPress={() => showPicture(userImage)}
                         >
                             <Image
@@ -292,8 +292,8 @@ const Home = () => {
                                 {username ?? "Name"}
                             </Text>
                         </Pressable>
-                        <Pressable 
-                            style={styles.personCt} 
+                        <Pressable
+                            style={styles.personCt}
                             onPress={() => showPicture(partnerImage)}
                         >
                             <Image
@@ -335,14 +335,14 @@ const Home = () => {
                         yearDiff={YMDDiff.years}
                     />
                 </View>
-                {imgPopupOpen && imgPopupSrc && 
+                {imgPopupOpen && imgPopupSrc && (
                     <Pressable style={styles.imgPopupCt} onPress={hidePicture}>
-                        <Image 
-                            style={styles.imgPopup} 
-                            source={{uri: imgPopupSrc}} 
+                        <Image
+                            style={styles.imgPopup}
+                            source={{ uri: imgPopupSrc }}
                         />
                     </Pressable>
-                }
+                )}
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -447,11 +447,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#0008",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 10
+        zIndex: 10,
     },
     imgPopup: {
         width: "100%",
         height: "auto",
-        aspectRatio: "1 / 1"
-    }
+        aspectRatio: "1 / 1",
+    },
 });
