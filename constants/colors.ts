@@ -40,12 +40,26 @@ const colors: { [index in SchemeName]: ColorScheme } = {
         secondaryColor: "hsla(0, 0%, 50%, 1.00)",
         mainBackground: "hsla(0, 0%, 100%, 1.00)",
         secondaryBackground: "hsla(0, 0%, 70%, 1.00)",
-    }
+    },
+    halloween: {
+        mainColor: "hsla(16, 92%, 48%, 1.00)",
+        secondaryColor: "hsla(16, 92%, 30%, 1.00)",
+        mainBackground: "hsla(16, 92%, 7%, 1.00)",
+        secondaryBackground: "hsla(16, 92%, 15%, 1.00)",
+    },
 };
 
 export default colors;
 
-export type SchemeName = "dark" | "light" | "blue" | "lightblue" | "forest" | "black" | "white";
+export type SchemeName =
+    | "dark"
+    | "light"
+    | "blue"
+    | "lightblue"
+    | "forest"
+    | "black"
+    | "white"
+    | "halloween";
 
 export type ColorScheme = {
     mainColor: string;
