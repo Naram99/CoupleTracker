@@ -6,6 +6,7 @@ import {
     View,
     AppState,
     AppStateStatus,
+    ScrollView,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useFocusEffect } from "expo-router";
@@ -225,124 +226,138 @@ const Home = () => {
         <SafeAreaProvider>
             <SafeAreaView
                 style={{
-                    ...styles.container,
+                    ...styles.safeArea,
                     backgroundColor: currentTheme.mainBackground,
                 }}
+                edges={["top"]}
             >
-                {tutorial && <Tutorial />}
-                <View style={styles.header}>
-                    <Text
-                        style={{
-                            ...styles.title,
-                            color: currentTheme.mainColor,
-                        }}
-                    >
-                        Couple Tracker
-                    </Text>
-                    <Link href={"/settings"}>
-                        <FontAwesome6
-                            name="gear"
-                            iconStyle="solid"
+                <ScrollView
+                    style={styles.scroll}
+                    contentContainerStyle={styles.container}
+                >
+                    {tutorial && <Tutorial />}
+                    <View style={styles.header}>
+                        <Text
                             style={{
-                                ...styles.link,
-                                color: currentTheme.secondaryColor,
+                                ...styles.title,
+                                color: currentTheme.mainColor,
                             }}
-                        />
-                    </Link>
-                </View>
-                <View style={styles.mainCt}>
-                    <View style={styles.coverImgCt}>
-                        <Image
-                            source={{
-                                uri: coverImage ?? "../assets/avatar.jpg",
-                            }}
-                            style={styles.coverImg}
-                        />
-                        <LinearGradient
-                            colors={[
-                                currentTheme.mainBackground,
-                                "transparent",
-                                "transparent",
-                                currentTheme.mainBackground,
-                            ]}
-                            locations={[0, 0.1, 0.75, 1]}
-                            style={styles.gradient}
-                        />
-                    </View>
-                    <View style={styles.personsCt}>
-                        <Pressable
-                            style={styles.personCt}
-                            onPress={() => showPicture(userImage)}
                         >
-                            <Image
-                                source={{
-                                    uri: userImage ?? "../assets/avatar.jpg",
-                                }}
+                            Couple Tracker
+                        </Text>
+                        <Link href={"/settings"}>
+                            <FontAwesome6
+                                name="gear"
+                                iconStyle="solid"
                                 style={{
-                                    ...styles.avatar,
-                                    borderColor: currentTheme.secondaryColor,
+                                    ...styles.link,
+                                    color: currentTheme.secondaryColor,
                                 }}
                             />
-                            <Text
-                                style={{
-                                    ...styles.personName,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                {username ?? "Name"}
-                            </Text>
-                        </Pressable>
-                        <Pressable
-                            style={styles.personCt}
-                            onPress={() => showPicture(partnerImage)}
-                        >
+                        </Link>
+                    </View>
+                    <View style={styles.mainCt}>
+                        <View style={styles.coverImgCt}>
                             <Image
                                 source={{
-                                    uri: partnerImage ?? "../assets/avatar.jpg",
+                                    uri: coverImage ?? "../assets/avatar.jpg",
                                 }}
-                                style={{
-                                    ...styles.avatar,
-                                    borderColor: currentTheme.secondaryColor,
-                                }}
+                                style={styles.coverImg}
                             />
-                            <Text
-                                style={{
-                                    ...styles.personName,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                {partnername ?? "Name"}
-                            </Text>
-                        </Pressable>
-                    </View>
-                    <Pressable onPress={toggleDateDiff}>
-                        <View style={styles.dateDiffCt}>
-                            <Text
-                                style={{
-                                    ...styles.dateDiffText,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                {dateToggle === 0
-                                    ? `${dayDiff} days`
-                                    : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
-                            </Text>
+                            <LinearGradient
+                                colors={[
+                                    currentTheme.mainBackground,
+                                    "transparent",
+                                    "transparent",
+                                    currentTheme.mainBackground,
+                                ]}
+                                locations={[0, 0.1, 0.75, 1]}
+                                style={styles.gradient}
+                            />
                         </View>
-                    </Pressable>
-                    <ProgressBar
-                        selectedDate={date ? new Date(date) : new Date()}
-                        dayDiff={dayDiff}
-                        yearDiff={YMDDiff.years}
-                    />
-                </View>
-                {imgPopupOpen && imgPopupSrc && (
-                    <Pressable style={styles.imgPopupCt} onPress={hidePicture}>
-                        <Image
-                            style={styles.imgPopup}
-                            source={{ uri: imgPopupSrc }}
+                        <View style={styles.personsCt}>
+                            <Pressable
+                                style={styles.personCt}
+                                onPress={() => showPicture(userImage)}
+                            >
+                                <Image
+                                    source={{
+                                        uri:
+                                            userImage ?? "../assets/avatar.jpg",
+                                    }}
+                                    style={{
+                                        ...styles.avatar,
+                                        borderColor:
+                                            currentTheme.secondaryColor,
+                                    }}
+                                />
+                                <Text
+                                    style={{
+                                        ...styles.personName,
+                                        color: currentTheme.mainColor,
+                                    }}
+                                >
+                                    {username ?? "Name"}
+                                </Text>
+                            </Pressable>
+                            <Pressable
+                                style={styles.personCt}
+                                onPress={() => showPicture(partnerImage)}
+                            >
+                                <Image
+                                    source={{
+                                        uri:
+                                            partnerImage ??
+                                            "../assets/avatar.jpg",
+                                    }}
+                                    style={{
+                                        ...styles.avatar,
+                                        borderColor:
+                                            currentTheme.secondaryColor,
+                                    }}
+                                />
+                                <Text
+                                    style={{
+                                        ...styles.personName,
+                                        color: currentTheme.mainColor,
+                                    }}
+                                >
+                                    {partnername ?? "Name"}
+                                </Text>
+                            </Pressable>
+                        </View>
+                        <Pressable onPress={toggleDateDiff}>
+                            <View style={styles.dateDiffCt}>
+                                <Text
+                                    style={{
+                                        ...styles.dateDiffText,
+                                        color: currentTheme.mainColor,
+                                    }}
+                                >
+                                    {dateToggle === 0
+                                        ? `${dayDiff} days`
+                                        : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
+                                </Text>
+                            </View>
+                        </Pressable>
+                        <ProgressBar
+                            selectedDate={date ? new Date(date) : new Date()}
+                            dayDiff={dayDiff}
+                            yearDiff={YMDDiff.years}
                         />
-                    </Pressable>
-                )}
+                    </View>
+                    {imgPopupOpen && imgPopupSrc && (
+                        <Pressable
+                            style={styles.imgPopupCt}
+                            onPress={hidePicture}
+                        >
+                            <Image
+                                style={styles.imgPopup}
+                                source={{ uri: imgPopupSrc }}
+                            />
+                        </Pressable>
+                    )}
+                </ScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -351,12 +366,13 @@ const Home = () => {
 export default Home;
 
 const styles = StyleSheet.create({
+    safeArea: { flex: 1 },
+    scroll: { flex: 1 },
     container: {
         position: "relative",
         flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
     },
     header: {
         width: "100%",
