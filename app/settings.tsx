@@ -45,8 +45,7 @@ const Settings = () => {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -225,8 +224,7 @@ const Settings = () => {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             {tutorial && <SettingsTutorial />}
             <SettingsInputField
                 label="Your name:"
@@ -283,30 +281,28 @@ const Settings = () => {
                 date={date ? new Date(date) : new Date()}
                 theme={currentTheme}
             />
-            <View style={styles.inputGroup}>
-                <Link href="/themes" style={styles.linkContainer}>
+            <Link href="/themes" style={styles.inputGroup}>
+                <View style={styles.linkContainer}>
                     <Text
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Themes
                     </Text>
-                </Link>
-            </View>
-            <View style={styles.inputGroup}>
-                <Link href="/info" style={styles.linkContainer}>
+                </View>
+            </Link>
+            <Link href="/info" style={styles.inputGroup}>
+                <View style={styles.linkContainer}>
                     <Text
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Info
                     </Text>
-                </Link>
-            </View>
+                </View>
+            </Link>
         </View>
     );
 };
