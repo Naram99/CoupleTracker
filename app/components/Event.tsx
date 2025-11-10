@@ -1,19 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-
-export type EventData = {
-    name?: string;
-    date: number;
-    type: "dating" | "proposal" | "wedding" | "birth";
-    showOnMainPage: boolean;
-    notifications: EventNotifications;
-    order: number;
-};
-
-type EventNotifications = {
-    yearly: boolean;
-    hundredDays: boolean;
-};
+import React, { useEffect, useState } from "react";
+import { EventData } from "./EventsDisplay";
 
 type YMDDifference = {
     years: number;
@@ -21,7 +8,7 @@ type YMDDifference = {
     days: number;
 };
 
-export default function EventDisplay(eventData: EventData) {
+export default function Event({ eventData }: { eventData: EventData }) {
     const [dateToggle, setDateToggle] = useState(0);
     const [dayDiff, setDayDiff] = useState(0);
     const [YMDDiff, setYMDDiff] = useState<YMDDifference>({
@@ -29,6 +16,10 @@ export default function EventDisplay(eventData: EventData) {
         months: 0,
         days: 0,
     });
+
+    useEffect(() => {
+        updateDateDifferences();
+    }, []);
 
     // Function to calculate and update date differences
     const updateDateDifferences = () => {
@@ -81,10 +72,12 @@ export default function EventDisplay(eventData: EventData) {
     }
 
     return (
-        <View>
-            <Text></Text>
+        <View style={styles.eventCt}>
+            <Text>Event</Text>
         </View>
     );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    eventCt: {},
+});
