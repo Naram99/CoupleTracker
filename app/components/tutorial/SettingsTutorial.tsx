@@ -5,11 +5,11 @@ import {
     Text,
     View,
 } from "react-native";
-import React, { useState } from "react";
+import React from "react";
+import { useTheme } from "../../../context/ThemeContext";
+import colors from "../../../constants/colors";
+import { useTutorial } from "../../../context/TutorialContext";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../context/ThemeContext";
-import colors from "../../constants/colors";
-import { useTutorial } from "../../context/TutorialContext";
 
 type TutorialTextItem = {
     title: string;
@@ -26,32 +26,21 @@ type OverlayPositions = {
     right: DimensionValue;
 };
 
-const Tutorial = () => {
+const SettingsTutorial = () => {
     const { theme } = useTheme();
     const colorTheme = colors[theme];
 
-    const { step, nextStep, finish } = useTutorial();
+    const { step, nextStep } = useTutorial();
 
     const tutorialTexts: { [index: number]: TutorialTextItem } = {
-        0: {
-            title: "Welcome to CoupleTracker!",
-            subTitle: "Let us show you how the app works!",
+        1: {
+            title: "This is the settings page.",
+            subTitle:
+                "You can set your data here, as well as choosing a color theme or enabling notifications.",
             btnText: "Next step",
             btn: true,
             overlayPosition: {
                 top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-            },
-        },
-        1: {
-            title: "First go to settings",
-            subTitle: "Touch the gear icon at the top right.",
-            btn: false,
-            btnText: "",
-            overlayPosition: {
-                top: "20%",
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -60,23 +49,11 @@ const Tutorial = () => {
         2: {
             title: "",
             subTitle:
-                "On the home page you can see the names and pictures you set.\nYou can tap the shown day counter to switch between only days or years, months and days shown, and you can tap the progress bar to switch between years or 100 days progress.",
-            btn: true,
-            btnText: "Next step",
+                "Set as many things as you want and then save them to go back to the home page.",
+            btn: false,
+            btnText: "",
             overlayPosition: {
-                top: 0,
-                bottom: "60%",
-                left: 0,
-                right: 0,
-            },
-        },
-        3: {
-            title: "Have fun!",
-            subTitle: "",
-            btn: true,
-            btnText: "Finish tutorial",
-            overlayPosition: {
-                top: 0,
+                top: "85%",
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -85,16 +62,7 @@ const Tutorial = () => {
     };
 
     function handleNextStep() {
-        if (
-            step <
-            parseInt(
-                Object.keys(tutorialTexts)[
-                    Object.keys(tutorialTexts).length - 1
-                ]
-            )
-        )
-            nextStep(step);
-        else finish();
+        nextStep(step);
     }
 
     return (
@@ -107,9 +75,11 @@ const Tutorial = () => {
                 bottom: tutorialTexts[step].overlayPosition.bottom,
             }}
         >
-            <Text style={{ ...styles.title, color: colorTheme.mainColor }}>
-                {tutorialTexts[step].title}
-            </Text>
+            {tutorialTexts[step].title !== "" && (
+                <Text style={{ ...styles.title, color: colorTheme.mainColor }}>
+                    {tutorialTexts[step].title}
+                </Text>
+            )}
             <Text
                 style={{ ...styles.subtitle, color: colorTheme.secondaryColor }}
             >
@@ -137,12 +107,12 @@ const Tutorial = () => {
     );
 };
 
-export default Tutorial;
+export default SettingsTutorial;
 
 const styles = StyleSheet.create({
     overlay: {
         position: "absolute",
-        padding: 40,
+        padding: 5,
         gap: 40,
         backgroundColor: "#000B",
         zIndex: 10,

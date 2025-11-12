@@ -16,8 +16,8 @@ import colors from "../constants/colors";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
-import ProgressBar from "./components/ProgressBar";
-import Tutorial from "./components/Tutorial";
+import ProgressBar from "./components/home/ProgressBar";
+import Tutorial from "./components/tutorial/Tutorial";
 import { useTutorial } from "../context/TutorialContext";
 
 type YMDDifference = {

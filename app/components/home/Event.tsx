@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { EventData } from "./EventsDisplay";
+import { EventData } from "../../../types/EventTypes";
+import ProgressBar from "./ProgressBar";
 
 type YMDDifference = {
     years: number;
@@ -71,13 +72,50 @@ export default function Event({ eventData }: { eventData: EventData }) {
         return { years, months, days };
     }
 
+    function toggleDateDiff() {
+        setDateToggle(dateToggle === 1 ? 0 : 1);
+    }
+
     return (
         <View style={styles.eventCt}>
-            <Text>Event</Text>
+            <Pressable onPress={toggleDateDiff}>
+                <View style={styles.dateDiffCt}>
+                    <Text style={styles.dateDiffText}>
+                        {dateToggle === 0
+                            ? `${dayDiff} days`
+                            : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
+                    </Text>
+                </View>
+            </Pressable>
+            <Text>
+                since{" "}
+                {eventData.type === "milestone"
+                    ? eventData.name
+                    : eventData.type}
+            </Text>
+            <ProgressBar
+                selectedDate={new Date(eventData.date)}
+                dayDiff={dayDiff}
+                yearDiff={YMDDiff.years}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    eventCt: {},
+    eventCt: {
+        width: "100%",
+        padding: 10,
+    },
+    dateDiffCt: {
+        width: "100%",
+        textAlign: "center",
+        zIndex: 3,
+    },
+    dateDiffText: {
+        width: "100%",
+        textAlign: "center",
+        fontWeight: "bold",
+        fontSize: 20,
+    },
 });

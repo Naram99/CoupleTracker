@@ -3,12 +3,11 @@ import React from "react";
 import colors from "../constants/colors";
 import { useTheme } from "../context/ThemeContext";
 import { SchemeName } from "../constants/colors";
-import { useRouter } from "expo-router";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import ColorBubbles from "./components/themes/ColorBubbles";
 
 const Themes = () => {
     const { theme, savedTheme, setTheme } = useTheme();
-    const router = useRouter();
     const currentTheme = colors[theme];
 
     async function handleThemeChange(newTheme: SchemeName | "default") {
@@ -20,18 +19,21 @@ const Themes = () => {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <Pressable onPress={() => handleThemeChange("default")}>
                 <View
                     style={{
                         ...styles.themeContainer,
                         borderBottomColor: currentTheme.secondaryColor,
-                    }}>
+                    }}
+                >
                     <Text
                         style={{
                             ...styles.themeText,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         System Default
                     </Text>
                     {savedTheme === "default" && (
@@ -46,23 +48,26 @@ const Themes = () => {
                     )}
                 </View>
             </Pressable>
-            {Object.keys(colors).map((color) => (
+            {Object.entries(colors).map(([color, scheme]) => (
                 <Pressable
                     key={color}
-                    onPress={() => handleThemeChange(color as SchemeName)}>
+                    onPress={() => handleThemeChange(color as SchemeName)}
+                >
                     <View
                         style={{
                             ...styles.themeContainer,
                             borderBottomColor: currentTheme.secondaryColor,
-                        }}>
+                        }}
+                    >
                         <Text
                             style={{
                                 ...styles.themeText,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             {color}
                         </Text>
-                        {savedTheme === color && (
+                        {savedTheme === color ? (
                             <FontAwesome6
                                 name="check"
                                 iconStyle="solid"
@@ -71,6 +76,8 @@ const Themes = () => {
                                     fontSize: 18,
                                 }}
                             />
+                        ) : (
+                            <ColorBubbles theme={scheme} />
                         )}
                     </View>
                 </Pressable>

@@ -5,11 +5,11 @@ import {
     Text,
     View,
 } from "react-native";
-import React from "react";
-import { useTheme } from "../../context/ThemeContext";
-import colors from "../../constants/colors";
-import { useTutorial } from "../../context/TutorialContext";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../../context/ThemeContext";
+import colors from "../../../constants/colors";
+import { useTutorial } from "../../../context/TutorialContext";
 
 type TutorialTextItem = {
     title: string;
@@ -26,17 +26,16 @@ type OverlayPositions = {
     right: DimensionValue;
 };
 
-const SettingsTutorial = () => {
+const Tutorial = () => {
     const { theme } = useTheme();
     const colorTheme = colors[theme];
 
-    const { step, nextStep } = useTutorial();
+    const { step, nextStep, finish } = useTutorial();
 
     const tutorialTexts: { [index: number]: TutorialTextItem } = {
-        1: {
-            title: "This is the settings page.",
-            subTitle:
-                "You can set your data here, as well as choosing a color theme or enabling notifications.",
+        0: {
+            title: "Welcome to CoupleTracker!",
+            subTitle: "Let us show you how the app works!",
             btnText: "Next step",
             btn: true,
             overlayPosition: {
@@ -46,14 +45,38 @@ const SettingsTutorial = () => {
                 right: 0,
             },
         },
-        2: {
-            title: "",
-            subTitle:
-                "Set as many things as you want and then save them to go back to the home page.",
+        1: {
+            title: "First go to settings",
+            subTitle: "Touch the gear icon at the top right.",
             btn: false,
             btnText: "",
             overlayPosition: {
-                top: "85%",
+                top: "20%",
+                bottom: 0,
+                left: 0,
+                right: 0,
+            },
+        },
+        2: {
+            title: "",
+            subTitle:
+                "On the home page you can see the names and pictures you set.\nYou can tap the shown day counter to switch between only days or years, months and days shown, and you can tap the progress bar to switch between years or 100 days progress.",
+            btn: true,
+            btnText: "Next step",
+            overlayPosition: {
+                top: 0,
+                bottom: "60%",
+                left: 0,
+                right: 0,
+            },
+        },
+        3: {
+            title: "Have fun!",
+            subTitle: "",
+            btn: true,
+            btnText: "Finish tutorial",
+            overlayPosition: {
+                top: 0,
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -62,7 +85,16 @@ const SettingsTutorial = () => {
     };
 
     function handleNextStep() {
-        nextStep(step);
+        if (
+            step <
+            parseInt(
+                Object.keys(tutorialTexts)[
+                    Object.keys(tutorialTexts).length - 1
+                ]
+            )
+        )
+            nextStep(step);
+        else finish();
     }
 
     return (
@@ -75,11 +107,9 @@ const SettingsTutorial = () => {
                 bottom: tutorialTexts[step].overlayPosition.bottom,
             }}
         >
-            {tutorialTexts[step].title !== "" && (
-                <Text style={{ ...styles.title, color: colorTheme.mainColor }}>
-                    {tutorialTexts[step].title}
-                </Text>
-            )}
+            <Text style={{ ...styles.title, color: colorTheme.mainColor }}>
+                {tutorialTexts[step].title}
+            </Text>
             <Text
                 style={{ ...styles.subtitle, color: colorTheme.secondaryColor }}
             >
@@ -107,12 +137,12 @@ const SettingsTutorial = () => {
     );
 };
 
-export default SettingsTutorial;
+export default Tutorial;
 
 const styles = StyleSheet.create({
     overlay: {
         position: "absolute",
-        padding: 5,
+        padding: 40,
         gap: 40,
         backgroundColor: "#000B",
         zIndex: 10,

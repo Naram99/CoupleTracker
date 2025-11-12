@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useTheme } from "../../context/ThemeContext";
-import colors from "../../constants/colors";
+import { useTheme } from "../../../context/ThemeContext";
+import colors from "../../../constants/colors";
 
 const ProgressBar = ({
     selectedDate,
@@ -12,7 +12,7 @@ const ProgressBar = ({
     dayDiff: number;
     yearDiff: number;
 }) => {
-    const {theme} = useTheme();
+    const { theme } = useTheme();
     const currentTheme = colors[theme];
     const currentDate = new Date();
 
@@ -34,7 +34,9 @@ const ProgressBar = ({
     }
 
     function set100DaysProgress() {
-        setFrom(`${roundDownToNearest(dayDiff, 100)} day${dayDiff > 1 ? "s" : ""}`);
+        setFrom(
+            `${roundDownToNearest(dayDiff, 100)} day${dayDiff > 1 ? "s" : ""}`
+        );
         setTo(`${roundUpToNearest(dayDiff, 100)} day${dayDiff > 1 ? "s" : ""}`);
         setPercent(100 - (dayDiff % 100));
     }
@@ -47,8 +49,8 @@ const ProgressBar = ({
     }
 
     function setYearProgress() {
-        setFrom(`${yearDiff} year${yearDiff > 1 ? "s": ""}`);
-        setTo(`${yearDiff + 1} year${yearDiff > 0 ? "s": ""}`);
+        setFrom(`${yearDiff} year${yearDiff > 1 ? "s" : ""}`);
+        setTo(`${yearDiff + 1} year${yearDiff > 0 ? "s" : ""}`);
 
         const nextYear = getNeededYear(selectedDate);
         const nextYearDate = new Date(
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
         height: 20,
         width: 150,
         borderRadius: 100,
-        overflow: "hidden"
+        overflow: "hidden",
     },
     bar: {
         position: "absolute",

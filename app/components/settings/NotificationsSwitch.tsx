@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import React, { useEffect } from "react";
 import SwitchInputField from "./SwitchInputField";
-import { ColorScheme } from "../../constants/colors";
+import { ColorScheme } from "../../../constants/colors";
 import * as Notifications from "expo-notifications";
 
 const NotificationsSwitch = ({

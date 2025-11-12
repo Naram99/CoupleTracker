@@ -1,4 +1,11 @@
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,13 +16,13 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
-import ImagePickerField from "./components/ImagePickerField";
-import SettingsInputField from "./components/SettingsInputField";
-import DatePickerField from "./components/DatePickerField";
+import ImagePickerField from "./components/settings/ImagePickerField";
+import SettingsInputField from "./components/settings/SettingsInputField";
+import DatePickerField from "./components/settings/DatePickerField";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
-import NotificationsSwitch from "./components/NotificationsSwitch";
+import NotificationsSwitch from "./components/settings/NotificationsSwitch";
 import { useTutorial } from "../context/TutorialContext";
-import SettingsTutorial from "./components/SettingsTutorial";
+import SettingsTutorial from "./components/tutorial/SettingsTutorial";
 
 const Settings = () => {
     const router = useRouter();
@@ -45,7 +52,8 @@ const Settings = () => {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -220,11 +228,12 @@ const Settings = () => {
     }
 
     return (
-        <View
+        <ScrollView
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             {tutorial && <SettingsTutorial />}
             <SettingsInputField
                 label="Your name:"
@@ -273,6 +282,18 @@ const Settings = () => {
                 onPick={pickImage}
                 theme={currentTheme}
             />
+            <Link href="/events" style={styles.inputGroup}>
+                <View style={styles.linkContainer}>
+                    <Text
+                        style={{
+                            ...styles.settingsLabel,
+                            color: currentTheme.mainColor,
+                        }}
+                    >
+                        Events
+                    </Text>
+                </View>
+            </Link>
             <NotificationsSwitch
                 enabled={isNotificationEnabled}
                 onChange={toggleNotification}
@@ -287,7 +308,8 @@ const Settings = () => {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Themes
                     </Text>
                 </View>
@@ -298,12 +320,13 @@ const Settings = () => {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Info
                     </Text>
                 </View>
             </Link>
-        </View>
+        </ScrollView>
     );
 };
 

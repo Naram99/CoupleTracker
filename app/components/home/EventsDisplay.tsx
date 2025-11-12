@@ -1,20 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Event from "./Event";
-
-export type EventData = {
-    name?: string;
-    date: number;
-    type: "dating" | "proposal" | "wedding" | "birth" | "milestone";
-    showOnMainPage: boolean;
-    notifications: EventNotifications;
-    order: number;
-};
-
-export type EventNotifications = {
-    yearly: boolean;
-    hundredDays: boolean;
-};
+import { EventData } from "../../../types/EventTypes";
 
 export default function EventsDisplay(eventsData: EventData[]) {
     return (
