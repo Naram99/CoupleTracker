@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 
-const Events = () => {
+export default function Events() {
     const router = useRouter();
     const navigation = useNavigation();
 
@@ -49,8 +49,7 @@ const Events = () => {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -96,23 +95,20 @@ const Events = () => {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             {events.map((event) => (
                 <Pressable
                     key={event.date}
                     style={{
                         ...styles.eventCt,
                         borderBottomColor: currentTheme.mainColor,
-                    }}
-                >
+                    }}>
                     <View style={styles.mainDataCt}>
                         <Text
                             style={{
                                 ...styles.eventName,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             {event.type === "milestone"
                                 ? event.name
                                 : event.type}
@@ -121,8 +117,7 @@ const Events = () => {
                             style={{
                                 ...styles.eventDate,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             {new Date(event.date).toLocaleDateString()}
                         </Text>
                         <FontAwesome6
@@ -139,8 +134,7 @@ const Events = () => {
                             style={{
                                 ...styles.notificationText,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Notifications: yearly -{" "}
                             {event.notifications.yearly ? "on" : "off"}, every
                             100 days -{" "}
@@ -150,8 +144,7 @@ const Events = () => {
                             style={{
                                 ...styles.showMainPageText,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Show on main page:{" "}
                             {event.showOnMainPage ? "yes" : "no"}
                         </Text>
@@ -160,8 +153,7 @@ const Events = () => {
                                 style={{
                                     ...styles.orderText,
                                     color: currentTheme.mainColor,
-                                }}
-                            >
+                                }}>
                                 Order on main page: {event.order}
                             </Text>
                         )}
@@ -173,8 +165,7 @@ const Events = () => {
                 style={{
                     ...styles.newBtn,
                     backgroundColor: currentTheme.mainColor,
-                }}
-            >
+                }}>
                 <FontAwesome6
                     name="plus"
                     iconStyle="solid"
@@ -187,16 +178,13 @@ const Events = () => {
                     style={{
                         ...styles.newBtnText,
                         color: currentTheme.mainBackground,
-                    }}
-                >
+                    }}>
                     Add new event
                 </Text>
             </Pressable>
         </ScrollView>
     );
-};
-
-export default Events;
+}
 
 const styles = StyleSheet.create({
     container: {

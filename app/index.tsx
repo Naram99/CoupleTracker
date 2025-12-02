@@ -26,7 +26,7 @@ type YMDDifference = {
     days: number;
 };
 
-const Home = () => {
+export default function Home() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
@@ -229,20 +229,17 @@ const Home = () => {
                     ...styles.safeArea,
                     backgroundColor: currentTheme.mainBackground,
                 }}
-                edges={["top"]}
-            >
+                edges={["top"]}>
                 <ScrollView
                     style={styles.scroll}
-                    contentContainerStyle={styles.container}
-                >
+                    contentContainerStyle={styles.container}>
                     {tutorial && <Tutorial />}
                     <View style={styles.header}>
                         <Text
                             style={{
                                 ...styles.title,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Couple Tracker
                         </Text>
                         <Link href={"/settings"}>
@@ -278,8 +275,7 @@ const Home = () => {
                         <View style={styles.personsCt}>
                             <Pressable
                                 style={styles.personCt}
-                                onPress={() => showPicture(userImage)}
-                            >
+                                onPress={() => showPicture(userImage)}>
                                 <Image
                                     source={{
                                         uri:
@@ -295,15 +291,13 @@ const Home = () => {
                                     style={{
                                         ...styles.personName,
                                         color: currentTheme.mainColor,
-                                    }}
-                                >
+                                    }}>
                                     {username ?? "Name"}
                                 </Text>
                             </Pressable>
                             <Pressable
                                 style={styles.personCt}
-                                onPress={() => showPicture(partnerImage)}
-                            >
+                                onPress={() => showPicture(partnerImage)}>
                                 <Image
                                     source={{
                                         uri:
@@ -320,8 +314,7 @@ const Home = () => {
                                     style={{
                                         ...styles.personName,
                                         color: currentTheme.mainColor,
-                                    }}
-                                >
+                                    }}>
                                     {partnername ?? "Name"}
                                 </Text>
                             </Pressable>
@@ -332,8 +325,7 @@ const Home = () => {
                                     style={{
                                         ...styles.dateDiffText,
                                         color: currentTheme.mainColor,
-                                    }}
-                                >
+                                    }}>
                                     {dateToggle === 0
                                         ? `${dayDiff} days`
                                         : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
@@ -349,8 +341,7 @@ const Home = () => {
                     {imgPopupOpen && imgPopupSrc && (
                         <Pressable
                             style={styles.imgPopupCt}
-                            onPress={hidePicture}
-                        >
+                            onPress={hidePicture}>
                             <Image
                                 style={styles.imgPopup}
                                 source={{ uri: imgPopupSrc }}
@@ -361,9 +352,7 @@ const Home = () => {
             </SafeAreaView>
         </SafeAreaProvider>
     );
-};
-
-export default Home;
+}
 
 const styles = StyleSheet.create({
     safeArea: { flex: 1 },

@@ -24,7 +24,7 @@ import NotificationsSwitch from "./components/settings/NotificationsSwitch";
 import { useTutorial } from "../context/TutorialContext";
 import SettingsTutorial from "./components/tutorial/SettingsTutorial";
 
-const Settings = () => {
+export default function Settings() {
     const router = useRouter();
     const navigation = useNavigation();
 
@@ -52,8 +52,7 @@ const Settings = () => {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -232,8 +231,7 @@ const Settings = () => {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             {tutorial && <SettingsTutorial />}
             <SettingsInputField
                 label="Your name:"
@@ -288,8 +286,7 @@ const Settings = () => {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Events
                     </Text>
                 </View>
@@ -308,8 +305,7 @@ const Settings = () => {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Themes
                     </Text>
                 </View>
@@ -320,17 +316,14 @@ const Settings = () => {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Info
                     </Text>
                 </View>
             </Link>
         </ScrollView>
     );
-};
-
-export default Settings;
+}
 
 const styles = StyleSheet.create({
     container: {

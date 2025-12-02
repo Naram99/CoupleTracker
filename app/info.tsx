@@ -10,7 +10,7 @@ import React from "react";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 
-const Info = () => {
+export default function Info() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
@@ -80,9 +80,7 @@ const Info = () => {
             </Text>
         </View>
     );
-};
-
-export default Info;
+}
 
 const styles = StyleSheet.create({
     container: {

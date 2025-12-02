@@ -6,7 +6,7 @@ import { SchemeName } from "../constants/colors";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import ColorBubbles from "./components/themes/ColorBubbles";
 
-const Themes = () => {
+export default function Themes() {
     const { theme, savedTheme, setTheme } = useTheme();
     const currentTheme = colors[theme];
 
@@ -19,21 +19,18 @@ const Themes = () => {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             <Pressable onPress={() => handleThemeChange("default")}>
                 <View
                     style={{
                         ...styles.themeContainer,
                         borderBottomColor: currentTheme.secondaryColor,
-                    }}
-                >
+                    }}>
                     <Text
                         style={{
                             ...styles.themeText,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         System Default
                     </Text>
                     {savedTheme === "default" && (
@@ -51,20 +48,17 @@ const Themes = () => {
             {Object.entries(colors).map(([color, scheme]) => (
                 <Pressable
                     key={color}
-                    onPress={() => handleThemeChange(color as SchemeName)}
-                >
+                    onPress={() => handleThemeChange(color as SchemeName)}>
                     <View
                         style={{
                             ...styles.themeContainer,
                             borderBottomColor: currentTheme.secondaryColor,
-                        }}
-                    >
+                        }}>
                         <Text
                             style={{
                                 ...styles.themeText,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             {color}
                         </Text>
                         {savedTheme === color ? (
@@ -84,9 +78,7 @@ const Themes = () => {
             ))}
         </View>
     );
-};
-
-export default Themes;
+}
 
 const styles = StyleSheet.create({
     container: {
