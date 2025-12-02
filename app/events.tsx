@@ -49,7 +49,8 @@ export default function Events() {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -90,25 +91,41 @@ export default function Events() {
 
     function newEvent() {}
 
+    function editEvent(eventData: EventData) {
+        router.push({
+            pathname: "/editEvent",
+            params: {
+                eventData: JSON.stringify(eventData),
+                onSave: (edited: string) => saveEdit(edited),
+            },
+        });
+    }
+
+    function saveEdit(eventData: EventData) {}
+
     return (
         <ScrollView
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             {events.map((event) => (
                 <Pressable
                     key={event.date}
                     style={{
                         ...styles.eventCt,
                         borderBottomColor: currentTheme.mainColor,
-                    }}>
+                    }}
+                    onPress={() => editEvent(event)}
+                >
                     <View style={styles.mainDataCt}>
                         <Text
                             style={{
                                 ...styles.eventName,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             {event.type === "milestone"
                                 ? event.name
                                 : event.type}
@@ -117,7 +134,8 @@ export default function Events() {
                             style={{
                                 ...styles.eventDate,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             {new Date(event.date).toLocaleDateString()}
                         </Text>
                         <FontAwesome6
@@ -134,7 +152,8 @@ export default function Events() {
                             style={{
                                 ...styles.notificationText,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             Notifications: yearly -{" "}
                             {event.notifications.yearly ? "on" : "off"}, every
                             100 days -{" "}
@@ -144,7 +163,8 @@ export default function Events() {
                             style={{
                                 ...styles.showMainPageText,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             Show on main page:{" "}
                             {event.showOnMainPage ? "yes" : "no"}
                         </Text>
@@ -153,7 +173,8 @@ export default function Events() {
                                 style={{
                                     ...styles.orderText,
                                     color: currentTheme.mainColor,
-                                }}>
+                                }}
+                            >
                                 Order on main page: {event.order}
                             </Text>
                         )}
@@ -165,7 +186,8 @@ export default function Events() {
                 style={{
                     ...styles.newBtn,
                     backgroundColor: currentTheme.mainColor,
-                }}>
+                }}
+            >
                 <FontAwesome6
                     name="plus"
                     iconStyle="solid"
@@ -178,7 +200,8 @@ export default function Events() {
                     style={{
                         ...styles.newBtnText,
                         color: currentTheme.mainBackground,
-                    }}>
+                    }}
+                >
                     Add new event
                 </Text>
             </Pressable>

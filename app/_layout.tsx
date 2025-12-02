@@ -47,6 +47,7 @@ const AppContent = () => {
             <Stack.Screen name="themes" options={{ title: "Themes" }} />
             <Stack.Screen name="info" options={{ title: "Info" }} />
             <Stack.Screen name="events" options={{ title: "Events" }} />
+            <Stack.Screen name="editEvent" options={{ title: "New Event" }} />
         </Stack>
     );
 };
