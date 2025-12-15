@@ -1,16 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
+import EventForm from "./components/events/EventForm";
 
 export default function EditEvent() {
-    const { event } = useLocalSearchParams();
-    const eventData = JSON.parse(event as string);
+    const { eventId } = useLocalSearchParams();
 
-    return (
-        <View>
-            <Text>EditEvent</Text>
-        </View>
-    );
+    return <EventForm eventId={Number.parseInt(eventId as string)} />;
 }
 
 const styles = StyleSheet.create({});

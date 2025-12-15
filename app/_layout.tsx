@@ -29,7 +29,7 @@ const AppContent = () => {
                     flex: 1,
                     backgroundColor: colors.light.mainBackground,
                 }}>
-                {/* You can add a loading screen here if needed */}
+                {/* Loading screen here if needed */}
             </View>
         );
     }
@@ -48,7 +48,8 @@ const AppContent = () => {
             <Stack.Screen name="themes" options={{ title: "Themes" }} />
             <Stack.Screen name="info" options={{ title: "Info" }} />
             <Stack.Screen name="events" options={{ title: "Events" }} />
-            <Stack.Screen name="editEvent" options={{ title: "New Event" }} />
+            <Stack.Screen name="editEvent" options={{ title: "Edit Event" }} />
+            <Stack.Screen name="newEvent" options={{ title: "New Event" }} />
         </Stack>
     );
 };

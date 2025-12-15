@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import { useEvents } from "../context/EventContext";
 
 export default function Events() {
     const router = useRouter();
@@ -15,30 +16,36 @@ export default function Events() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    const [events, setEvents] = useState<EventData[]>([
-        {
-            date: 1535148000000,
-            type: "dating",
-            notifications: {
-                yearly: true,
-                hundredDays: true,
-                offset: 0,
+    const { events, saveEvents } = useEvents();
+
+    const [localEvents, setLocalEvents] = useState<EventData[]>(
+        [
+            {
+                id: 1,
+                date: 1535148000000,
+                type: "dating",
+                notifications: {
+                    yearly: true,
+                    hundredDays: true,
+                    offset: 0,
+                },
+                order: 1,
+                showOnMainPage: true,
             },
-            order: 1,
-            showOnMainPage: true,
-        },
-        {
-            date: 1629842400000,
-            type: "proposal",
-            notifications: {
-                yearly: true,
-                hundredDays: true,
-                offset: 0,
+            {
+                id: 1,
+                date: 1629842400000,
+                type: "proposal",
+                notifications: {
+                    yearly: true,
+                    hundredDays: true,
+                    offset: 0,
+                },
+                order: 2,
+                showOnMainPage: false,
             },
-            order: 2,
-            showOnMainPage: false,
-        },
-    ]);
+        ] /*, events*/
+    );
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -49,8 +56,7 @@ export default function Events() {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -66,50 +72,33 @@ export default function Events() {
         });
     });
 
-    useEffect(() => {
-        async function getEventsDataFromStorage() {
-            const data = await AsyncStorage.getItem("events");
-            if (data) {
-                setEvents(JSON.parse(data));
-            } else {
-                setEvents([]);
-            }
-        }
-
-        // getEventsDataFromStorage();
-    }, []);
-
     async function handleSave() {
-        await setEventsDataToStorage();
-    }
-
-    async function setEventsDataToStorage() {
-        await AsyncStorage.setItem("events", JSON.stringify(events));
+        await saveEvents(localEvents);
     }
 
     async function setNotifications() {}
 
-    function newEvent() {}
-
-    function editEvent(eventData: EventData) {
+    function newEvent() {
         router.push({
-            pathname: "/editEvent",
-            params: {
-                eventData: JSON.stringify(eventData),
-                onSave: (edited: string) => saveEdit(edited),
-            },
+            pathname: "/newEvent",
         });
     }
 
-    function saveEdit(eventData: EventData) {}
+    function editEvent(eventId: number) {
+        router.push({
+            pathname: "/editEvent",
+            params: {
+                eventId: eventId,
+            },
+        });
+    }
 
     return (
         <ScrollView
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             {events.map((event) => (
                 <Pressable
                     key={event.date}
@@ -117,15 +106,13 @@ export default function Events() {
                         ...styles.eventCt,
                         borderBottomColor: currentTheme.mainColor,
                     }}
-                    onPress={() => editEvent(event)}
-                >
+                    onPress={() => editEvent(event.id)}>
                     <View style={styles.mainDataCt}>
                         <Text
                             style={{
                                 ...styles.eventName,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             {event.type === "milestone"
                                 ? event.name
                                 : event.type}
@@ -134,8 +121,7 @@ export default function Events() {
                             style={{
                                 ...styles.eventDate,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             {new Date(event.date).toLocaleDateString()}
                         </Text>
                         <FontAwesome6
@@ -152,8 +138,7 @@ export default function Events() {
                             style={{
                                 ...styles.notificationText,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Notifications: yearly -{" "}
                             {event.notifications.yearly ? "on" : "off"}, every
                             100 days -{" "}
@@ -163,8 +148,7 @@ export default function Events() {
                             style={{
                                 ...styles.showMainPageText,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Show on main page:{" "}
                             {event.showOnMainPage ? "yes" : "no"}
                         </Text>
@@ -173,8 +157,7 @@ export default function Events() {
                                 style={{
                                     ...styles.orderText,
                                     color: currentTheme.mainColor,
-                                }}
-                            >
+                                }}>
                                 Order on main page: {event.order}
                             </Text>
                         )}
@@ -186,8 +169,7 @@ export default function Events() {
                 style={{
                     ...styles.newBtn,
                     backgroundColor: currentTheme.mainColor,
-                }}
-            >
+                }}>
                 <FontAwesome6
                     name="plus"
                     iconStyle="solid"
@@ -200,8 +182,7 @@ export default function Events() {
                     style={{
                         ...styles.newBtnText,
                         color: currentTheme.mainBackground,
-                    }}
-                >
+                    }}>
                     Add new event
                 </Text>
             </Pressable>

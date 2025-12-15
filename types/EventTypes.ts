@@ -1,6 +1,7 @@
 export type EventData = DefaultEvents | MilestoneEvent;
 
 type DefaultData = {
+    id: number;
     date: number;
     notifications: EventNotifications;
     showOnMainPage: boolean;
