@@ -8,7 +8,7 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
 
     const [event, setEvent] = useState<EventData>({
         id: 0,
-        date: 0,
+        date: new Date().getTime(),
         notifications: { hundredDays: false, yearly: false, offset: 0 },
         order: 0,
         type: "dating",
