@@ -8,8 +8,10 @@ type DefaultData = {
     order: number;
 };
 
+export type EventTypes = "dating" | "proposal" | "wedding" | "milestone";
+
 type DefaultEvents = DefaultData & {
-    type: "dating" | "proposal" | "wedding";
+    type: Exclude<EventTypes, "milestone">;
 };
 
 type MilestoneEvent = DefaultData & {
