@@ -21,13 +21,25 @@ export default function ModalSelector<T extends string>({
 
     return (
         <>
-            <Text>ModalSelector</Text>
-            <TouchableOpacity onPress={() => setVisible(true)}>
-                <Text>
-                    {options.find((o) => o.value === value)?.label ??
-                        "Select event type"}
+            <View style={styles.inputCt}>
+                <Text
+                    style={{
+                        ...styles.inputLabel,
+                        color: currentTheme.mainColor,
+                    }}>
+                    Event Type
                 </Text>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={() => setVisible(true)}>
+                    <Text
+                        style={{
+                            ...styles.inputValue,
+                            color: currentTheme.secondaryColor,
+                        }}>
+                        {options.find((o) => o.value === value)?.label ??
+                            "Select event type"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
 
             <Modal visible={visible} transparent>
                 <View style={styles.modalBg}>
@@ -62,4 +74,16 @@ const styles = StyleSheet.create({
     },
     modalCt: {},
     modalOption: {},
+    inputCt: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        padding: 10,
+    },
+    inputLabel: {
+        fontWeight: "bold",
+    },
+    inputValue: {
+        fontWeight: "bold",
+    },
 });
