@@ -1,4 +1,11 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { EventData, EventTypes } from "../../../types/EventTypes";
@@ -8,6 +15,10 @@ import SettingsInputField from "../settings/SettingsInputField";
 import { useTheme } from "../../../context/ThemeContext";
 import colors from "../../../constants/colors";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import DatePickerField from "../settings/DatePickerField";
+import RNDateTimePicker, {
+    DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -37,20 +48,26 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
     });
     // TODO: set name if type is milestone.
     const [name, setName] = useState("");
+    const [showDate, setShowDate] = useState(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
             title:
-                event.type === "milestone"
-                    ? name.toUpperCase()
-                    : event.type.toUpperCase(),
+                eventId !== null
+                    ? `Edit ${
+                          event.type === "milestone"
+                              ? name.toUpperCase()
+                              : event.type.toUpperCase()
+                      }`
+                    : "New Event",
             headerRight: () => (
                 <Pressable onPress={handleSubmit}>
                     <Text
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -68,15 +85,30 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
 
     useEffect(() => {
         if (eventId) {
-            setEvent(events.find((event) => event.id === eventId)!);
+            const selectedEvent = events.find((event) => event.id === eventId)!;
+            setEvent(selectedEvent);
+            if (selectedEvent.type === "milestone") setName(selectedEvent.name);
         }
     }, []);
+
+    function openDate() {
+        setShowDate(true);
+    }
+
+    function onDateChange(
+        e: DateTimePickerEvent,
+        selectedDate: Date | undefined
+    ) {
+        // console.log(event)
+        const currentDate = selectedDate?.getTime() || event.date;
+        setShowDate(Platform.OS === "ios");
+        setEvent({ ...event, date: currentDate });
+    }
 
     function handleSubmit() {}
 
     return (
         <ScrollView>
-            <Text>EventForm</Text>
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -92,6 +124,22 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
                         setName(text);
                     }}
                     theme={currentTheme}
+                />
+            )}
+            <DatePickerField
+                label="Event date:"
+                date={event.date}
+                onOpen={openDate}
+                theme={currentTheme}
+            />
+            {showDate && (
+                <RNDateTimePicker
+                    value={event.date ? new Date(event.date) : new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                    maximumDate={new Date()}
+                    minimumDate={new Date(1900, 0, 1)}
                 />
             )}
         </ScrollView>

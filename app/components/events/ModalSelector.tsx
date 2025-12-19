@@ -26,7 +26,8 @@ export default function ModalSelector<T extends string>({
                     style={{
                         ...styles.inputLabel,
                         color: currentTheme.mainColor,
-                    }}>
+                    }}
+                >
                     Event Type
                 </Text>
                 <TouchableOpacity onPress={() => setVisible(true)}>
@@ -34,7 +35,8 @@ export default function ModalSelector<T extends string>({
                         style={{
                             ...styles.inputValue,
                             color: currentTheme.secondaryColor,
-                        }}>
+                        }}
+                    >
                         {options.find((o) => o.value === value)?.label ??
                             "Select event type"}
                     </Text>
@@ -43,19 +45,26 @@ export default function ModalSelector<T extends string>({
 
             <Modal visible={visible} transparent>
                 <View style={styles.modalBg}>
-                    <View style={styles.modalCt}>
+                    <View
+                        style={{
+                            ...styles.modalCt,
+                            backgroundColor: currentTheme.mainBackground,
+                        }}
+                    >
                         {options.map((opt) => (
                             <TouchableOpacity
                                 key={opt.value}
                                 onPress={() => {
                                     onChange(opt.value);
                                     setVisible(false);
-                                }}>
+                                }}
+                            >
                                 <Text
                                     style={{
                                         ...styles.modalOption,
                                         color: currentTheme.mainColor,
-                                    }}>
+                                    }}
+                                >
                                     {opt.label}
                                 </Text>
                             </TouchableOpacity>
@@ -71,9 +80,15 @@ const styles = StyleSheet.create({
     modalBg: {
         flex: 1,
         justifyContent: "center",
+        backgroundColor: "#000c",
     },
-    modalCt: {},
-    modalOption: {},
+    modalCt: {
+        padding: 10,
+    },
+    modalOption: {
+        padding: 10,
+        fontWeight: "bold",
+    },
     inputCt: {
         flex: 1,
         flexDirection: "row",
