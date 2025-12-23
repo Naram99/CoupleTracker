@@ -13,7 +13,7 @@ const HundredDaysNotifications = ({
     theme,
 }: {
     enabled: boolean;
-    onChange: () => void;
+    onChange: (value: string | null) => void;
     user: string | null;
     partner: string | null;
     date: Date;

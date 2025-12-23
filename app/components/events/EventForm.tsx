@@ -19,6 +19,9 @@ import DatePickerField from "../settings/DatePickerField";
 import RNDateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import YearlyNotifications from "./YearlyNotifications";
+import HundredDaysNotifications from "./HundredDaysNotifications";
+import OffsetSelector from "./OffsetSelector";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -41,7 +44,7 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
     const [event, setEvent] = useState<Omit<EventData, "name">>({
         id: 0,
         date: new Date().getTime(),
-        notifications: { hundredDays: false, yearly: false, offset: 0 },
+        notifications: { hundredDays: null, yearly: null, offset: 0 },
         order: 0,
         type: "dating",
         showOnMainPage: false,
@@ -105,7 +108,13 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
         setEvent({ ...event, date: currentDate });
     }
 
-    function handleSubmit() {}
+    function handleSubmit() {
+        if (event.type === "milestone") {
+            events.push({ ...event, name: name });
+        } else {
+            events.push(event as EventData);
+        }
+    }
 
     return (
         <ScrollView>
@@ -142,6 +151,32 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
                     minimumDate={new Date(1900, 0, 1)}
                 />
             )}
+            <YearlyNotifications
+                enabled={event.notifications.yearly !== null}
+                onChange={(value: string | null) => {
+                    setEvent({
+                        ...event,
+                        notifications: {
+                            ...event.notifications,
+                            yearly: value,
+                        },
+                    });
+                }}
+            />
+            <HundredDaysNotifications
+                enabled={event.notifications.hundredDays !== null}
+                onChange={(value: string | null) => {
+                    setEvent({
+                        ...event,
+                        notifications: {
+                            ...event.notifications,
+                            hundredDays: value,
+                        },
+                    });
+                }}
+            />
+            <OffsetSelector />
+            {/* SHOW ON MAIN PAGE NEEDED */}
         </ScrollView>
     );
 }
