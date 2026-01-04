@@ -1,11 +1,12 @@
 import React from "react";
 import { StyleSheet, Switch, Text, View } from "react-native";
+import { ColorScheme } from "../../../constants/colors";
 
 interface SwitchInputFieldProps {
     label: string;
     value: boolean;
     onChangeValue: () => void;
-    theme: any;
+    theme: ColorScheme;
 }
 
 const SwitchInputField: React.FC<SwitchInputFieldProps> = ({

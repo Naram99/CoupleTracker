@@ -22,6 +22,7 @@ import RNDateTimePicker, {
 import YearlyNotifications from "./YearlyNotifications";
 import HundredDaysNotifications from "./HundredDaysNotifications";
 import OffsetSelector from "./OffsetSelector";
+import SwitchInputField from "../settings/SwitchInputField";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -33,22 +34,28 @@ const EventOptions = [
     label: string;
 }>;
 
-export default function EventForm({ eventId }: { eventId: number | null }) {
+export default function EventForm({
+    eventData,
+    onSave,
+}: {
+    eventData: EventData | null;
+    onSave: (data: EventData) => void;
+}) {
     const navigation = useNavigation();
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    const { events, saveEvents } = useEvents();
-
-    const [event, setEvent] = useState<Omit<EventData, "name">>({
-        id: 0,
-        date: new Date().getTime(),
-        notifications: { hundredDays: null, yearly: null, offset: 0 },
-        order: 0,
-        type: "dating",
-        showOnMainPage: false,
-    });
+    const [event, setEvent] = useState<Omit<EventData, "name">>(
+        eventData ?? {
+            id: 0,
+            date: new Date().getTime(),
+            notifications: { hundredDays: null, yearly: null, offset: 0 },
+            order: 0,
+            type: "dating",
+            showOnMainPage: false,
+        }
+    );
     // TODO: set name if type is milestone.
     const [name, setName] = useState("");
     const [showDate, setShowDate] = useState(false);
@@ -56,7 +63,7 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
     useLayoutEffect(() => {
         navigation.setOptions({
             title:
-                eventId !== null
+                eventData !== null
                     ? `Edit ${
                           event.type === "milestone"
                               ? name.toUpperCase()
@@ -87,11 +94,7 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
     });
 
     useEffect(() => {
-        if (eventId) {
-            const selectedEvent = events.find((event) => event.id === eventId)!;
-            setEvent(selectedEvent);
-            if (selectedEvent.type === "milestone") setName(selectedEvent.name);
-        }
+        if (eventData?.type === "milestone") setName(eventData?.name);
     }, []);
 
     function openDate() {
@@ -110,10 +113,14 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
 
     function handleSubmit() {
         if (event.type === "milestone") {
-            events.push({ ...event, name: name });
+            onSave({ ...event, name: name });
         } else {
-            events.push(event as EventData);
+            onSave(event as EventData);
         }
+    }
+
+    function toggleShowOnMainPage() {
+        setEvent({ ...event, showOnMainPage: !event.showOnMainPage });
     }
 
     return (
@@ -176,6 +183,12 @@ export default function EventForm({ eventId }: { eventId: number | null }) {
                 }}
             />
             <OffsetSelector />
+            <SwitchInputField
+                label="Show event on main page"
+                theme={currentTheme}
+                onChangeValue={toggleShowOnMainPage}
+                value={event.showOnMainPage}
+            />
             {/* SHOW ON MAIN PAGE NEEDED */}
         </ScrollView>
     );
