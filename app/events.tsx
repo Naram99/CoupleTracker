@@ -25,8 +25,8 @@ export default function Events() {
                 date: 1535148000000,
                 type: "dating",
                 notifications: {
-                    yearly: true,
-                    hundredDays: true,
+                    yearly: null,
+                    hundredDays: null,
                     offset: 0,
                 },
                 order: 1,
@@ -37,8 +37,8 @@ export default function Events() {
                 date: 1629842400000,
                 type: "proposal",
                 notifications: {
-                    yearly: true,
-                    hundredDays: true,
+                    yearly: null,
+                    hundredDays: null,
                     offset: 0,
                 },
                 order: 2,
@@ -99,14 +99,14 @@ export default function Events() {
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
             }}>
-            {events.map((event) => (
+            {events.map((event, index) => (
                 <Pressable
                     key={event.date}
                     style={{
                         ...styles.eventCt,
                         borderBottomColor: currentTheme.mainColor,
                     }}
-                    onPress={() => editEvent(event.id)}>
+                    onPress={() => editEvent(index)}>
                     <View style={styles.mainDataCt}>
                         <Text
                             style={{

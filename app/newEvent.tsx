@@ -13,7 +13,19 @@ export default function NewEvent() {
         await saveEvents(updatedEvents);
     }
 
-    return <EventForm eventData={null} onSave={handleSave} />;
+    return (
+        <EventForm
+            eventData={{
+                id: 0,
+                date: new Date().getTime(),
+                notifications: { hundredDays: null, yearly: null, offset: 0 },
+                order: 0,
+                type: "dating",
+                showOnMainPage: false,
+            }}
+            onSave={handleSave}
+        />
+    );
 }
 
 const styles = StyleSheet.create({});

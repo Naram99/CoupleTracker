@@ -6,10 +6,9 @@ import {
     Text,
     View,
 } from "react-native";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { EventData, EventTypes } from "../../../types/EventTypes";
-import { useEvents } from "../../../context/EventContext";
 import ModalSelector from "./ModalSelector";
 import SettingsInputField from "../settings/SettingsInputField";
 import { useTheme } from "../../../context/ThemeContext";
@@ -38,7 +37,7 @@ export default function EventForm({
     eventData,
     onSave,
 }: {
-    eventData: EventData | null;
+    eventData: EventData;
     onSave: (data: EventData) => void;
 }) {
     const navigation = useNavigation();
@@ -46,28 +45,26 @@ export default function EventForm({
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    const [event, setEvent] = useState<Omit<EventData, "name">>(
-        eventData ?? {
-            id: 0,
-            date: new Date().getTime(),
-            notifications: { hundredDays: null, yearly: null, offset: 0 },
-            order: 0,
-            type: "dating",
-            showOnMainPage: false,
-        }
-    );
-    // TODO: set name if type is milestone.
+    const [event, setEvent] =
+        useState<Omit<EventData, "name" | "date">>(eventData);
     const [name, setName] = useState("");
+
+    const [date, setDate] = useState<number | null>(eventData.date);
     const [showDate, setShowDate] = useState(false);
+
+    const pickerDate = useMemo(
+        () => (date ? new Date(date) : new Date()),
+        [date]
+    );
 
     useLayoutEffect(() => {
         navigation.setOptions({
             title:
                 eventData !== null
                     ? `Edit ${
-                          event.type === "milestone"
+                          event?.type === "milestone"
                               ? name.toUpperCase()
-                              : event.type.toUpperCase()
+                              : event?.type.toUpperCase()
                       }`
                     : "New Event",
             headerRight: () => (
@@ -76,8 +73,7 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -101,21 +97,21 @@ export default function EventForm({
         setShowDate(true);
     }
 
-    function onDateChange(
-        e: DateTimePickerEvent,
-        selectedDate: Date | undefined
-    ) {
-        // console.log(event)
-        const currentDate = selectedDate?.getTime() || event.date;
+    function onDateChange(e: DateTimePickerEvent, selectedDate?: Date) {
+        // On android "change" event triggeres twice, first set then dismissed
+
+        // if (e.type !== "set" || !selectedDate) return;
+        const currentDate = selectedDate?.getTime() || date;
+
         setShowDate(Platform.OS === "ios");
-        setEvent({ ...event, date: currentDate });
+        setDate(currentDate);
     }
 
     function handleSubmit() {
         if (event.type === "milestone") {
-            onSave({ ...event, name: name });
+            onSave({ ...event, name: name, date: date! });
         } else {
-            onSave(event as EventData);
+            onSave({ ...event, date: date } as EventData);
         }
     }
 
@@ -144,13 +140,13 @@ export default function EventForm({
             )}
             <DatePickerField
                 label="Event date:"
-                date={event.date}
+                date={date}
                 onOpen={openDate}
                 theme={currentTheme}
             />
             {showDate && (
                 <RNDateTimePicker
-                    value={event.date ? new Date(event.date) : new Date()}
+                    value={new Date(pickerDate)}
                     mode="date"
                     display="default"
                     onChange={onDateChange}
@@ -158,7 +154,7 @@ export default function EventForm({
                     minimumDate={new Date(1900, 0, 1)}
                 />
             )}
-            <YearlyNotifications
+            {/* <YearlyNotifications
                 enabled={event.notifications.yearly !== null}
                 onChange={(value: string | null) => {
                     setEvent({
@@ -181,7 +177,7 @@ export default function EventForm({
                         },
                     });
                 }}
-            />
+            /> */}
             <OffsetSelector />
             <SwitchInputField
                 label="Show event on main page"
