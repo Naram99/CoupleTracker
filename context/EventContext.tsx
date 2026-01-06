@@ -36,7 +36,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
 
     useEffect(() => {
         loadEvents();
-    });
+    }, []);
 
     async function loadEvents() {
         try {
@@ -57,6 +57,7 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
     async function saveEvents(events: EventData[]) {
         try {
             await AsyncStorage.setItem("events", JSON.stringify(events));
+            setEvents(events);
         } catch (error) {
             console.error("Error saving events:", error);
         }

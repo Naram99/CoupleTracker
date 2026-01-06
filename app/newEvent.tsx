@@ -9,6 +9,7 @@ export default function NewEvent() {
 
     async function handleSave(eventData: EventData) {
         const updatedEvents = [...events, eventData];
+        console.log(updatedEvents);
 
         await saveEvents(updatedEvents);
     }

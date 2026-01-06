@@ -6,7 +6,13 @@ import {
     Text,
     View,
 } from "react-native";
-import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useNavigation } from "@react-navigation/native";
 import { EventData, EventTypes } from "../../../types/EventTypes";
 import ModalSelector from "./ModalSelector";
@@ -22,6 +28,7 @@ import YearlyNotifications from "./YearlyNotifications";
 import HundredDaysNotifications from "./HundredDaysNotifications";
 import OffsetSelector from "./OffsetSelector";
 import SwitchInputField from "../settings/SwitchInputField";
+import { useRouter } from "expo-router";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -38,9 +45,10 @@ export default function EventForm({
     onSave,
 }: {
     eventData: EventData;
-    onSave: (data: EventData) => void;
+    onSave: (data: EventData) => Promise<void>;
 }) {
     const navigation = useNavigation();
+    const router = useRouter();
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
@@ -49,13 +57,8 @@ export default function EventForm({
         useState<Omit<EventData, "name" | "date">>(eventData);
     const [name, setName] = useState("");
 
-    const [date, setDate] = useState<number | null>(eventData.date);
+    const [date, setDate] = useState<number>(eventData.date);
     const [showDate, setShowDate] = useState(false);
-
-    const pickerDate = useMemo(
-        () => (date ? new Date(date) : new Date()),
-        [date]
-    );
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -87,7 +90,7 @@ export default function EventForm({
                 </Pressable>
             ),
         });
-    });
+    }, [navigation, event.type, name, currentTheme.mainColor]);
 
     useEffect(() => {
         if (eventData?.type === "milestone") setName(eventData?.name);
@@ -98,25 +101,27 @@ export default function EventForm({
     }
 
     function onDateChange(e: DateTimePickerEvent, selectedDate?: Date) {
-        // On android "change" event triggeres twice, first set then dismissed
-
-        // if (e.type !== "set" || !selectedDate) return;
         const currentDate = selectedDate?.getTime() || date;
 
         setShowDate(Platform.OS === "ios");
         setDate(currentDate);
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (event.type === "milestone") {
-            onSave({ ...event, name: name, date: date! });
+            console.log({ ...event, name: name, date: date });
+
+            await onSave({ ...event, name: name, date: date });
         } else {
-            onSave({ ...event, date: date } as EventData);
+            console.log({ ...event, date: date });
+            await onSave({ ...event, date: date } as EventData);
         }
+
+        router.back();
     }
 
     function toggleShowOnMainPage() {
-        setEvent({ ...event, showOnMainPage: !event.showOnMainPage });
+        setEvent((prev) => ({ ...prev, showOnMainPage: !prev.showOnMainPage }));
     }
 
     return (
@@ -146,7 +151,7 @@ export default function EventForm({
             />
             {showDate && (
                 <RNDateTimePicker
-                    value={new Date(pickerDate)}
+                    value={date ? new Date(date) : new Date()}
                     mode="date"
                     display="default"
                     onChange={onDateChange}

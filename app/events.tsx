@@ -17,6 +17,7 @@ export default function Events() {
     const currentTheme = colors[theme];
 
     const { events, saveEvents } = useEvents();
+    console.log(events);
 
     const [localEvents, setLocalEvents] = useState<EventData[]>(
         [
@@ -47,7 +48,7 @@ export default function Events() {
         ] /*, events*/
     );
 
-    useLayoutEffect(() => {
+    /* useLayoutEffect(() => {
         navigation.setOptions({
             title: "Events",
             headerRight: () => (
@@ -70,7 +71,7 @@ export default function Events() {
                 </Pressable>
             ),
         });
-    });
+    }); */
 
     async function handleSave() {
         await saveEvents(localEvents);
