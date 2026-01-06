@@ -1,9 +1,8 @@
 import { StyleSheet, Text, ScrollView, Pressable, View } from "react-native";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { EventData } from "../types/EventTypes";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
@@ -17,65 +16,6 @@ export default function Events() {
     const currentTheme = colors[theme];
 
     const { events, saveEvents } = useEvents();
-    console.log(events);
-
-    const [localEvents, setLocalEvents] = useState<EventData[]>(
-        [
-            {
-                id: 1,
-                date: 1535148000000,
-                type: "dating",
-                notifications: {
-                    yearly: null,
-                    hundredDays: null,
-                    offset: 0,
-                },
-                order: 1,
-                showOnMainPage: true,
-            },
-            {
-                id: 1,
-                date: 1629842400000,
-                type: "proposal",
-                notifications: {
-                    yearly: null,
-                    hundredDays: null,
-                    offset: 0,
-                },
-                order: 2,
-                showOnMainPage: false,
-            },
-        ] /*, events*/
-    );
-
-    /* useLayoutEffect(() => {
-        navigation.setOptions({
-            title: "Events",
-            headerRight: () => (
-                <Pressable onPress={handleSave}>
-                    <Text
-                        style={{
-                            ...styles.saveBtn,
-                            color: currentTheme.mainColor,
-                        }}>
-                        <FontAwesome6
-                            name="floppy-disk"
-                            iconStyle="solid"
-                            style={{
-                                color: currentTheme.mainColor,
-                                fontSize: 20,
-                            }}
-                        />
-                        &nbsp; Save
-                    </Text>
-                </Pressable>
-            ),
-        });
-    }); */
-
-    async function handleSave() {
-        await saveEvents(localEvents);
-    }
 
     async function setNotifications() {}
 
@@ -85,14 +25,20 @@ export default function Events() {
         });
     }
 
-    function editEvent(eventId: number) {
-        router.push({
-            pathname: "/editEvent",
-            params: {
-                eventId: eventId,
-            },
-        });
-    }
+    const editEvent = useCallback(
+        (eventId: number) => {
+            router.push({
+                pathname: "/editEvent",
+                params: {
+                    eventId: eventId,
+                },
+            });
+        },
+        [events, router]
+    );
+
+    function moveEventUp() {}
+    function moveEventDown() {}
 
     return (
         <ScrollView
@@ -101,59 +47,60 @@ export default function Events() {
                 backgroundColor: currentTheme.mainBackground,
             }}>
             {events.map((event, index) => (
-                <Pressable
-                    key={event.date}
-                    style={{
-                        ...styles.eventCt,
-                        borderBottomColor: currentTheme.mainColor,
-                    }}
-                    onPress={() => editEvent(index)}>
-                    <View style={styles.mainDataCt}>
-                        <Text
-                            style={{
-                                ...styles.eventName,
-                                color: currentTheme.mainColor,
-                            }}>
-                            {event.type === "milestone"
-                                ? event.name
-                                : event.type}
-                        </Text>
-                        <Text
-                            style={{
-                                ...styles.eventDate,
-                                color: currentTheme.mainColor,
-                            }}>
-                            {new Date(event.date).toLocaleDateString()}
-                        </Text>
-                        <FontAwesome6
-                            name="pen"
-                            iconStyle="solid"
-                            style={{
-                                ...styles.editIcon,
-                                color: currentTheme.mainColor,
-                            }}
-                        />
-                    </View>
-                    <View style={styles.secondaryDataCt}>
-                        <Text
-                            style={{
-                                ...styles.notificationText,
-                                color: currentTheme.mainColor,
-                            }}>
-                            Notifications: yearly -{" "}
-                            {event.notifications.yearly ? "on" : "off"}, every
-                            100 days -{" "}
-                            {event.notifications.hundredDays ? "on" : "off"}
-                        </Text>
-                        <Text
-                            style={{
-                                ...styles.showMainPageText,
-                                color: currentTheme.mainColor,
-                            }}>
-                            Show on main page:{" "}
-                            {event.showOnMainPage ? "yes" : "no"}
-                        </Text>
-                        {event.showOnMainPage && (
+                <>
+                    <Pressable
+                        key={event.date}
+                        style={{
+                            ...styles.eventCt,
+                            borderBottomColor: currentTheme.mainColor,
+                        }}
+                        onPress={() => editEvent(index)}>
+                        <View style={styles.mainDataCt}>
+                            <Text
+                                style={{
+                                    ...styles.eventName,
+                                    color: currentTheme.mainColor,
+                                }}>
+                                {event.type === "milestone"
+                                    ? event.name
+                                    : event.type}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.eventDate,
+                                    color: currentTheme.mainColor,
+                                }}>
+                                {new Date(event.date).toLocaleDateString()}
+                            </Text>
+                            <FontAwesome6
+                                name="pen"
+                                iconStyle="solid"
+                                style={{
+                                    ...styles.editIcon,
+                                    color: currentTheme.mainColor,
+                                }}
+                            />
+                        </View>
+                        <View style={styles.secondaryDataCt}>
+                            <Text
+                                style={{
+                                    ...styles.notificationText,
+                                    color: currentTheme.mainColor,
+                                }}>
+                                Notifications: yearly -{" "}
+                                {event.notifications.yearly ? "on" : "off"},
+                                every 100 days -{" "}
+                                {event.notifications.hundredDays ? "on" : "off"}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.showMainPageText,
+                                    color: currentTheme.mainColor,
+                                }}>
+                                Show on main page:{" "}
+                                {event.showOnMainPage ? "yes" : "no"}
+                            </Text>
+                            {/* {event.showOnMainPage && (
                             <Text
                                 style={{
                                     ...styles.orderText,
@@ -161,9 +108,43 @@ export default function Events() {
                                 }}>
                                 Order on main page: {event.order}
                             </Text>
-                        )}
+                        )} */}
+                        </View>
+                    </Pressable>
+                    <View
+                        style={{
+                            ...styles.orderControlCt,
+                            borderBottomColor: currentTheme.mainColor,
+                        }}>
+                        <Text
+                            style={{
+                                ...styles.orderControlLabel,
+                                color: currentTheme.mainColor,
+                            }}>
+                            Order
+                        </Text>
+                        <Pressable onPress={moveEventUp}>
+                            <FontAwesome6
+                                name="caret-up"
+                                iconStyle="solid"
+                                style={{
+                                    color: currentTheme.mainColor,
+                                    fontSize: 20,
+                                }}
+                            />
+                        </Pressable>
+                        <Pressable onPress={moveEventDown}>
+                            <FontAwesome6
+                                name="caret-down"
+                                iconStyle="solid"
+                                style={{
+                                    color: currentTheme.mainColor,
+                                    fontSize: 20,
+                                }}
+                            />
+                        </Pressable>
                     </View>
-                </Pressable>
+                </>
             ))}
             <Pressable
                 onPress={newEvent}
@@ -213,9 +194,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: 5,
     },
-    eventCt: {
-        borderBottomWidth: 1,
-    },
+    eventCt: {},
     eventName: {
         fontSize: 18,
         textTransform: "capitalize",
@@ -231,6 +210,16 @@ const styles = StyleSheet.create({
     notificationText: {},
     showMainPageText: {},
     orderText: {},
+    orderControlCt: {
+        padding: 5,
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        borderBottomWidth: 1,
+    },
+    orderControlLabel: {
+        fontWeight: "bold",
+    },
     newBtn: {
         flex: 1,
         flexDirection: "row",

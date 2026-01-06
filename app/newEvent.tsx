@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import EventForm from "./components/events/EventForm";
 import { useEvents } from "../context/EventContext";
 import { EventData } from "../types/EventTypes";
@@ -7,12 +7,17 @@ import { EventData } from "../types/EventTypes";
 export default function NewEvent() {
     const { events, saveEvents } = useEvents();
 
-    async function handleSave(eventData: EventData) {
-        const updatedEvents = [...events, eventData];
-        console.log(updatedEvents);
+    const handleSave = useCallback(
+        async (eventData: EventData) => {
+            console.log(`Saving event: ${eventData}`);
+            console.log(`Saving date: ${eventData.date}`);
 
-        await saveEvents(updatedEvents);
-    }
+            const updatedEvents = [...events, eventData];
+
+            await saveEvents(updatedEvents);
+        },
+        [events, saveEvents]
+    );
 
     return (
         <EventForm
@@ -20,7 +25,7 @@ export default function NewEvent() {
                 id: 0,
                 date: new Date().getTime(),
                 notifications: { hundredDays: null, yearly: null, offset: 0 },
-                order: 0,
+                order: events.length,
                 type: "dating",
                 showOnMainPage: false,
             }}

@@ -3,6 +3,7 @@ import {
     ReactNode,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from "react";
 import { EventData } from "../types/EventTypes";
@@ -63,9 +64,12 @@ export const EventsProvider = ({ children }: EventsProviderProps) => {
         }
     }
 
+    const value = useMemo(
+        () => ({ events, isLoading, saveEvents }),
+        [events, isLoading, saveEvents]
+    );
+
     return (
-        <EventContext.Provider value={{ events, isLoading, saveEvents }}>
-            {children}
-        </EventContext.Provider>
+        <EventContext.Provider value={value}>{children}</EventContext.Provider>
     );
 };

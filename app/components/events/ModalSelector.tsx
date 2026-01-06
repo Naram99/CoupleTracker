@@ -26,17 +26,17 @@ export default function ModalSelector<T extends string>({
                     style={{
                         ...styles.inputLabel,
                         color: currentTheme.mainColor,
-                    }}
-                >
+                    }}>
                     Event Type
                 </Text>
-                <TouchableOpacity onPress={() => setVisible(true)}>
+                <TouchableOpacity
+                    onPress={() => setVisible(true)}
+                    style={styles.inputValueCt}>
                     <Text
                         style={{
                             ...styles.inputValue,
                             color: currentTheme.secondaryColor,
-                        }}
-                    >
+                        }}>
                         {options.find((o) => o.value === value)?.label ??
                             "Select event type"}
                     </Text>
@@ -49,22 +49,19 @@ export default function ModalSelector<T extends string>({
                         style={{
                             ...styles.modalCt,
                             backgroundColor: currentTheme.mainBackground,
-                        }}
-                    >
+                        }}>
                         {options.map((opt) => (
                             <TouchableOpacity
                                 key={opt.value}
                                 onPress={() => {
                                     onChange(opt.value);
                                     setVisible(false);
-                                }}
-                            >
+                                }}>
                                 <Text
                                     style={{
                                         ...styles.modalOption,
                                         color: currentTheme.mainColor,
-                                    }}
-                                >
+                                    }}>
                                     {opt.label}
                                 </Text>
                             </TouchableOpacity>
@@ -93,10 +90,15 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: 10,
     },
     inputLabel: {
+        padding: 10,
         fontWeight: "bold",
+    },
+    inputValueCt: {
+        paddingBlock: 10,
+        width: "50%",
+        alignItems: "center",
     },
     inputValue: {
         fontWeight: "bold",

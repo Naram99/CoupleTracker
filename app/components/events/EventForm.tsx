@@ -4,13 +4,11 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    View,
 } from "react-native";
 import React, {
     useCallback,
     useEffect,
     useLayoutEffect,
-    useMemo,
     useState,
 } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -60,6 +58,18 @@ export default function EventForm({
     const [date, setDate] = useState<number>(eventData.date);
     const [showDate, setShowDate] = useState(false);
 
+    const handleSubmit = useCallback(async () => {
+        console.log(date);
+
+        if (event.type === "milestone") {
+            await onSave({ ...event, name: name, date: date });
+        } else {
+            await onSave({ ...event, date: date } as EventData);
+        }
+
+        router.back();
+    }, [event, name, date, onSave, router]);
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title:
@@ -90,7 +100,7 @@ export default function EventForm({
                 </Pressable>
             ),
         });
-    }, [navigation, event.type, name, currentTheme.mainColor]);
+    }, [navigation, event.type, name, currentTheme.mainColor, handleSubmit]);
 
     useEffect(() => {
         if (eventData?.type === "milestone") setName(eventData?.name);
@@ -107,25 +117,16 @@ export default function EventForm({
         setDate(currentDate);
     }
 
-    async function handleSubmit() {
-        if (event.type === "milestone") {
-            console.log({ ...event, name: name, date: date });
-
-            await onSave({ ...event, name: name, date: date });
-        } else {
-            console.log({ ...event, date: date });
-            await onSave({ ...event, date: date } as EventData);
-        }
-
-        router.back();
-    }
-
     function toggleShowOnMainPage() {
         setEvent((prev) => ({ ...prev, showOnMainPage: !prev.showOnMainPage }));
     }
 
     return (
-        <ScrollView>
+        <ScrollView
+            style={{
+                ...styles.settingsCt,
+                backgroundColor: currentTheme.mainBackground,
+            }}>
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -151,7 +152,7 @@ export default function EventForm({
             />
             {showDate && (
                 <RNDateTimePicker
-                    value={date ? new Date(date) : new Date()}
+                    value={new Date(date)}
                     mode="date"
                     display="default"
                     onChange={onDateChange}
@@ -190,7 +191,6 @@ export default function EventForm({
                 onChangeValue={toggleShowOnMainPage}
                 value={event.showOnMainPage}
             />
-            {/* SHOW ON MAIN PAGE NEEDED */}
         </ScrollView>
     );
 }
@@ -200,5 +200,8 @@ const styles = StyleSheet.create({
         fontWeight: "medium",
         fontSize: 20,
         padding: 5,
+    },
+    settingsCt: {
+        flex: 1,
     },
 });
