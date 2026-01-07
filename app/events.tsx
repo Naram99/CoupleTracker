@@ -38,10 +38,21 @@ export default function Events() {
     );
 
     function moveEventUp(index: number) {
-        console.log(index);
+        const original = events[index - 1];
+        const updatedEvents = events.map((e, i) =>
+            i === index - 1 ? events[i + 1] : i === index ? original : e
+        );
+
+        saveEvents(updatedEvents);
     }
+
     function moveEventDown(index: number) {
-        console.log(index);
+        const original = events[index];
+        const updatedEvents = events.map((e, i) =>
+            i === index ? events[i + 1] : i === index + 1 ? original : e
+        );
+
+        saveEvents(updatedEvents);
     }
 
     return (
@@ -123,7 +134,7 @@ export default function Events() {
                         }}>
                         <Pressable
                             onPress={() => {
-                                moveEventUp(index);
+                                index !== 0 ? moveEventUp(index) : 0;
                             }}>
                             <FontAwesome6
                                 name="caret-up"
@@ -143,7 +154,9 @@ export default function Events() {
                         </Text>
                         <Pressable
                             onPress={() => {
-                                moveEventDown(index);
+                                index !== events.length - 1
+                                    ? moveEventDown(index)
+                                    : 0;
                             }}>
                             <FontAwesome6
                                 name="caret-down"

@@ -59,8 +59,6 @@ export default function EventForm({
     const [showDate, setShowDate] = useState(false);
 
     const handleSubmit = useCallback(async () => {
-        console.log(date);
-
         if (event.type === "milestone") {
             await onSave({ ...event, name: name, date: date });
         } else {
