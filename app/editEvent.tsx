@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useCallback } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import EventForm from "./components/events/EventForm";
@@ -33,7 +33,27 @@ export default function EditEvent() {
         [events, saveEvents]
     );
 
-    function deleteEvent() {}
+    function deleteDialog() {
+        Alert.alert(
+            "Delete",
+            "Are you sure you want to delete this event?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    onPress: () => deleteEvent(),
+                    style: "destructive",
+                },
+            ],
+            { cancelable: true }
+        );
+    }
+
+    function deleteEvent() {
+        const updatedEvents = events.filter((e, index) => index !== eventIndex);
+        saveEvents(updatedEvents);
+        router.back();
+    }
 
     return (
         <View
@@ -44,7 +64,7 @@ export default function EditEvent() {
             <EventForm eventData={events[eventIndex]} onSave={handleSubmit} />
             {eventId && (
                 <Pressable
-                    onPress={deleteEvent}
+                    onPress={deleteDialog}
                     style={{
                         ...styles.deleteBtn,
                         backgroundColor: currentTheme.mainColor,

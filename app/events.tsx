@@ -37,33 +37,34 @@ export default function Events() {
         [events, router]
     );
 
-    function moveEventUp() {}
-    function moveEventDown() {}
+    function moveEventUp(index: number) {
+        console.log(index);
+    }
+    function moveEventDown(index: number) {
+        console.log(index);
+    }
 
     return (
         <ScrollView
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             {events.map((event, index) => (
-                <>
+                <View style={styles.eventWrapper} key={event.id}>
                     <Pressable
                         key={event.date}
                         style={{
                             ...styles.eventCt,
                             borderBottomColor: currentTheme.mainColor,
                         }}
-                        onPress={() => editEvent(index)}
-                    >
+                        onPress={() => editEvent(index)}>
                         <View style={styles.mainDataCt}>
                             <Text
                                 style={{
                                     ...styles.eventName,
                                     color: currentTheme.mainColor,
-                                }}
-                            >
+                                }}>
                                 {event.type === "milestone"
                                     ? event.name
                                     : event.type}
@@ -72,8 +73,7 @@ export default function Events() {
                                 style={{
                                     ...styles.eventDate,
                                     color: currentTheme.mainColor,
-                                }}
-                            >
+                                }}>
                                 {new Date(event.date).toLocaleDateString()}
                             </Text>
                             <FontAwesome6
@@ -90,8 +90,7 @@ export default function Events() {
                                 style={{
                                     ...styles.notificationText,
                                     color: currentTheme.mainColor,
-                                }}
-                            >
+                                }}>
                                 Notifications: yearly -{" "}
                                 {event.notifications.yearly ? "on" : "off"},
                                 every 100 days -{" "}
@@ -101,8 +100,7 @@ export default function Events() {
                                 style={{
                                     ...styles.showMainPageText,
                                     color: currentTheme.mainColor,
-                                }}
-                            >
+                                }}>
                                 Show on main page:{" "}
                                 {event.showOnMainPage ? "yes" : "no"}
                             </Text>
@@ -120,16 +118,19 @@ export default function Events() {
                     <View
                         style={{
                             ...styles.orderControlCt,
+                            backgroundColor: currentTheme.secondaryBackground,
                             borderBottomColor: currentTheme.mainColor,
-                        }}
-                    >
-                        <Pressable onPress={moveEventUp}>
+                        }}>
+                        <Pressable
+                            onPress={() => {
+                                moveEventUp(index);
+                            }}>
                             <FontAwesome6
                                 name="caret-up"
                                 iconStyle="solid"
                                 style={{
+                                    ...styles.orderIcon,
                                     color: currentTheme.mainColor,
-                                    fontSize: 20,
                                 }}
                             />
                         </Pressable>
@@ -137,30 +138,31 @@ export default function Events() {
                             style={{
                                 ...styles.orderControlLabel,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Order
                         </Text>
-                        <Pressable onPress={moveEventDown}>
+                        <Pressable
+                            onPress={() => {
+                                moveEventDown(index);
+                            }}>
                             <FontAwesome6
                                 name="caret-down"
                                 iconStyle="solid"
                                 style={{
+                                    ...styles.orderIcon,
                                     color: currentTheme.mainColor,
-                                    fontSize: 20,
                                 }}
                             />
                         </Pressable>
                     </View>
-                </>
+                </View>
             ))}
             <Pressable
                 onPress={newEvent}
                 style={{
                     ...styles.newBtn,
                     backgroundColor: currentTheme.mainColor,
-                }}
-            >
+                }}>
                 <FontAwesome6
                     name="plus"
                     iconStyle="solid"
@@ -173,8 +175,7 @@ export default function Events() {
                     style={{
                         ...styles.newBtnText,
                         color: currentTheme.mainBackground,
-                    }}
-                >
+                    }}>
                     Add new event
                 </Text>
             </Pressable>
@@ -204,6 +205,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: 5,
     },
+    eventWrapper: {
+        flex: 1,
+    },
     eventCt: {},
     eventName: {
         fontSize: 18,
@@ -224,11 +228,15 @@ const styles = StyleSheet.create({
         padding: 5,
         flex: 1,
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         borderBottomWidth: 1,
     },
     orderControlLabel: {
         fontWeight: "bold",
+    },
+    orderIcon: {
+        fontSize: 20,
+        flex: 1,
     },
     newBtn: {
         flex: 1,

@@ -9,9 +9,6 @@ export default function NewEvent() {
 
     const handleSave = useCallback(
         async (eventData: EventData) => {
-            console.log(`Saving event: ${eventData}`);
-            console.log(`Saving date: ${eventData.date}`);
-
             const updatedEvents = [...events, eventData];
 
             await saveEvents(updatedEvents);
@@ -22,7 +19,7 @@ export default function NewEvent() {
     return (
         <EventForm
             eventData={{
-                id: 0,
+                id: new Date().getTime(),
                 date: new Date().getTime(),
                 notifications: { hundredDays: null, yearly: null, offset: 0 },
                 order: events.length,
