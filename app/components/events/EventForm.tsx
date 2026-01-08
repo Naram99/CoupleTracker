@@ -27,6 +27,7 @@ import HundredDaysNotifications from "./HundredDaysNotifications";
 import OffsetSelector from "./OffsetSelector";
 import SwitchInputField from "../settings/SwitchInputField";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -58,7 +59,11 @@ export default function EventForm({
     const [date, setDate] = useState<number>(eventData.date);
     const [showDate, setShowDate] = useState(false);
 
+    const [notificationsEnabled, setNotificationsEnabled] =
+        useState<boolean>(false);
+
     const handleSubmit = useCallback(async () => {
+        if (notificationsEnabled) scheduleNotifications();
         if (event.type === "milestone") {
             await onSave({ ...event, name: name, date: date });
         } else {
@@ -84,7 +89,8 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -102,6 +108,19 @@ export default function EventForm({
 
     useEffect(() => {
         if (eventData?.type === "milestone") setName(eventData?.name);
+
+        async function getNotificationEnabled() {
+            try {
+                setNotificationsEnabled(
+                    (await AsyncStorage.getItem("notificationEnabled")) ===
+                        "true"
+                );
+            } catch (error) {
+                setNotificationsEnabled(false);
+            }
+        }
+
+        getNotificationEnabled();
     }, []);
 
     function openDate() {
@@ -119,12 +138,15 @@ export default function EventForm({
         setEvent((prev) => ({ ...prev, showOnMainPage: !prev.showOnMainPage }));
     }
 
+    function scheduleNotifications() {}
+
     return (
         <ScrollView
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
