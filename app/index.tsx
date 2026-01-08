@@ -19,6 +19,8 @@ import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import ProgressBar from "./components/home/ProgressBar";
 import Tutorial from "./components/tutorial/Tutorial";
 import { useTutorial } from "../context/TutorialContext";
+import { useEvents } from "../context/EventContext";
+import EventsDisplay from "./components/home/EventsDisplay";
 
 type YMDDifference = {
     years: number;
@@ -31,6 +33,8 @@ export default function Home() {
     const currentTheme = colors[theme];
 
     const { tutorial } = useTutorial();
+
+    const { events } = useEvents();
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -319,7 +323,7 @@ export default function Home() {
                                 </Text>
                             </Pressable>
                         </View>
-                        <Pressable onPress={toggleDateDiff}>
+                        {/* <Pressable onPress={toggleDateDiff}>
                             <View style={styles.dateDiffCt}>
                                 <Text
                                     style={{
@@ -336,7 +340,8 @@ export default function Home() {
                             selectedDate={date ? new Date(date) : new Date()}
                             dayDiff={dayDiff}
                             yearDiff={YMDDiff.years}
-                        />
+                        /> */}
+                        <EventsDisplay eventsData={events} />
                     </View>
                     {imgPopupOpen && imgPopupSrc && (
                         <Pressable
@@ -409,15 +414,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         width: "100%",
-        marginTop: "25%",
+        marginTop: "70%",
         zIndex: 3,
     },
     personCt: {
         gap: 10,
-    },
-    heartCt: {
-        height: "100%",
-        justifyContent: "center",
     },
     dateDiffCt: {
         width: "100%",

@@ -3,17 +3,19 @@ import React, { useState } from "react";
 import Event from "./Event";
 import { EventData } from "../../../types/EventTypes";
 
-export default function EventsDisplay(eventsData: EventData[]) {
+export default function EventsDisplay({
+    eventsData,
+}: {
+    eventsData: EventData[];
+}) {
     return (
         <ScrollView
             style={styles.eventsCt}
-            contentContainerStyle={styles.events}
-        >
+            contentContainerStyle={styles.events}>
             {eventsData
-                .sort((a, b) => a.order - b.order)
                 .filter((e) => e.showOnMainPage)
                 .map((event) => (
-                    <Event eventData={event} />
+                    <Event eventData={event} key={event.id} />
                 ))}
         </ScrollView>
     );

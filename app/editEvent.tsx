@@ -21,9 +21,6 @@ export default function EditEvent() {
 
     const handleSubmit = useCallback(
         async (event: EventData) => {
-            console.log("Saving event:", event);
-            console.log(`Saving date: ${event.date}`);
-
             const updatedEvents = events.map((e, index) =>
                 index === eventIndex ? event : e
             );

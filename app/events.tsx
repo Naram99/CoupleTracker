@@ -1,23 +1,18 @@
 import { StyleSheet, Text, ScrollView, Pressable, View } from "react-native";
-import React, { useCallback, useState } from "react";
-import { EventData } from "../types/EventTypes";
+import React, { useCallback } from "react";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import { useRouter } from "expo-router";
-import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { useEvents } from "../context/EventContext";
 
 export default function Events() {
     const router = useRouter();
-    const navigation = useNavigation();
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
     const { events, saveEvents } = useEvents();
-
-    async function setNotifications() {}
 
     function newEvent() {
         router.push({
@@ -115,15 +110,6 @@ export default function Events() {
                                 Show on main page:{" "}
                                 {event.showOnMainPage ? "yes" : "no"}
                             </Text>
-                            {/* {event.showOnMainPage && (
-                            <Text
-                                style={{
-                                    ...styles.orderText,
-                                    color: currentTheme.mainColor,
-                                }}>
-                                Order on main page: {event.order}
-                            </Text>
-                        )} */}
                         </View>
                     </Pressable>
                     <View
