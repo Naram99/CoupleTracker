@@ -5,13 +5,16 @@ import colors from "../constants/colors";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { TutorialProvider } from "../context/TutorialContext";
 import { EventsProvider } from "../context/EventContext";
+import { NotificationsProvider } from "../context/NotificationsContext";
 
 const RootLayout = () => {
     return (
         <ThemeProvider>
             <TutorialProvider>
                 <EventsProvider>
-                    <AppContent />
+                    <NotificationsProvider>
+                        <AppContent />
+                    </NotificationsProvider>
                 </EventsProvider>
             </TutorialProvider>
         </ThemeProvider>
