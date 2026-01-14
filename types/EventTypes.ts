@@ -22,5 +22,9 @@ type MilestoneEvent = DefaultData & {
 export type EventNotifications = {
     yearly: string | null;
     hundredDays: string | null;
-    offset: number;
+    offset: {
+        day: number; // Number of days before the event
+        hour: number; // When to trigger the notification on the given day
+        minute: number;
+    };
 };

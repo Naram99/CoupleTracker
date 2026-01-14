@@ -21,7 +21,11 @@ export default function NewEvent() {
             eventData={{
                 id: new Date().getTime(),
                 date: new Date().getTime(),
-                notifications: { hundredDays: null, yearly: null, offset: 0 },
+                notifications: {
+                    hundredDays: null,
+                    yearly: null,
+                    offset: { day: 0, hour: 9, minute: 0 },
+                },
                 order: events.length,
                 type: "dating",
                 showOnMainPage: false,

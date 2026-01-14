@@ -28,6 +28,7 @@ import OffsetSelector from "./OffsetSelector";
 import SwitchInputField from "../settings/SwitchInputField";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNotifications } from "../../../context/NotificationsContext";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -52,6 +53,9 @@ export default function EventForm({
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
+    const { notificationsEnabled, saveNotificationsEnabled } =
+        useNotifications();
+
     const [event, setEvent] =
         useState<Omit<EventData, "name" | "date">>(eventData);
     const [name, setName] = useState("");
@@ -59,8 +63,8 @@ export default function EventForm({
     const [date, setDate] = useState<number>(eventData.date);
     const [showDate, setShowDate] = useState(false);
 
-    const [notificationsEnabled, setNotificationsEnabled] =
-        useState<boolean>(false);
+    const [notificationEnabled, setNotificationEnabled] =
+        useState<boolean>(notificationsEnabled);
 
     const handleSubmit = useCallback(async () => {
         if (notificationsEnabled) scheduleNotifications();
@@ -89,8 +93,7 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -108,20 +111,11 @@ export default function EventForm({
 
     useEffect(() => {
         if (eventData?.type === "milestone") setName(eventData?.name);
-
-        async function getNotificationEnabled() {
-            try {
-                setNotificationsEnabled(
-                    (await AsyncStorage.getItem("notificationEnabled")) ===
-                        "true"
-                );
-            } catch (error) {
-                setNotificationsEnabled(false);
-            }
-        }
-
-        getNotificationEnabled();
     }, []);
+
+    useEffect(() => {
+        setNotificationEnabled(notificationsEnabled);
+    }, [notificationsEnabled]);
 
     function openDate() {
         setShowDate(true);
@@ -145,8 +139,7 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}

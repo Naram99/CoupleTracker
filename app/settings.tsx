@@ -1,24 +1,13 @@
-import {
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNDateTimePicker, {
-    DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
 import ImagePickerField from "./components/settings/ImagePickerField";
 import SettingsInputField from "./components/settings/SettingsInputField";
-import DatePickerField from "./components/settings/DatePickerField";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import NotificationsSwitch from "./components/settings/NotificationsSwitch";
 import { useTutorial } from "../context/TutorialContext";
