@@ -138,9 +138,15 @@ export default function Settings() {
         await setUserImageToStorage();
         await setPartnerImageToStorage();
         await setCoverImageToStorage();
+
+        // If notifications were not allowed, we schedule them.
+        if (isNotificationEnabled && !notificationsEnabled)
+            await scheduleEventsNotifications();
         await saveNotificationsEnabled(isNotificationEnabled);
         router.replace("/");
     }
+
+    async function scheduleEventsNotifications() {}
 
     async function pickImage(imgType: string) {
         const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
