@@ -5,7 +5,7 @@ import { ColorScheme } from "../../../constants/colors";
 interface SwitchInputFieldProps {
     label: string;
     value: boolean;
-    onChangeValue: () => void;
+    onChangeValue: (value: boolean) => void;
     theme: ColorScheme;
 }
 
@@ -21,7 +21,7 @@ const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
         </Text>
         <Switch
             trackColor={{ true: theme.mainColor, false: theme.secondaryColor }}
-            thumbColor={value ? theme.mainColor : theme.secondaryColor} // TODO: Switched off colors
+            thumbColor={value ? theme.mainColor : theme.secondaryColor}
             onValueChange={onChangeValue}
             value={value}
         />

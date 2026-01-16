@@ -1,8 +1,9 @@
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import React, { useEffect } from "react";
 import SwitchInputField from "../settings/SwitchInputField";
 import { ColorScheme } from "../../../constants/colors";
 import * as Notifications from "expo-notifications";
+import * as Linking from "expo-linking";
 
 const YearlyNotifications = ({
     enabled,
@@ -45,23 +46,41 @@ const YearlyNotifications = ({
         if (!enabled) Notifications.cancelAllScheduledNotificationsAsync();
     }, [user, partner, date, enabled]);
 
-    async function setupAllAlerts() {
-        const needed = await checkIfNotificationsAreScheduled();
-
-        if (needed.days) {
-            const next100days = calcNext100Days(date);
-            const next100daysDate = new Date(
-                date.getTime() + next100days * 1000 * 60 * 60 * 24
-            );
-            // console.log(next100days, next100daysDate.toDateString())
-            await setupAlert(
-                user,
-                partner,
-                next100daysDate,
-                next100days,
-                "days"
+    async function checkNotifications(value: boolean) {
+        const status = await Notifications.requestPermissionsAsync();
+        if (value && !status.granted) {
+            Alert.alert(
+                "Notifications are not allowed",
+                "In order to receive notifications, please allow them in the system settings.",
+                [
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                    },
+                    {
+                        text: "Open settings",
+                        style: "default",
+                        onPress: () => Linking.openSettings(),
+                    },
+                ]
             );
         }
+        if (value && status.granted) {
+            Notifications.setNotificationHandler({
+                handleNotification: async () => ({
+                    shouldPlaySound: true,
+                    shouldSetBadge: true,
+                    shouldShowBanner: true,
+                    shouldShowList: true,
+                }),
+            });
+        }
+
+        onChange(value ? "awaiting" : null);
+    }
+
+    async function setupAllAlerts() {
+        const needed = await checkIfNotificationsAreScheduled();
 
         if (needed.years) {
             const nextYear = calcNextYear(date);
@@ -116,13 +135,6 @@ const YearlyNotifications = ({
         return needed;
     }
 
-    function calcNext100Days(date: Date): number {
-        const currDays = Math.floor(
-            (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-        );
-        return (Math.floor(currDays / 100) + 1) * 100;
-    }
-
     function calcNextYear(date: Date): number {
         const currYear = new Date().getFullYear();
         const givenYear = date.getFullYear();
@@ -137,9 +149,9 @@ const YearlyNotifications = ({
 
     return (
         <SwitchInputField
-            label="Enable notifications:"
+            label="Yearly"
             value={enabled}
-            onChangeValue={onChange}
+            onChangeValue={checkNotifications}
             theme={theme}
         />
     );
