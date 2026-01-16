@@ -93,7 +93,8 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -139,7 +140,8 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -197,7 +199,7 @@ export default function EventForm({
                     });
                 }}
             /> */}
-            <OffsetSelector />
+            <OffsetSelector days={eventData.notifications.offset.day} />
             <SwitchInputField
                 label="Show event on main page"
                 theme={currentTheme}
