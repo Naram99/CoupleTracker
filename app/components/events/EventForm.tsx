@@ -12,7 +12,11 @@ import React, {
     useState,
 } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { EventData, EventTypes } from "../../../types/EventTypes";
+import {
+    EventData,
+    EventTypes,
+    NotificationOffset,
+} from "../../../types/EventTypes";
 import ModalSelector from "./ModalSelector";
 import SettingsInputField from "../settings/SettingsInputField";
 import { useTheme } from "../../../context/ThemeContext";
@@ -133,6 +137,13 @@ export default function EventForm({
         setEvent((prev) => ({ ...prev, showOnMainPage: !prev.showOnMainPage }));
     }
 
+    function updateOffset(value: NotificationOffset) {
+        setEvent((prev) => ({
+            ...prev,
+            notifications: { ...prev.notifications, offset: value },
+        }));
+    }
+
     function scheduleNotifications() {}
 
     return (
@@ -199,7 +210,11 @@ export default function EventForm({
                     });
                 }}
             /> */}
-            <OffsetSelector days={eventData.notifications.offset.day} />
+            <OffsetSelector
+                days={eventData.notifications.offset.day}
+                onChange={updateOffset}
+                theme={currentTheme}
+            />
             <SwitchInputField
                 label="Show event on main page"
                 theme={currentTheme}
