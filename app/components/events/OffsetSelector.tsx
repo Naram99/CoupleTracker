@@ -3,14 +3,16 @@ import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { ColorScheme } from "../../../constants/colors";
 import { NotificationOffset } from "../../../types/EventTypes";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
+import RNDateTimePicker, {
+    DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 
 export default function OffsetSelector({
-    days,
+    currentOffset,
     onChange,
     theme,
 }: {
-    days: number;
+    currentOffset: NotificationOffset;
     onChange: (value: NotificationOffset) => void;
     theme: ColorScheme;
 }) {
@@ -27,13 +29,30 @@ export default function OffsetSelector({
         setTimeOpen(true);
     }
 
+    function dayChange(value: number) {
+        onChange({ ...currentOffset, day: value });
+    }
+
+    function timeChange(e: DateTimePickerEvent, selectedTime?: Date) {
+        if (e.type === "set") {
+            const hour = selectedTime?.getHours() || currentOffset.hour;
+            const minute = selectedTime?.getMinutes() || currentOffset.minute;
+            onChange({
+                ...currentOffset,
+                hour: hour,
+                minute: minute,
+            });
+        }
+    }
+
     return (
         <View style={styles.offsetCt}>
             <Text style={{ ...styles.offsetLabel, color: theme.mainColor }}>
                 The notification(s) will be sent
             </Text>
             <Picker
-                selectedValue={days}
+                selectedValue={currentOffset.day}
+                onValueChange={dayChange}
                 dropdownIconColor={theme.mainColor}
                 style={{ color: theme.mainColor }}
             >
@@ -46,7 +65,13 @@ export default function OffsetSelector({
                 at
             </Text>
             {/* TODO: Open button */}
-            {timeOpen && <RNDateTimePicker mode="time" value={new Date()} />}
+            {timeOpen && (
+                <RNDateTimePicker
+                    mode="time"
+                    value={new Date()}
+                    onChange={timeChange}
+                />
+            )}
         </View>
     );
 }

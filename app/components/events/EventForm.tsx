@@ -211,7 +211,7 @@ export default function EventForm({
                 }}
             /> */}
             <OffsetSelector
-                days={eventData.notifications.offset.day}
+                currentOffset={eventData.notifications.offset}
                 onChange={updateOffset}
                 theme={currentTheme}
             />
