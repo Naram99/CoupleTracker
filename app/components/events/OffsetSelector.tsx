@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { ColorScheme } from "../../../constants/colors";
@@ -6,6 +6,7 @@ import { NotificationOffset } from "../../../types/EventTypes";
 import RNDateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import TimePickerField from "./TimePickerField";
 
 export default function OffsetSelector({
     currentOffset,
@@ -43,6 +44,8 @@ export default function OffsetSelector({
                 minute: minute,
             });
         }
+
+        setTimeOpen(Platform.OS === "ios");
     }
 
     return (
@@ -61,10 +64,16 @@ export default function OffsetSelector({
                 ))}
             </Picker>
 
-            <Text style={{ ...styles.offsetLabel, color: theme.mainColor }}>
-                at
-            </Text>
             {/* TODO: Open button */}
+            <TimePickerField
+                label="at"
+                date={new Date(0).setHours(
+                    currentOffset.hour,
+                    currentOffset.minute,
+                )}
+                onOpen={openTime}
+                theme={theme}
+            />
             {timeOpen && (
                 <RNDateTimePicker
                     mode="time"

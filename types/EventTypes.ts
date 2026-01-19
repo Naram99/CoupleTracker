@@ -20,8 +20,10 @@ type MilestoneEvent = DefaultData & {
 };
 
 export type EventNotifications = {
-    yearly: string | null;
-    hundredDays: string | null;
+    yearlyExact: string | null;
+    yearlyOffset: string | null;
+    hundredDaysExact: string | null;
+    hundredDaysOffset: string | null;
     offset: NotificationOffset;
 };
 
