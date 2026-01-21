@@ -21,6 +21,7 @@ import Tutorial from "./components/tutorial/Tutorial";
 import { useTutorial } from "../context/TutorialContext";
 import { useEvents } from "../context/EventContext";
 import EventsDisplay from "./components/home/EventsDisplay";
+import { validateImageUri } from "../utils/imageStorage";
 
 type YMDDifference = {
     years: number;
@@ -43,6 +44,10 @@ export default function Home() {
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
     const [coverImage, setCoverImage] = useState<string | null>(null);
+
+    const [userImageError, setUserImageError] = useState(false);
+    const [partnerImageError, setPartnerImageError] = useState(false);
+    const [coverImageError, setCoverImageError] = useState(false);
 
     const [dateToggle, setDateToggle] = useState(0);
     const [dayDiff, setDayDiff] = useState(0);
@@ -82,6 +87,55 @@ export default function Home() {
         }
     };
 
+    // Image loading functions (extracted for reuse)
+    async function getUserImageFromStorage() {
+        try {
+            const storedUri = await AsyncStorage.getItem("userImage");
+            const validatedUri = await validateImageUri(storedUri);
+            setUserImage(validatedUri);
+            setUserImageError(!validatedUri);
+            // If validation failed, clear the invalid URI from storage
+            if (storedUri && !validatedUri) {
+                await AsyncStorage.removeItem("userImage");
+            }
+        } catch {
+            setUserImage(null);
+            setUserImageError(true);
+        }
+    }
+
+    async function getPartnerImageFromStorage() {
+        try {
+            const storedUri = await AsyncStorage.getItem("partnerImage");
+            const validatedUri = await validateImageUri(storedUri);
+            setPartnerImage(validatedUri);
+            setPartnerImageError(!validatedUri);
+            // If validation failed, clear the invalid URI from storage
+            if (storedUri && !validatedUri) {
+                await AsyncStorage.removeItem("partnerImage");
+            }
+        } catch {
+            setPartnerImage(null);
+            setPartnerImageError(true);
+        }
+    }
+
+    async function getCoverImageFromStorage() {
+        try {
+            const storedUri = await AsyncStorage.getItem("coverImage");
+            const validatedUri = await validateImageUri(storedUri);
+            setCoverImage(validatedUri);
+            setCoverImageError(!validatedUri);
+            // If validation failed, clear the invalid URI from storage
+            if (storedUri && !validatedUri) {
+                await AsyncStorage.removeItem("coverImage");
+            }
+        } catch {
+            setCoverImage(null);
+            setCoverImageError(true);
+        }
+    }
+
     // Async storage data loading
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -108,30 +162,6 @@ export default function Home() {
                 setDate(parseInt(storedDate));
             } catch {
                 setDate(null);
-            }
-        }
-
-        async function getUserImageFromStorage() {
-            try {
-                setUserImage(await AsyncStorage.getItem("userImage"));
-            } catch {
-                setUserImage(null);
-            }
-        }
-
-        async function getPartnerImageFromStorage() {
-            try {
-                setPartnerImage(await AsyncStorage.getItem("partnerImage"));
-            } catch {
-                setPartnerImage(null);
-            }
-        }
-
-        async function getCoverImageFromStorage() {
-            try {
-                setCoverImage(await AsyncStorage.getItem("coverImage"));
-            } catch {
-                setCoverImage(null);
             }
         }
 
@@ -182,6 +212,10 @@ export default function Home() {
     useFocusEffect(
         React.useCallback(() => {
             updateDateDifferences();
+            // Re-validate images when screen comes into focus
+            getUserImageFromStorage();
+            getPartnerImageFromStorage();
+            getCoverImageFromStorage();
         }, [date])
     );
 
@@ -261,9 +295,13 @@ export default function Home() {
                         <View style={styles.coverImgCt}>
                             <Image
                                 source={{
-                                    uri: coverImage ?? "../assets/avatar.jpg",
+                                    uri:
+                                        coverImage && !coverImageError
+                                            ? coverImage
+                                            : "../assets/avatar.jpg",
                                 }}
                                 style={styles.coverImg}
+                                onError={() => setCoverImageError(true)}
                             />
                             <LinearGradient
                                 colors={[
@@ -283,13 +321,16 @@ export default function Home() {
                                 <Image
                                     source={{
                                         uri:
-                                            userImage ?? "../assets/avatar.jpg",
+                                            userImage && !userImageError
+                                                ? userImage
+                                                : "../assets/avatar.jpg",
                                     }}
                                     style={{
                                         ...styles.avatar,
                                         borderColor:
                                             currentTheme.secondaryColor,
                                     }}
+                                    onError={() => setUserImageError(true)}
                                 />
                                 <Text
                                     style={{
@@ -305,14 +346,16 @@ export default function Home() {
                                 <Image
                                     source={{
                                         uri:
-                                            partnerImage ??
-                                            "../assets/avatar.jpg",
+                                            partnerImage && !partnerImageError
+                                                ? partnerImage
+                                                : "../assets/avatar.jpg",
                                     }}
                                     style={{
                                         ...styles.avatar,
                                         borderColor:
                                             currentTheme.secondaryColor,
                                     }}
+                                    onError={() => setPartnerImageError(true)}
                                 />
                                 <Text
                                     style={{
@@ -350,6 +393,10 @@ export default function Home() {
                             <Image
                                 style={styles.imgPopup}
                                 source={{ uri: imgPopupSrc }}
+                                onError={() => {
+                                    hidePicture();
+                                    alert("Failed to load image");
+                                }}
                             />
                         </Pressable>
                     )}

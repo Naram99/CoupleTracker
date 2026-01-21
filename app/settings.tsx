@@ -13,6 +13,11 @@ import NotificationsSwitch from "./components/settings/NotificationsSwitch";
 import { useTutorial } from "../context/TutorialContext";
 import SettingsTutorial from "./components/tutorial/SettingsTutorial";
 import { useNotifications } from "../context/NotificationsContext";
+import {
+    saveImageToPermanentStorage,
+    validateImageUri,
+    type ImageType,
+} from "../utils/imageStorage";
 
 export default function Settings() {
     const router = useRouter();
@@ -78,7 +83,13 @@ export default function Settings() {
 
         async function getUserImageFromStorage() {
             try {
-                setUserImage(await AsyncStorage.getItem("userImage"));
+                const storedUri = await AsyncStorage.getItem("userImage");
+                const validatedUri = await validateImageUri(storedUri);
+                setUserImage(validatedUri);
+                // If validation failed, clear the invalid URI from storage
+                if (storedUri && !validatedUri) {
+                    await AsyncStorage.removeItem("userImage");
+                }
             } catch {
                 setUserImage(null);
             }
@@ -86,7 +97,13 @@ export default function Settings() {
 
         async function getPartnerImageFromStorage() {
             try {
-                setPartnerImage(await AsyncStorage.getItem("partnerImage"));
+                const storedUri = await AsyncStorage.getItem("partnerImage");
+                const validatedUri = await validateImageUri(storedUri);
+                setPartnerImage(validatedUri);
+                // If validation failed, clear the invalid URI from storage
+                if (storedUri && !validatedUri) {
+                    await AsyncStorage.removeItem("partnerImage");
+                }
             } catch {
                 setPartnerImage(null);
             }
@@ -94,7 +111,13 @@ export default function Settings() {
 
         async function getCoverImageFromStorage() {
             try {
-                setCoverImage(await AsyncStorage.getItem("coverImage"));
+                const storedUri = await AsyncStorage.getItem("coverImage");
+                const validatedUri = await validateImageUri(storedUri);
+                setCoverImage(validatedUri);
+                // If validation failed, clear the invalid URI from storage
+                if (storedUri && !validatedUri) {
+                    await AsyncStorage.removeItem("coverImage");
+                }
             } catch {
                 setCoverImage(null);
             }
@@ -167,9 +190,32 @@ export default function Settings() {
         });
 
         if (!result.canceled && result.assets && result.assets.length > 0) {
-            if (imgType === "User") setUserImage(result.assets[0].uri);
-            if (imgType === "Partner") setPartnerImage(result.assets[0].uri);
-            if (imgType === "Cover") setCoverImage(result.assets[0].uri);
+            try {
+                const sourceUri = result.assets[0].uri;
+                // Map imgType string to ImageType
+                const imageTypeMap: Record<string, ImageType> = {
+                    User: "user",
+                    Partner: "partner",
+                    Cover: "cover",
+                };
+                const imageType = imageTypeMap[imgType];
+
+                if (imageType) {
+                    // Save to permanent storage (this also deletes old image)
+                    const permanentUri = await saveImageToPermanentStorage(
+                        sourceUri,
+                        imageType
+                    );
+
+                    // Update state with permanent URI
+                    if (imgType === "User") setUserImage(permanentUri);
+                    if (imgType === "Partner") setPartnerImage(permanentUri);
+                    if (imgType === "Cover") setCoverImage(permanentUri);
+                }
+            } catch (error) {
+                console.error("Error saving image:", error);
+                alert("Failed to save image. Please try again.");
+            }
         }
     }
 
