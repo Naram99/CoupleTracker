@@ -41,7 +41,7 @@ const HundredDaysNotifications = ({
                         style: "default",
                         onPress: () => Linking.openSettings(),
                     },
-                ]
+                ],
             );
         }
         if (value && status.granted) {
@@ -64,7 +64,7 @@ const HundredDaysNotifications = ({
         if (needed.days) {
             const next100days = calcNext100Days(date);
             const next100daysDate = new Date(
-                date.getTime() + next100days * 1000 * 60 * 60 * 24
+                date.getTime() + next100days * 1000 * 60 * 60 * 24,
             );
             // console.log(next100days, next100daysDate.toDateString())
             await setupAlert(
@@ -72,7 +72,7 @@ const HundredDaysNotifications = ({
                 partner,
                 next100daysDate,
                 next100days,
-                "days"
+                "days",
             );
         }
     }
@@ -83,7 +83,7 @@ const HundredDaysNotifications = ({
         partner: string | null,
         triggerDate: Date,
         elapsed: number,
-        timeType: "year" | "days"
+        timeType: "year" | "days",
     ) {
         triggerDate.setHours(9, 0, 0, 0);
 
@@ -120,7 +120,7 @@ const HundredDaysNotifications = ({
 
     function calcNext100Days(date: Date): number {
         const currDays = Math.floor(
-            (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+            (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
         );
         return (Math.floor(currDays / 100) + 1) * 100;
     }
