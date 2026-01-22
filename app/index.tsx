@@ -16,7 +16,6 @@ import colors from "../constants/colors";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
-import ProgressBar from "./components/home/ProgressBar";
 import Tutorial from "./components/tutorial/Tutorial";
 import { useTutorial } from "../context/TutorialContext";
 import { useEvents } from "../context/EventContext";
@@ -74,15 +73,15 @@ export default function Home() {
                     (Date.UTC(
                         new Date().getFullYear(),
                         new Date().getMonth(),
-                        new Date().getDate()
+                        new Date().getDate(),
                     ) -
                         Date.UTC(
                             new Date(date).getFullYear(),
                             new Date(date).getMonth(),
-                            new Date(date).getDate()
+                            new Date(date).getDate(),
                         )) /
-                        (1000 * 60 * 60 * 24)
-                )
+                        (1000 * 60 * 60 * 24),
+                ),
             );
         }
     };
@@ -200,7 +199,7 @@ export default function Home() {
 
         const subscription = AppState.addEventListener(
             "change",
-            handleAppStateChange
+            handleAppStateChange,
         );
 
         return () => {
@@ -216,7 +215,7 @@ export default function Home() {
             getUserImageFromStorage();
             getPartnerImageFromStorage();
             getCoverImageFromStorage();
-        }, [date])
+        }, [date]),
     );
 
     function toggleDateDiff() {
@@ -236,7 +235,7 @@ export default function Home() {
             const prevMonth = new Date(
                 toDate.getFullYear(),
                 toDate.getMonth(),
-                0
+                0,
             );
             days += prevMonth.getDate();
         }
@@ -366,24 +365,6 @@ export default function Home() {
                                 </Text>
                             </Pressable>
                         </View>
-                        {/* <Pressable onPress={toggleDateDiff}>
-                            <View style={styles.dateDiffCt}>
-                                <Text
-                                    style={{
-                                        ...styles.dateDiffText,
-                                        color: currentTheme.mainColor,
-                                    }}>
-                                    {dateToggle === 0
-                                        ? `${dayDiff} days`
-                                        : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
-                                </Text>
-                            </View>
-                        </Pressable>
-                        <ProgressBar
-                            selectedDate={date ? new Date(date) : new Date()}
-                            dayDiff={dayDiff}
-                            yearDiff={YMDDiff.years}
-                        /> */}
                         <EventsDisplay eventsData={events} />
                     </View>
                     {imgPopupOpen && imgPopupSrc && (

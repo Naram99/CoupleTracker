@@ -1,4 +1,4 @@
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 
 export type ImageType = "user" | "partner" | "cover";
 
@@ -51,7 +51,7 @@ export async function deleteImage(imageType: ImageType): Promise<void> {
  */
 export async function saveImageToPermanentStorage(
     sourceUri: string,
-    imageType: ImageType
+    imageType: ImageType,
 ): Promise<string> {
     try {
         // Delete old image first
@@ -77,7 +77,9 @@ export async function saveImageToPermanentStorage(
  * Validate if a stored URI is still accessible
  * Handles both old temporary URIs and new permanent paths
  */
-export async function validateImageUri(uri: string | null): Promise<string | null> {
+export async function validateImageUri(
+    uri: string | null,
+): Promise<string | null> {
     if (!uri) {
         return null;
     }
@@ -97,7 +99,9 @@ export async function validateImageUri(uri: string | null): Promise<string | nul
 /**
  * Get the permanent URI for an image type, or null if it doesn't exist
  */
-export async function getImageUri(imageType: ImageType): Promise<string | null> {
+export async function getImageUri(
+    imageType: ImageType,
+): Promise<string | null> {
     const imagePath = getImagePath(imageType);
     const exists = await imageExists(imagePath);
     return exists ? imagePath : null;
@@ -109,7 +113,7 @@ export async function getImageUri(imageType: ImageType): Promise<string | null> 
  */
 export async function migrateImageUri(
     oldUri: string | null,
-    imageType: ImageType
+    imageType: ImageType,
 ): Promise<string | null> {
     if (!oldUri) {
         return null;

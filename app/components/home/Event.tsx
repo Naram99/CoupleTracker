@@ -8,9 +8,14 @@ import {
     calculateYMDDiff,
     YMDDifference,
 } from "../../../hooks/dateCalculations";
+import { useTheme } from "../../../context/ThemeContext";
+import colors from "../../../constants/colors";
 
 export default function Event({ eventData }: { eventData: EventData }) {
     const now = useCurrentTime(60_000);
+
+    const { theme } = useTheme();
+    const currentTheme = colors[theme];
 
     const [dateToggle, setDateToggle] = useState(0);
     const [dayDiff, setDayDiff] = useState(0);
@@ -40,14 +45,19 @@ export default function Event({ eventData }: { eventData: EventData }) {
         <View style={styles.eventCt}>
             <Pressable onPress={toggleDateDiff}>
                 <View style={styles.dateDiffCt}>
-                    <Text style={styles.dateDiffText}>
+                    <Text
+                        style={{
+                            ...styles.dateDiffText,
+                            color: currentTheme.mainColor,
+                        }}>
                         {dateToggle === 0
                             ? `${dayDiff} days`
                             : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
                     </Text>
                 </View>
             </Pressable>
-            <Text>
+            <Text
+                style={{ ...styles.sinceText, color: currentTheme.mainColor }}>
                 since{" "}
                 {eventData.type === "milestone"
                     ? eventData.name
@@ -77,5 +87,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight: "bold",
         fontSize: 20,
+    },
+    sinceText: {
+        width: "100%",
+        textAlign: "center",
     },
 });
