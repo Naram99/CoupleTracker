@@ -1,5 +1,5 @@
-import { Alert, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import { Alert } from "react-native";
+import React from "react";
 import SwitchInputField from "../settings/SwitchInputField";
 import { ColorScheme } from "../../../constants/colors";
 import * as Notifications from "expo-notifications";
@@ -20,11 +20,6 @@ const HundredDaysNotifications = ({
     date: Date;
     theme: ColorScheme;
 }) => {
-    useEffect(() => {
-        if (enabled) setupAllAlerts();
-        if (!enabled) Notifications.cancelAllScheduledNotificationsAsync();
-    }, [user, partner, date, enabled]);
-
     async function checkNotifications(value: boolean) {
         const status = await Notifications.requestPermissionsAsync();
         if (value && !status.granted) {
@@ -58,53 +53,6 @@ const HundredDaysNotifications = ({
         onChange(value ? "awaiting" : null);
     }
 
-    async function setupAllAlerts() {
-        const needed = await checkIfNotificationsAreScheduled();
-
-        if (needed.days) {
-            const next100days = calcNext100Days(date);
-            const next100daysDate = new Date(
-                date.getTime() + next100days * 1000 * 60 * 60 * 24,
-            );
-            // console.log(next100days, next100daysDate.toDateString())
-            await setupAlert(
-                user,
-                partner,
-                next100daysDate,
-                next100days,
-                "days",
-            );
-        }
-    }
-
-    // TODO: no alert when data is missing
-    async function setupAlert(
-        user: string | null,
-        partner: string | null,
-        triggerDate: Date,
-        elapsed: number,
-        timeType: "year" | "days",
-    ) {
-        triggerDate.setHours(9, 0, 0, 0);
-
-        if (elapsed > 1 && timeType === "year") timeType += "s";
-
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: `${elapsed} ${timeType}!`,
-                body: `Hey ${
-                    user ?? "{user}"
-                }, celebrate your ${elapsed} ${timeType} together with ${
-                    partner ?? "{partner}"
-                }!`,
-            },
-            trigger: {
-                date: triggerDate,
-                type: Notifications.SchedulableTriggerInputTypes.DATE,
-            },
-        });
-    }
-
     async function checkIfNotificationsAreScheduled() {
         const needed = { years: true, days: true };
         const scheduled =
@@ -136,5 +84,3 @@ const HundredDaysNotifications = ({
 };
 
 export default HundredDaysNotifications;
-
-const styles = StyleSheet.create({});

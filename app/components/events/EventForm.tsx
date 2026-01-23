@@ -33,6 +33,7 @@ import SwitchInputField from "../settings/SwitchInputField";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNotifications } from "../../../context/NotificationsContext";
+import * as Notifications from "expo-notifications";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -97,8 +98,7 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -146,13 +146,39 @@ export default function EventForm({
 
     function scheduleNotifications() {}
 
+    async function setupAlert(
+        user: string | null,
+        partner: string | null,
+        triggerDate: Date,
+        elapsed: number,
+        timeType: "year" | "days",
+    ) {
+        triggerDate.setHours(9, 0, 0, 0);
+
+        if (elapsed > 1 && timeType === "year") timeType += "s";
+
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: `${elapsed} ${timeType}!`,
+                body: `Hey ${
+                    user ?? "{user}"
+                }, celebrate your ${elapsed} ${timeType} together with ${
+                    partner ?? "{partner}"
+                }!`,
+            },
+            trigger: {
+                date: triggerDate,
+                type: Notifications.SchedulableTriggerInputTypes.DATE,
+            },
+        });
+    }
+
     return (
         <ScrollView
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -186,30 +212,38 @@ export default function EventForm({
                     minimumDate={new Date(1900, 0, 1)}
                 />
             )}
-            {/* <YearlyNotifications
-                enabled={event.notifications.yearly !== null}
+            <YearlyNotifications
+                enabled={
+                    event.notifications.yearlyExact !== null &&
+                    event.notifications.yearlyOffset !== null
+                }
                 onChange={(value: string | null) => {
                     setEvent({
                         ...event,
                         notifications: {
                             ...event.notifications,
-                            yearly: value,
+                            yearlyExact: value,
+                            yearlyOffset: value,
                         },
                     });
                 }}
             />
             <HundredDaysNotifications
-                enabled={event.notifications.hundredDays !== null}
+                enabled={
+                    event.notifications.hundredDaysExact !== null &&
+                    event.notifications.hundredDaysOffset !== null
+                }
                 onChange={(value: string | null) => {
                     setEvent({
                         ...event,
                         notifications: {
                             ...event.notifications,
-                            hundredDays: value,
+                            hundredDaysExact: value,
+                            hundredDaysOffset: value,
                         },
                     });
                 }}
-            /> */}
+            />
             <OffsetSelector
                 currentOffset={eventData.notifications.offset}
                 onChange={updateOffset}
