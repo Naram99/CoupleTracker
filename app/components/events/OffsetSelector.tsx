@@ -67,10 +67,14 @@ export default function OffsetSelector({
             {/* TODO: Open button */}
             <TimePickerField
                 label="at"
-                date={new Date(0).setHours(
-                    currentOffset.hour,
-                    currentOffset.minute,
-                )}
+                date={(() => {
+                    const date = new Date(0);
+                    date.setHours(
+                        currentOffset.hour ?? 0,
+                        currentOffset.minute ?? 0,
+                    );
+                    return date.getTime();
+                })()}
                 onOpen={openTime}
                 theme={theme}
             />

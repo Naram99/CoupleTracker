@@ -23,6 +23,7 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
         <Pressable onPress={() => onPick(type)} style={styles.imagePressable}>
             {imageUri ? (
                 <Image
+                    key={imageUri}
                     source={{ uri: imageUri }}
                     style={{
                         ...styles.avatar,

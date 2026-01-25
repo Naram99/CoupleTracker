@@ -144,6 +144,44 @@ export default function EventForm({
         }));
     }
 
+    async function yearlyChange(value: string | null) {
+        if (event.notifications.yearlyExact && event.notifications.yearlyExact !== "awaiting") {
+            await Notifications.cancelScheduledNotificationAsync(event.notifications.yearlyExact);
+        }
+
+        if (event.notifications.yearlyOffset && event.notifications.yearlyOffset !== "awaiting") {
+            await Notifications.cancelScheduledNotificationAsync(event.notifications.yearlyOffset);
+        }
+
+        setEvent((prev) => ({
+            ...prev,
+            notifications: {
+                ...prev.notifications,
+                yearlyExact: value,
+                yearlyOffset: value,
+            },
+        }));
+    }
+
+    async function hundredDaysChange(value: string | null) {
+        if (event.notifications.hundredDaysExact && event.notifications.hundredDaysExact !== "awaiting") {
+            await Notifications.cancelScheduledNotificationAsync(event.notifications.hundredDaysExact);
+        }
+        
+        if (event.notifications.hundredDaysOffset && event.notifications.hundredDaysOffset !== "awaiting") {
+            await Notifications.cancelScheduledNotificationAsync(event.notifications.hundredDaysOffset);
+        }
+
+        setEvent((prev) => ({
+            ...prev,
+            notifications: {
+                ...prev.notifications,
+                hundredDaysExact: value,
+                hundredDaysOffset: value,
+            },
+        }));
+    }
+
     function scheduleNotifications() {}
 
     async function setupAlert(
@@ -218,14 +256,7 @@ export default function EventForm({
                     event.notifications.yearlyOffset !== null
                 }
                 onChange={(value: string | null) => {
-                    setEvent({
-                        ...event,
-                        notifications: {
-                            ...event.notifications,
-                            yearlyExact: value,
-                            yearlyOffset: value,
-                        },
-                    });
+                    yearlyChange(value);
                 }}
             />
             <HundredDaysNotifications
@@ -234,18 +265,11 @@ export default function EventForm({
                     event.notifications.hundredDaysOffset !== null
                 }
                 onChange={(value: string | null) => {
-                    setEvent({
-                        ...event,
-                        notifications: {
-                            ...event.notifications,
-                            hundredDaysExact: value,
-                            hundredDaysOffset: value,
-                        },
-                    });
+                    hundredDaysChange(value);
                 }}
             />
             <OffsetSelector
-                currentOffset={eventData.notifications.offset}
+                currentOffset={event.notifications.offset}
                 onChange={updateOffset}
                 theme={currentTheme}
             />

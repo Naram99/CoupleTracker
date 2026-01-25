@@ -90,7 +90,9 @@ export default function Home() {
     async function getUserImageFromStorage() {
         try {
             const storedUri = await AsyncStorage.getItem("userImage");
-            const validatedUri = await validateImageUri(storedUri);
+            // Remove cache busting query param if present
+            const cleanUri = storedUri?.split("?")[0] || storedUri;
+            const validatedUri = validateImageUri(cleanUri);
             setUserImage(validatedUri);
             setUserImageError(!validatedUri);
             // If validation failed, clear the invalid URI from storage
@@ -106,7 +108,9 @@ export default function Home() {
     async function getPartnerImageFromStorage() {
         try {
             const storedUri = await AsyncStorage.getItem("partnerImage");
-            const validatedUri = await validateImageUri(storedUri);
+            // Remove cache busting query param if present
+            const cleanUri = storedUri?.split("?")[0] || storedUri;
+            const validatedUri = validateImageUri(cleanUri);
             setPartnerImage(validatedUri);
             setPartnerImageError(!validatedUri);
             // If validation failed, clear the invalid URI from storage
@@ -122,7 +126,9 @@ export default function Home() {
     async function getCoverImageFromStorage() {
         try {
             const storedUri = await AsyncStorage.getItem("coverImage");
-            const validatedUri = await validateImageUri(storedUri);
+            // Remove cache busting query param if present
+            const cleanUri = storedUri?.split("?")[0] || storedUri;
+            const validatedUri = validateImageUri(cleanUri);
             setCoverImage(validatedUri);
             setCoverImageError(!validatedUri);
             // If validation failed, clear the invalid URI from storage

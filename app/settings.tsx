@@ -84,7 +84,7 @@ export default function Settings() {
         async function getUserImageFromStorage() {
             try {
                 const storedUri = await AsyncStorage.getItem("userImage");
-                const validatedUri = await validateImageUri(storedUri);
+                const validatedUri = validateImageUri(storedUri);
                 setUserImage(validatedUri);
                 // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
@@ -98,7 +98,7 @@ export default function Settings() {
         async function getPartnerImageFromStorage() {
             try {
                 const storedUri = await AsyncStorage.getItem("partnerImage");
-                const validatedUri = await validateImageUri(storedUri);
+                const validatedUri = validateImageUri(storedUri);
                 setPartnerImage(validatedUri);
                 // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
@@ -112,7 +112,7 @@ export default function Settings() {
         async function getCoverImageFromStorage() {
             try {
                 const storedUri = await AsyncStorage.getItem("coverImage");
-                const validatedUri = await validateImageUri(storedUri);
+                const validatedUri = validateImageUri(storedUri);
                 setCoverImage(validatedUri);
                 // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
@@ -143,16 +143,27 @@ export default function Settings() {
     }
 
     async function setUserImageToStorage() {
-        if (userImage) await AsyncStorage.setItem("userImage", userImage);
+        if (userImage) {
+            // Remove cache busting query param before saving
+            const cleanUri = userImage.split("?")[0];
+            await AsyncStorage.setItem("userImage", cleanUri);
+        }
     }
 
     async function setPartnerImageToStorage() {
-        if (partnerImage)
-            await AsyncStorage.setItem("partnerImage", partnerImage);
+        if (partnerImage) {
+            // Remove cache busting query param before saving
+            const cleanUri = partnerImage.split("?")[0];
+            await AsyncStorage.setItem("partnerImage", cleanUri);
+        }
     }
 
     async function setCoverImageToStorage() {
-        if (coverImage) await AsyncStorage.setItem("coverImage", coverImage);
+        if (coverImage) {
+            // Remove cache busting query param before saving
+            const cleanUri = coverImage.split("?")[0];
+            await AsyncStorage.setItem("coverImage", cleanUri);
+        }
     }
 
     async function handleSubmit() {
@@ -202,15 +213,17 @@ export default function Settings() {
 
                 if (imageType) {
                     // Save to permanent storage (this also deletes old image)
-                    const permanentUri = await saveImageToPermanentStorage(
+                    const permanentUri = saveImageToPermanentStorage(
                         sourceUri,
-                        imageType
+                        imageType,
                     );
 
-                    // Update state with permanent URI
-                    if (imgType === "User") setUserImage(permanentUri);
-                    if (imgType === "Partner") setPartnerImage(permanentUri);
-                    if (imgType === "Cover") setCoverImage(permanentUri);
+                    // Update state with permanent URI (add timestamp for cache busting)
+                    const uriWithCacheBust = `${permanentUri}?t=${Date.now()}`;
+                    if (imgType === "User") setUserImage(uriWithCacheBust);
+                    if (imgType === "Partner")
+                        setPartnerImage(uriWithCacheBust);
+                    if (imgType === "Cover") setCoverImage(uriWithCacheBust);
                 }
             } catch (error) {
                 console.error("Error saving image:", error);

@@ -1,4 +1,4 @@
-import * as FileSystem from "expo-file-system/legacy";
+import { File, Paths } from "expo-file-system";
 
 export type ImageType = "user" | "partner" | "cover";
 
@@ -13,16 +13,24 @@ const IMAGE_FILENAMES: Record<ImageType, string> = {
  */
 export function getImagePath(imageType: ImageType): string {
     const filename = IMAGE_FILENAMES[imageType];
-    return `${FileSystem.documentDirectory}${filename}`;
+    return `${Paths.document.uri}${filename}`;
+}
+
+/**
+ * Get the File instance for an image type
+ */
+export function getImageFile(imageType: ImageType): File {
+    const filename = IMAGE_FILENAMES[imageType];
+    return new File(Paths.document, filename);
 }
 
 /**
  * Check if an image file exists at the given path
  */
-export async function imageExists(uri: string): Promise<boolean> {
+export function imageExists(uri: string): boolean {
     try {
-        const fileInfo = await FileSystem.getInfoAsync(uri);
-        return fileInfo.exists;
+        const file = new File(uri);
+        return file.exists;
     } catch (error) {
         console.error(`Error checking if image exists: ${error}`);
         return false;
@@ -32,12 +40,11 @@ export async function imageExists(uri: string): Promise<boolean> {
 /**
  * Delete an image file if it exists
  */
-export async function deleteImage(imageType: ImageType): Promise<void> {
+export function deleteImage(imageType: ImageType): void {
     try {
-        const imagePath = getImagePath(imageType);
-        const exists = await imageExists(imagePath);
-        if (exists) {
-            await FileSystem.deleteAsync(imagePath, { idempotent: true });
+        const file = getImageFile(imageType);
+        if (file.exists) {
+            file.delete();
         }
     } catch (error) {
         console.error(`Error deleting image: ${error}`);
@@ -49,24 +56,22 @@ export async function deleteImage(imageType: ImageType): Promise<void> {
  * Copy image from picker URI to permanent storage
  * Deletes old image before copying new one
  */
-export async function saveImageToPermanentStorage(
+export function saveImageToPermanentStorage(
     sourceUri: string,
     imageType: ImageType,
-): Promise<string> {
+): string {
     try {
         // Delete old image first
-        await deleteImage(imageType);
+        deleteImage(imageType);
 
-        // Get destination path
-        const destinationPath = getImagePath(imageType);
+        // Get destination file
+        const destinationFile = getImageFile(imageType);
 
         // Copy the image to permanent storage
-        await FileSystem.copyAsync({
-            from: sourceUri,
-            to: destinationPath,
-        });
+        const sourceFile = new File(sourceUri);
+        sourceFile.copy(destinationFile);
 
-        return destinationPath;
+        return destinationFile.uri;
     } catch (error) {
         console.error(`Error saving image to permanent storage: ${error}`);
         throw error;
@@ -77,59 +82,56 @@ export async function saveImageToPermanentStorage(
  * Validate if a stored URI is still accessible
  * Handles both old temporary URIs and new permanent paths
  */
-export async function validateImageUri(
-    uri: string | null,
-): Promise<string | null> {
+export function validateImageUri(uri: string | null): string | null {
     if (!uri) {
         return null;
     }
 
-    // Check if it's already a permanent path (starts with documentDirectory)
-    if (uri.startsWith(FileSystem.documentDirectory || "")) {
-        const exists = await imageExists(uri);
+    // Check if it's already a permanent path (starts with document directory)
+    const documentUri = Paths.document.uri;
+    if (uri.startsWith(documentUri)) {
+        const exists = imageExists(uri);
         return exists ? uri : null;
     }
 
     // For old temporary URIs, check if they still exist
     // If they don't, return null (image needs to be re-selected)
-    const exists = await imageExists(uri);
+    const exists = imageExists(uri);
     return exists ? uri : null;
 }
 
 /**
  * Get the permanent URI for an image type, or null if it doesn't exist
  */
-export async function getImageUri(
-    imageType: ImageType,
-): Promise<string | null> {
-    const imagePath = getImagePath(imageType);
-    const exists = await imageExists(imagePath);
-    return exists ? imagePath : null;
+export function getImageUri(imageType: ImageType): string | null {
+    const file = getImageFile(imageType);
+    return file.exists ? file.uri : null;
 }
 
 /**
  * Migrate old temporary URI to permanent storage if still accessible
  * Returns the permanent URI if migration succeeded, null otherwise
  */
-export async function migrateImageUri(
+export function migrateImageUri(
     oldUri: string | null,
     imageType: ImageType,
-): Promise<string | null> {
+): string | null {
     if (!oldUri) {
         return null;
     }
 
     // If it's already a permanent path, just validate it
-    if (oldUri.startsWith(FileSystem.documentDirectory || "")) {
-        const exists = await imageExists(oldUri);
+    const documentUri = Paths.document.uri;
+    if (oldUri.startsWith(documentUri)) {
+        const exists = imageExists(oldUri);
         return exists ? oldUri : null;
     }
 
     // Try to copy old temporary URI to permanent storage
     try {
-        const exists = await imageExists(oldUri);
+        const exists = imageExists(oldUri);
         if (exists) {
-            return await saveImageToPermanentStorage(oldUri, imageType);
+            return saveImageToPermanentStorage(oldUri, imageType);
         }
     } catch (error) {
         console.error(`Error migrating image: ${error}`);
