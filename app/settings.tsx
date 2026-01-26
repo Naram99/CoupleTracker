@@ -85,7 +85,12 @@ export default function Settings() {
             try {
                 const storedUri = await AsyncStorage.getItem("userImage");
                 const validatedUri = validateImageUri(storedUri);
-                setUserImage(validatedUri);
+
+                // Add cache busting timestamp when setting state
+                const uriWithCacheBust = validatedUri
+                    ? `${validatedUri}?t=${Date.now()}`
+                    : null;
+                setUserImage(uriWithCacheBust);
                 // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
                     await AsyncStorage.removeItem("userImage");
@@ -99,7 +104,12 @@ export default function Settings() {
             try {
                 const storedUri = await AsyncStorage.getItem("partnerImage");
                 const validatedUri = validateImageUri(storedUri);
-                setPartnerImage(validatedUri);
+
+                // Add cache busting timestamp when setting state
+                const uriWithCacheBust = validatedUri
+                    ? `${validatedUri}?t=${Date.now()}`
+                    : null;
+                setPartnerImage(uriWithCacheBust);
                 // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
                     await AsyncStorage.removeItem("partnerImage");
@@ -113,7 +123,12 @@ export default function Settings() {
             try {
                 const storedUri = await AsyncStorage.getItem("coverImage");
                 const validatedUri = validateImageUri(storedUri);
-                setCoverImage(validatedUri);
+
+                // Add cache busting timestamp when setting state
+                const uriWithCacheBust = validatedUri
+                    ? `${validatedUri}?t=${Date.now()}`
+                    : null;
+                setCoverImage(uriWithCacheBust);
                 // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
                     await AsyncStorage.removeItem("coverImage");

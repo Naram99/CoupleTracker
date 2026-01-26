@@ -4,11 +4,9 @@ import {
     StyleSheet,
     Text,
     View,
-    AppState,
-    AppStateStatus,
     ScrollView,
 } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../context/ThemeContext";
@@ -22,12 +20,6 @@ import { useEvents } from "../context/EventContext";
 import EventsDisplay from "./components/home/EventsDisplay";
 import { validateImageUri } from "../utils/imageStorage";
 
-type YMDDifference = {
-    years: number;
-    months: number;
-    days: number;
-};
-
 export default function Home() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
@@ -38,7 +30,6 @@ export default function Home() {
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
-    const [date, setDate] = useState<number | null>(null);
 
     const [userImage, setUserImage] = useState<string | null>(null);
     const [partnerImage, setPartnerImage] = useState<string | null>(null);
@@ -48,54 +39,23 @@ export default function Home() {
     const [partnerImageError, setPartnerImageError] = useState(false);
     const [coverImageError, setCoverImageError] = useState(false);
 
-    const [dateToggle, setDateToggle] = useState(0);
-    const [dayDiff, setDayDiff] = useState(0);
-    const [YMDDiff, setYMDDiff] = useState<YMDDifference>({
-        years: 0,
-        months: 0,
-        days: 0,
-    });
-
     const [imgPopupOpen, setImgPopupOpen] = useState(false);
     const [imgPopupSrc, setImgPopupSrc] = useState<string | null>(null);
-
-    const appState = useRef(AppState.currentState);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-    // Function to calculate and update date differences
-    const updateDateDifferences = () => {
-        if (date) {
-            setYMDDiff(calculateYMDDiff(date, new Date().getTime()));
-            setDayDiff(
-                Math.floor(
-                    // (new Date().getTime() - date.getTime()) /
-                    //     (1000 * 60 * 60 * 24)
-                    (Date.UTC(
-                        new Date().getFullYear(),
-                        new Date().getMonth(),
-                        new Date().getDate(),
-                    ) -
-                        Date.UTC(
-                            new Date(date).getFullYear(),
-                            new Date(date).getMonth(),
-                            new Date(date).getDate(),
-                        )) /
-                        (1000 * 60 * 60 * 24),
-                ),
-            );
-        }
-    };
 
     // Image loading functions (extracted for reuse)
     async function getUserImageFromStorage() {
         try {
             const storedUri = await AsyncStorage.getItem("userImage");
-            // Remove cache busting query param if present
             const cleanUri = storedUri?.split("?")[0] || storedUri;
             const validatedUri = validateImageUri(cleanUri);
-            setUserImage(validatedUri);
+
+            // Add cache busting timestamp when setting state
+            const uriWithCacheBust = validatedUri
+                ? `${validatedUri}?t=${Date.now()}`
+                : null;
+            setUserImage(uriWithCacheBust);
             setUserImageError(!validatedUri);
-            // If validation failed, clear the invalid URI from storage
+
             if (storedUri && !validatedUri) {
                 await AsyncStorage.removeItem("userImage");
             }
@@ -108,12 +68,16 @@ export default function Home() {
     async function getPartnerImageFromStorage() {
         try {
             const storedUri = await AsyncStorage.getItem("partnerImage");
-            // Remove cache busting query param if present
             const cleanUri = storedUri?.split("?")[0] || storedUri;
             const validatedUri = validateImageUri(cleanUri);
-            setPartnerImage(validatedUri);
+
+            // Add cache busting timestamp
+            const uriWithCacheBust = validatedUri
+                ? `${validatedUri}?t=${Date.now()}`
+                : null;
+            setPartnerImage(uriWithCacheBust);
             setPartnerImageError(!validatedUri);
-            // If validation failed, clear the invalid URI from storage
+
             if (storedUri && !validatedUri) {
                 await AsyncStorage.removeItem("partnerImage");
             }
@@ -126,12 +90,16 @@ export default function Home() {
     async function getCoverImageFromStorage() {
         try {
             const storedUri = await AsyncStorage.getItem("coverImage");
-            // Remove cache busting query param if present
             const cleanUri = storedUri?.split("?")[0] || storedUri;
             const validatedUri = validateImageUri(cleanUri);
-            setCoverImage(validatedUri);
+
+            // Add cache busting timestamp
+            const uriWithCacheBust = validatedUri
+                ? `${validatedUri}?t=${Date.now()}`
+                : null;
+            setCoverImage(uriWithCacheBust);
             setCoverImageError(!validatedUri);
-            // If validation failed, clear the invalid URI from storage
+
             if (storedUri && !validatedUri) {
                 await AsyncStorage.removeItem("coverImage");
             }
@@ -159,100 +127,17 @@ export default function Home() {
             }
         }
 
-        async function getDateFromStorage() {
-            try {
-                const storedDate =
-                    (await AsyncStorage.getItem("date")) ??
-                    new Date().getTime().toString();
-                setDate(parseInt(storedDate));
-            } catch {
-                setDate(null);
-            }
-        }
-
         getUsernameFromStorage();
         getPartnernameFromStorage();
-        getDateFromStorage();
-        getUserImageFromStorage();
-        getPartnerImageFromStorage();
-        getCoverImageFromStorage();
     }, []);
 
-    useEffect(() => {
-        updateDateDifferences();
-        const interval = setInterval(updateDateDifferences, 1000); // Update every second
-        intervalRef.current = interval;
-
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-        };
-    }, [date]);
-
-    // Handle app state changes (foreground/background)
-    useEffect(() => {
-        const handleAppStateChange = (nextAppState: AppStateStatus) => {
-            if (
-                appState.current.match(/inactive|background/) &&
-                nextAppState === "active"
-            ) {
-                // App has come to the foreground
-                updateDateDifferences();
-            }
-            appState.current = nextAppState;
-        };
-
-        const subscription = AppState.addEventListener(
-            "change",
-            handleAppStateChange,
-        );
-
-        return () => {
-            subscription?.remove();
-        };
-    }, [date]);
-
-    // Recalculate when screen comes into focus (e.g., navigating back from settings)
     useFocusEffect(
-        React.useCallback(() => {
-            updateDateDifferences();
-            // Re-validate images when screen comes into focus
+        useCallback(() => {
             getUserImageFromStorage();
             getPartnerImageFromStorage();
             getCoverImageFromStorage();
-        }, [date]),
+        }, []),
     );
-
-    function toggleDateDiff() {
-        setDateToggle(dateToggle === 0 ? 1 : 0);
-    }
-
-    function calculateYMDDiff(from: number, to: number): YMDDifference {
-        const fromDate = new Date(from);
-        const toDate = new Date(to);
-        let years = toDate.getFullYear() - fromDate.getFullYear();
-        let months = toDate.getMonth() - fromDate.getMonth();
-        let days = toDate.getDate() - fromDate.getDate();
-
-        if (days < 0) {
-            months -= 1;
-            // Vegyük az előző hónap utolsó napját
-            const prevMonth = new Date(
-                toDate.getFullYear(),
-                toDate.getMonth(),
-                0,
-            );
-            days += prevMonth.getDate();
-        }
-
-        if (months < 0) {
-            years -= 1;
-            months += 12;
-        }
-
-        return { years, months, days };
-    }
 
     function showPicture(picture: string | null) {
         if (picture) {

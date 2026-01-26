@@ -8,16 +8,10 @@ import * as Linking from "expo-linking";
 const HundredDaysNotifications = ({
     enabled,
     onChange,
-    user,
-    partner,
-    date,
     theme,
 }: {
     enabled: boolean;
     onChange: (value: string | null) => void;
-    user: string | null;
-    partner: string | null;
-    date: Date;
     theme: ColorScheme;
 }) => {
     async function checkNotifications(value: boolean) {

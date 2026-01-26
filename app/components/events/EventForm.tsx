@@ -145,12 +145,22 @@ export default function EventForm({
     }
 
     async function yearlyChange(value: string | null) {
-        if (event.notifications.yearlyExact && event.notifications.yearlyExact !== "awaiting") {
-            await Notifications.cancelScheduledNotificationAsync(event.notifications.yearlyExact);
+        if (
+            event.notifications.yearlyExact &&
+            event.notifications.yearlyExact !== "awaiting"
+        ) {
+            await Notifications.cancelScheduledNotificationAsync(
+                event.notifications.yearlyExact,
+            );
         }
 
-        if (event.notifications.yearlyOffset && event.notifications.yearlyOffset !== "awaiting") {
-            await Notifications.cancelScheduledNotificationAsync(event.notifications.yearlyOffset);
+        if (
+            event.notifications.yearlyOffset &&
+            event.notifications.yearlyOffset !== "awaiting"
+        ) {
+            await Notifications.cancelScheduledNotificationAsync(
+                event.notifications.yearlyOffset,
+            );
         }
 
         setEvent((prev) => ({
@@ -164,12 +174,22 @@ export default function EventForm({
     }
 
     async function hundredDaysChange(value: string | null) {
-        if (event.notifications.hundredDaysExact && event.notifications.hundredDaysExact !== "awaiting") {
-            await Notifications.cancelScheduledNotificationAsync(event.notifications.hundredDaysExact);
+        if (
+            event.notifications.hundredDaysExact &&
+            event.notifications.hundredDaysExact !== "awaiting"
+        ) {
+            await Notifications.cancelScheduledNotificationAsync(
+                event.notifications.hundredDaysExact,
+            );
         }
-        
-        if (event.notifications.hundredDaysOffset && event.notifications.hundredDaysOffset !== "awaiting") {
-            await Notifications.cancelScheduledNotificationAsync(event.notifications.hundredDaysOffset);
+
+        if (
+            event.notifications.hundredDaysOffset &&
+            event.notifications.hundredDaysOffset !== "awaiting"
+        ) {
+            await Notifications.cancelScheduledNotificationAsync(
+                event.notifications.hundredDaysOffset,
+            );
         }
 
         setEvent((prev) => ({
@@ -258,6 +278,7 @@ export default function EventForm({
                 onChange={(value: string | null) => {
                     yearlyChange(value);
                 }}
+                theme={currentTheme}
             />
             <HundredDaysNotifications
                 enabled={
@@ -267,6 +288,7 @@ export default function EventForm({
                 onChange={(value: string | null) => {
                     hundredDaysChange(value);
                 }}
+                theme={currentTheme}
             />
             <OffsetSelector
                 currentOffset={event.notifications.offset}
