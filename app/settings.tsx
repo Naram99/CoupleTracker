@@ -197,6 +197,7 @@ export default function Settings() {
             await scheduleEventsNotifications();
         if (!isNotificationEnabled)
             await cancelAllScheduledNotificationsAsync();
+
         await saveNotificationsEnabled(isNotificationEnabled);
         router.replace("/");
     }
