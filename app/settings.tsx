@@ -18,6 +18,8 @@ import {
     validateImageUri,
     type ImageType,
 } from "../utils/imageStorage";
+import { useEvents } from "../context/EventContext";
+import { cancelAllScheduledNotificationsAsync } from "expo-notifications";
 
 export default function Settings() {
     const router = useRouter();
@@ -27,6 +29,8 @@ export default function Settings() {
     const currentTheme = colors[theme];
 
     const { tutorial } = useTutorial();
+
+    const { events, saveEvents } = useEvents();
 
     const { notificationsEnabled, saveNotificationsEnabled } =
         useNotifications();
@@ -191,6 +195,8 @@ export default function Settings() {
         // If notifications were not allowed, we schedule them.
         if (isNotificationEnabled && !notificationsEnabled)
             await scheduleEventsNotifications();
+        if (!isNotificationEnabled)
+            await cancelAllScheduledNotificationsAsync();
         await saveNotificationsEnabled(isNotificationEnabled);
         router.replace("/");
     }
