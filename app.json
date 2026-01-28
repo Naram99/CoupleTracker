@@ -3,7 +3,7 @@
         "name": "CoupleTracker",
         "slug": "CoupleTracker",
         "scheme": "coupletracker",
-        "version": "1.0.3",
+        "version": "1.0.4",
         "orientation": "portrait",
         "icon": "./assets/testicon.png",
         "userInterfaceStyle": "dark",
@@ -33,16 +33,12 @@
                 "android.permission.NOTIFICATIONS"
             ],
             "package": "com.naram99.coupletracker",
-            "versionCode": 1
+            "versionCode": 4
         },
         "web": {
             "favicon": "./assets/testicon.png"
         },
-        "plugins": [
-            "expo-router",
-            "expo-image-picker",
-            "expo-notifications"
-        ],
+        "plugins": ["expo-router", "expo-image-picker", "expo-notifications"],
         "extra": {
             "router": {},
             "eas": {

@@ -14,6 +14,7 @@ import React, {
 import { useNavigation } from "@react-navigation/native";
 import {
     EventData,
+    EventNotifications,
     EventTypes,
     NotificationOffset,
 } from "../../../types/EventTypes";
@@ -71,7 +72,27 @@ export default function EventForm({
     const [notificationEnabled, setNotificationEnabled] =
         useState<boolean>(notificationsEnabled);
 
+    const scheduleNotifications = useCallback(async () => {
+        const notifs = await scheduleAwaitingEventNotifications(
+            date,
+            event.notifications,
+            event.type,
+            event.type === "milestone" ? name : undefined,
+        );
+
+        setEvent((prev) => ({
+            ...prev,
+            notifications: notifs,
+        }));
+    }, [event, date, name, setEvent]);
+
     const handleSubmit = useCallback(async () => {
+        const notifs = await setupEventNotifications();
+        setEvent((prev) => ({
+            ...prev,
+            notifications: notifs,
+        }));
+
         if (notificationsEnabled) await scheduleNotifications();
         if (event.type === "milestone") {
             await onSave({ ...event, name: name, date: date });
@@ -80,7 +101,15 @@ export default function EventForm({
         }
 
         router.back();
-    }, [event, name, date, onSave, router, scheduleNotifications]);
+    }, [
+        event,
+        name,
+        date,
+        onSave,
+        router,
+        scheduleNotifications,
+        setupEventNotifications,
+    ]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -98,7 +127,8 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -170,7 +200,7 @@ export default function EventForm({
             notifications: {
                 ...prev.notifications,
                 yearlyExact: value,
-                yearlyOffset: value,
+                yearlyOffset: prev.notifications.offset.day > 0 ? value : null,
             },
         }));
     }
@@ -201,19 +231,70 @@ export default function EventForm({
             notifications: {
                 ...prev.notifications,
                 hundredDaysExact: value,
-                hundredDaysOffset: value,
+                hundredDaysOffset:
+                    prev.notifications.offset.day > 0 ? value : null,
             },
         }));
     }
 
-    async function scheduleNotifications() {
-        setEvent({
-            ...event,
-            notifications: await scheduleAwaitingEventNotifications(
-                date,
-                event.notifications,
-            ),
-        });
+    async function setupEventNotifications() {
+        const notifs: EventNotifications = { ...event.notifications };
+
+        if (
+            notifs.offset.day !== eventData.notifications.offset.day ||
+            notifs.offset.hour !== eventData.notifications.offset.hour ||
+            notifs.offset.minute !== eventData.notifications.offset.hour
+        ) {
+            if (notifs.yearlyExact && notifs.yearlyExact !== "awaiting") {
+                await Notifications.cancelScheduledNotificationAsync(
+                    notifs.yearlyExact,
+                );
+
+                notifs.yearlyExact = "awaiting";
+            }
+
+            if (
+                notifs.hundredDaysExact &&
+                notifs.hundredDaysExact !== "awaiting"
+            ) {
+                await Notifications.cancelScheduledNotificationAsync(
+                    notifs.hundredDaysExact,
+                );
+
+                notifs.hundredDaysExact = "awaiting";
+            }
+
+            if (notifs.offset.day === 0) {
+                if (notifs.yearlyOffset)
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.yearlyOffset,
+                    );
+
+                if (notifs.hundredDaysOffset)
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.hundredDaysOffset,
+                    );
+
+                notifs.yearlyOffset = null;
+                notifs.hundredDaysOffset = null;
+            } else {
+                if (notifs.yearlyOffset) {
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.yearlyOffset,
+                    );
+                }
+                notifs.yearlyOffset = "awaiting";
+
+                if (notifs.hundredDaysOffset) {
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.hundredDaysOffset,
+                    );
+                }
+                notifs.hundredDaysOffset = "awaiting";
+            }
+        }
+
+        return notifs;
     }
 
     return (
@@ -221,7 +302,8 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -256,20 +338,14 @@ export default function EventForm({
                 />
             )}
             <YearlyNotifications
-                enabled={
-                    event.notifications.yearlyExact !== null &&
-                    event.notifications.yearlyOffset !== null
-                }
+                enabled={event.notifications.yearlyExact !== null}
                 onChange={(value: string | null) => {
                     yearlyChange(value);
                 }}
                 theme={currentTheme}
             />
             <HundredDaysNotifications
-                enabled={
-                    event.notifications.hundredDaysExact !== null &&
-                    event.notifications.hundredDaysOffset !== null
-                }
+                enabled={event.notifications.hundredDaysExact !== null}
                 onChange={(value: string | null) => {
                     hundredDaysChange(value);
                 }}

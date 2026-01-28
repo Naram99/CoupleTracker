@@ -1,20 +1,23 @@
 import {
+    getAllScheduledNotificationsAsync,
     SchedulableTriggerInputTypes,
     scheduleNotificationAsync,
 } from "expo-notifications";
-import { useEvents } from "../context/EventContext";
 import {
     EventData,
     EventNotifications,
+    EventTypes,
     NotificationOffset,
 } from "../types/EventTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setNotificationText } from "../constants/notificationTexts";
 
 export async function scheduleAllEventsNotifications(
+    events: EventData[],
+    saveEvents: (events: EventData[]) => Promise<void>,
     user: string,
     partner: string,
 ): Promise<void> {
-    const { events, saveEvents } = useEvents();
     const updatedEvents: EventData[] = [];
 
     for (const eventData of events) {
@@ -29,6 +32,8 @@ export async function scheduleAllEventsNotifications(
                     hour: eventData.notifications.offset.hour,
                     minute: eventData.notifications.offset.minute,
                 },
+                eventData.type,
+                eventData.type === "milestone" ? eventData.name : undefined,
             );
 
             eventData.notifications.yearlyExact = notificationId;
@@ -41,6 +46,8 @@ export async function scheduleAllEventsNotifications(
                 calcNextYearTrigger(new Date(eventData.date)),
                 calcNextYear(new Date(eventData.date)),
                 eventData.notifications.offset,
+                eventData.type,
+                eventData.type === "milestone" ? eventData.name : undefined,
             );
 
             eventData.notifications.yearlyOffset = notificationId;
@@ -57,6 +64,8 @@ export async function scheduleAllEventsNotifications(
                     hour: eventData.notifications.offset.hour,
                     minute: eventData.notifications.offset.minute,
                 },
+                eventData.type,
+                eventData.type === "milestone" ? eventData.name : undefined,
             );
 
             eventData.notifications.hundredDaysExact = notificationId;
@@ -69,6 +78,8 @@ export async function scheduleAllEventsNotifications(
                 calcNext100DaysTrigger(new Date(eventData.date)),
                 calcNext100Days(new Date(eventData.date)),
                 eventData.notifications.offset,
+                eventData.type,
+                eventData.type === "milestone" ? eventData.name : undefined,
             );
 
             eventData.notifications.hundredDaysOffset = notificationId;
@@ -77,12 +88,15 @@ export async function scheduleAllEventsNotifications(
         updatedEvents.push(eventData);
     }
 
+    console.log(await getAllScheduledNotificationsAsync());
     await saveEvents(updatedEvents);
 }
 
 export async function scheduleAwaitingEventNotifications(
     eventDate: number,
     notifications: EventNotifications,
+    type: EventTypes,
+    name?: string,
 ): Promise<EventNotifications> {
     const user = (await AsyncStorage.getItem("username")) ?? "";
     const partner = (await AsyncStorage.getItem("partnername")) ?? "";
@@ -98,6 +112,8 @@ export async function scheduleAwaitingEventNotifications(
                 hour: notifications.offset.hour,
                 minute: notifications.offset.minute,
             },
+            type,
+            name,
         );
     }
 
@@ -111,6 +127,8 @@ export async function scheduleAwaitingEventNotifications(
             calcNext100DaysTrigger(new Date(eventDate)),
             calcNext100Days(new Date(eventDate)),
             notifications.offset,
+            type,
+            name,
         );
     }
 
@@ -125,6 +143,8 @@ export async function scheduleAwaitingEventNotifications(
                 hour: notifications.offset.hour,
                 minute: notifications.offset.minute,
             },
+            type,
+            name,
         );
     }
 
@@ -138,9 +158,12 @@ export async function scheduleAwaitingEventNotifications(
             calcNextYearTrigger(new Date(eventDate)),
             calcNextYear(new Date(eventDate)),
             notifications.offset,
+            type,
+            name,
         );
     }
 
+    console.log(await getAllScheduledNotificationsAsync());
     return notifications;
 }
 
@@ -150,6 +173,8 @@ export async function scheduleYearlyNotification(
     date: number,
     elapsed: number,
     offset: NotificationOffset,
+    type: EventTypes,
+    name?: string,
 ) {
     const triggerDate = new Date(date - offset.day * 24 * 3600 * 1000);
     triggerDate.setHours(offset.hour, offset.minute, 0, 0);
@@ -161,7 +186,15 @@ export async function scheduleYearlyNotification(
         },
         content: {
             title: `${elapsed} year${elapsed > 1 ? "s" : ""}${offset.day > 0 ? " reminder" : ""}!`,
-            body: `Hey ${user}, celebrate your ${elapsed} year${elapsed > 1 ? "s" : ""} together with ${partner}${offset.day > 0 ? `, which will be in ${offset.day > 1 ? "s" : ""}` : ""}!`,
+            body: setNotificationText(
+                user,
+                partner,
+                "year",
+                elapsed,
+                offset.day,
+                type,
+                name,
+            ),
         },
     });
 }
@@ -172,6 +205,8 @@ export async function scheduleHundredDaysNotification(
     date: number,
     elapsed: number,
     offset: NotificationOffset,
+    type: EventTypes,
+    name?: string,
 ) {
     const triggerDate = new Date(date - offset.day * 24 * 3600 * 1000);
     triggerDate.setHours(offset.hour, offset.minute, 0, 0);
@@ -183,7 +218,15 @@ export async function scheduleHundredDaysNotification(
         },
         content: {
             title: `${elapsed} days${offset.day > 0 ? " reminder" : ""}!`,
-            body: `Hey ${user}, celebrate your ${elapsed} days together with ${partner}${offset.day > 0 ? `, which will be in ${offset.day > 1 ? "s" : ""}` : ""}!`,
+            body: setNotificationText(
+                user,
+                partner,
+                "days",
+                elapsed,
+                offset.day,
+                type,
+                name,
+            ),
         },
     });
 }

@@ -31,7 +31,7 @@ const TimePickerField: React.FC<DatePickerFieldProps> = ({
         </Text>
         <Pressable onPress={onOpen} style={styles.pressableStyle}>
             <TextInput
-                value={`${new Date(date).getHours()}:${new Date(date).getMinutes()}`}
+                value={`${("0" + new Date(date).getHours()).slice(-2)}:${("0" + new Date(date).getMinutes()).slice(-2)}`}
                 editable={false}
                 pointerEvents="none"
                 style={{

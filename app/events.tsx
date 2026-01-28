@@ -29,13 +29,13 @@ export default function Events() {
                 },
             });
         },
-        [events, router]
+        [events, router],
     );
 
     function moveEventUp(index: number) {
         const original = events[index - 1];
         const updatedEvents = events.map((e, i) =>
-            i === index - 1 ? events[i + 1] : i === index ? original : e
+            i === index - 1 ? events[i + 1] : i === index ? original : e,
         );
 
         saveEvents(updatedEvents);
@@ -44,7 +44,7 @@ export default function Events() {
     function moveEventDown(index: number) {
         const original = events[index];
         const updatedEvents = events.map((e, i) =>
-            i === index ? events[i + 1] : i === index + 1 ? original : e
+            i === index ? events[i + 1] : i === index + 1 ? original : e,
         );
 
         saveEvents(updatedEvents);
@@ -55,7 +55,8 @@ export default function Events() {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             {events.map((event, index) => (
                 <View style={styles.eventWrapper} key={event.id}>
                     <Pressable
@@ -64,13 +65,15 @@ export default function Events() {
                             ...styles.eventCt,
                             borderBottomColor: currentTheme.mainColor,
                         }}
-                        onPress={() => editEvent(index)}>
+                        onPress={() => editEvent(index)}
+                    >
                         <View style={styles.mainDataCt}>
                             <Text
                                 style={{
                                     ...styles.eventName,
                                     color: currentTheme.mainColor,
-                                }}>
+                                }}
+                            >
                                 {event.type === "milestone"
                                     ? event.name
                                     : event.type}
@@ -79,7 +82,8 @@ export default function Events() {
                                 style={{
                                     ...styles.eventDate,
                                     color: currentTheme.mainColor,
-                                }}>
+                                }}
+                            >
                                 {new Date(event.date).toLocaleDateString()}
                             </Text>
                             <FontAwesome6
@@ -96,17 +100,23 @@ export default function Events() {
                                 style={{
                                     ...styles.notificationText,
                                     color: currentTheme.mainColor,
-                                }}>
+                                }}
+                            >
                                 Notifications: yearly -{" "}
-                                {event.notifications.yearly ? "on" : "off"},
-                                every 100 days -{" "}
-                                {event.notifications.hundredDays ? "on" : "off"}
+                                {event.notifications.yearlyExact !== null
+                                    ? "on"
+                                    : "off"}
+                                , every 100 days -{" "}
+                                {event.notifications.hundredDaysExact !== null
+                                    ? "on"
+                                    : "off"}
                             </Text>
                             <Text
                                 style={{
                                     ...styles.showMainPageText,
                                     color: currentTheme.mainColor,
-                                }}>
+                                }}
+                            >
                                 Show on main page:{" "}
                                 {event.showOnMainPage ? "yes" : "no"}
                             </Text>
@@ -117,11 +127,13 @@ export default function Events() {
                             ...styles.orderControlCt,
                             backgroundColor: currentTheme.secondaryBackground,
                             borderBottomColor: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <Pressable
                             onPress={() => {
                                 index !== 0 ? moveEventUp(index) : 0;
-                            }}>
+                            }}
+                        >
                             <FontAwesome6
                                 name="caret-up"
                                 iconStyle="solid"
@@ -135,7 +147,8 @@ export default function Events() {
                             style={{
                                 ...styles.orderControlLabel,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             Order
                         </Text>
                         <Pressable
@@ -143,7 +156,8 @@ export default function Events() {
                                 index !== events.length - 1
                                     ? moveEventDown(index)
                                     : 0;
-                            }}>
+                            }}
+                        >
                             <FontAwesome6
                                 name="caret-down"
                                 iconStyle="solid"
@@ -161,7 +175,8 @@ export default function Events() {
                 style={{
                     ...styles.newBtn,
                     backgroundColor: currentTheme.mainColor,
-                }}>
+                }}
+            >
                 <FontAwesome6
                     name="plus"
                     iconStyle="solid"
@@ -174,7 +189,8 @@ export default function Events() {
                     style={{
                         ...styles.newBtnText,
                         color: currentTheme.mainBackground,
-                    }}>
+                    }}
+                >
                     Add new event
                 </Text>
             </Pressable>

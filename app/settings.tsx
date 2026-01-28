@@ -18,8 +18,12 @@ import {
     validateImageUri,
     type ImageType,
 } from "../utils/imageStorage";
-import { cancelAllScheduledNotificationsAsync } from "expo-notifications";
+import {
+    cancelAllScheduledNotificationsAsync,
+    getAllScheduledNotificationsAsync,
+} from "expo-notifications";
 import { scheduleAllEventsNotifications } from "../utils/notificationScheduling";
+import { useEvents } from "../context/EventContext";
 
 export default function Settings() {
     const router = useRouter();
@@ -29,6 +33,8 @@ export default function Settings() {
     const currentTheme = colors[theme];
 
     const { tutorial } = useTutorial();
+
+    const { events, saveEvents } = useEvents();
 
     const { notificationsEnabled, saveNotificationsEnabled } =
         useNotifications();
@@ -50,7 +56,8 @@ export default function Settings() {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -145,6 +152,11 @@ export default function Settings() {
         getUserImageFromStorage();
         getPartnerImageFromStorage();
         getCoverImageFromStorage();
+
+        async function logAllNotif() {
+            console.log(await getAllScheduledNotificationsAsync());
+        }
+        logAllNotif();
     }, []);
 
     useEffect(() => {
@@ -193,6 +205,8 @@ export default function Settings() {
         // If notifications were not allowed, we schedule them.
         if (isNotificationEnabled && !notificationsEnabled)
             await scheduleAllEventsNotifications(
+                events,
+                saveEvents,
                 username ?? "",
                 partnername ?? "",
             );
@@ -262,7 +276,8 @@ export default function Settings() {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             {tutorial && <SettingsTutorial />}
             <SettingsInputField
                 label="Your name:"
@@ -301,7 +316,8 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Events
                     </Text>
                 </View>
@@ -317,7 +333,8 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Themes
                     </Text>
                 </View>
@@ -328,7 +345,8 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Info
                     </Text>
                 </View>

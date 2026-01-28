@@ -47,18 +47,6 @@ const YearlyNotifications = ({
         onChange(value ? "awaiting" : null);
     }
 
-    function calcNextYear(date: Date): number {
-        const currYear = new Date().getFullYear();
-        const givenYear = date.getFullYear();
-        const thisYearDate = new Date(
-            `${currYear}-${date.getMonth() + 1}-${date.getDate()}`,
-        );
-        const yearDiff = currYear - givenYear;
-        return thisYearDate.getTime() < new Date().getTime()
-            ? yearDiff + 1
-            : yearDiff;
-    }
-
     return (
         <SwitchInputField
             label="Yearly"
@@ -70,5 +58,3 @@ const YearlyNotifications = ({
 };
 
 export default YearlyNotifications;
-
-const styles = StyleSheet.create({});

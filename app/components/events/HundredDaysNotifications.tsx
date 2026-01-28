@@ -47,26 +47,6 @@ const HundredDaysNotifications = ({
         onChange(value ? "awaiting" : null);
     }
 
-    async function checkIfNotificationsAreScheduled() {
-        const needed = { years: true, days: true };
-        const scheduled =
-            await Notifications.getAllScheduledNotificationsAsync();
-
-        scheduled.forEach((data) => {
-            if (data.content.title?.includes("year")) needed.years = false;
-            if (data.content.title?.includes("days")) needed.days = false;
-        });
-
-        return needed;
-    }
-
-    function calcNext100Days(date: Date): number {
-        const currDays = Math.floor(
-            (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-        );
-        return (Math.floor(currDays / 100) + 1) * 100;
-    }
-
     return (
         <SwitchInputField
             label="Every 100 days"

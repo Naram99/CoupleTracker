@@ -21,19 +21,19 @@ export default function Info() {
         try {
             await Linking.openURL(
                 `mailto:${encodeURIComponent(
-                    mailAddress
-                )}?subject=${encodeURIComponent(subject)}`
+                    mailAddress,
+                )}?subject=${encodeURIComponent(subject)}`,
             );
         } catch (error) {
             try {
                 Linking.openURL(
                     `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
-                        mailAddress
-                    )}&su=${encodeURIComponent(subject)}`
+                        mailAddress,
+                    )}&su=${encodeURIComponent(subject)}`,
                 );
             } catch {
                 Alert.alert(
-                    "No mailing app found on this device. Please send your feedback to: contact.coupletracker@gmail.com"
+                    "No mailing app found on this device. Please send your feedback to: contact.coupletracker@gmail.com",
                 );
             }
         }
@@ -44,7 +44,8 @@ export default function Info() {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <View style={styles.mainTextContainer}>
                 <Text style={{ ...styles.text, color: currentTheme.mainColor }}>
                     This app is a simple tool to help you track your
@@ -69,14 +70,16 @@ export default function Info() {
                             ...styles.linkText,
                             color: currentTheme.mainColor,
                             textDecorationColor: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         contact.coupletracker@gmail.com
                     </Text>
                 </TouchableOpacity>
             </View>
             <Text
-                style={{ ...styles.footerText, color: currentTheme.mainColor }}>
-                v0.3 - Made by Naram99
+                style={{ ...styles.footerText, color: currentTheme.mainColor }}
+            >
+                v1.0.4 - Made by Naram99
             </Text>
         </View>
     );

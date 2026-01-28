@@ -13,7 +13,7 @@ export default function NewEvent() {
 
             await saveEvents(updatedEvents);
         },
-        [events, saveEvents]
+        [events, saveEvents],
     );
 
     return (
@@ -22,8 +22,10 @@ export default function NewEvent() {
                 id: new Date().getTime(),
                 date: new Date().getTime(),
                 notifications: {
-                    hundredDays: null,
-                    yearly: null,
+                    hundredDaysExact: null,
+                    hundredDaysOffset: null,
+                    yearlyExact: null,
+                    yearlyOffset: null,
                     offset: { day: 0, hour: 9, minute: 0 },
                 },
                 order: events.length,
