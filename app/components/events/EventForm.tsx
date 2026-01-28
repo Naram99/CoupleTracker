@@ -31,9 +31,9 @@ import HundredDaysNotifications from "./HundredDaysNotifications";
 import OffsetSelector from "./OffsetSelector";
 import SwitchInputField from "../settings/SwitchInputField";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNotifications } from "../../../context/NotificationsContext";
 import * as Notifications from "expo-notifications";
+import { scheduleAwaitingEventNotifications } from "../../../utils/notificationScheduling";
 
 const EventOptions = [
     { value: "dating", label: "Dating" },
@@ -72,7 +72,7 @@ export default function EventForm({
         useState<boolean>(notificationsEnabled);
 
     const handleSubmit = useCallback(async () => {
-        if (notificationsEnabled) scheduleNotifications();
+        if (notificationsEnabled) await scheduleNotifications();
         if (event.type === "milestone") {
             await onSave({ ...event, name: name, date: date });
         } else {
@@ -80,7 +80,7 @@ export default function EventForm({
         }
 
         router.back();
-    }, [event, name, date, onSave, router]);
+    }, [event, name, date, onSave, router, scheduleNotifications]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -145,22 +145,24 @@ export default function EventForm({
     }
 
     async function yearlyChange(value: string | null) {
-        if (
-            event.notifications.yearlyExact &&
-            event.notifications.yearlyExact !== "awaiting"
-        ) {
-            await Notifications.cancelScheduledNotificationAsync(
-                event.notifications.yearlyExact,
-            );
-        }
+        if (value === null) {
+            if (
+                event.notifications.yearlyExact &&
+                event.notifications.yearlyExact !== "awaiting"
+            ) {
+                await Notifications.cancelScheduledNotificationAsync(
+                    event.notifications.yearlyExact,
+                );
+            }
 
-        if (
-            event.notifications.yearlyOffset &&
-            event.notifications.yearlyOffset !== "awaiting"
-        ) {
-            await Notifications.cancelScheduledNotificationAsync(
-                event.notifications.yearlyOffset,
-            );
+            if (
+                event.notifications.yearlyOffset &&
+                event.notifications.yearlyOffset !== "awaiting"
+            ) {
+                await Notifications.cancelScheduledNotificationAsync(
+                    event.notifications.yearlyOffset,
+                );
+            }
         }
 
         setEvent((prev) => ({
@@ -174,22 +176,24 @@ export default function EventForm({
     }
 
     async function hundredDaysChange(value: string | null) {
-        if (
-            event.notifications.hundredDaysExact &&
-            event.notifications.hundredDaysExact !== "awaiting"
-        ) {
-            await Notifications.cancelScheduledNotificationAsync(
-                event.notifications.hundredDaysExact,
-            );
-        }
+        if (value === null) {
+            if (
+                event.notifications.hundredDaysExact &&
+                event.notifications.hundredDaysExact !== "awaiting"
+            ) {
+                await Notifications.cancelScheduledNotificationAsync(
+                    event.notifications.hundredDaysExact,
+                );
+            }
 
-        if (
-            event.notifications.hundredDaysOffset &&
-            event.notifications.hundredDaysOffset !== "awaiting"
-        ) {
-            await Notifications.cancelScheduledNotificationAsync(
-                event.notifications.hundredDaysOffset,
-            );
+            if (
+                event.notifications.hundredDaysOffset &&
+                event.notifications.hundredDaysOffset !== "awaiting"
+            ) {
+                await Notifications.cancelScheduledNotificationAsync(
+                    event.notifications.hundredDaysOffset,
+                );
+            }
         }
 
         setEvent((prev) => ({
@@ -202,32 +206,13 @@ export default function EventForm({
         }));
     }
 
-    function scheduleNotifications() {}
-
-    async function setupAlert(
-        user: string | null,
-        partner: string | null,
-        triggerDate: Date,
-        elapsed: number,
-        timeType: "year" | "days",
-    ) {
-        triggerDate.setHours(9, 0, 0, 0);
-
-        if (elapsed > 1 && timeType === "year") timeType += "s";
-
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: `${elapsed} ${timeType}!`,
-                body: `Hey ${
-                    user ?? "{user}"
-                }, celebrate your ${elapsed} ${timeType} together with ${
-                    partner ?? "{partner}"
-                }!`,
-            },
-            trigger: {
-                date: triggerDate,
-                type: Notifications.SchedulableTriggerInputTypes.DATE,
-            },
+    async function scheduleNotifications() {
+        setEvent({
+            ...event,
+            notifications: await scheduleAwaitingEventNotifications(
+                date,
+                event.notifications,
+            ),
         });
     }
 

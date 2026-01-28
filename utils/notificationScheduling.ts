@@ -3,13 +3,145 @@ import {
     scheduleNotificationAsync,
 } from "expo-notifications";
 import { useEvents } from "../context/EventContext";
-import { NotificationOffset } from "../types/EventTypes";
+import {
+    EventData,
+    EventNotifications,
+    NotificationOffset,
+} from "../types/EventTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export async function scheduleAllEventsNotifications(): Promise<void> {
+export async function scheduleAllEventsNotifications(
+    user: string,
+    partner: string,
+): Promise<void> {
     const { events, saveEvents } = useEvents();
+    const updatedEvents: EventData[] = [];
 
     for (const eventData of events) {
+        if (eventData.notifications.yearlyExact) {
+            const notificationId = await scheduleYearlyNotification(
+                user,
+                partner,
+                calcNextYearTrigger(new Date(eventData.date)),
+                calcNextYear(new Date(eventData.date)),
+                {
+                    day: 0,
+                    hour: eventData.notifications.offset.hour,
+                    minute: eventData.notifications.offset.minute,
+                },
+            );
+
+            eventData.notifications.yearlyExact = notificationId;
+        }
+
+        if (eventData.notifications.yearlyOffset) {
+            const notificationId = await scheduleYearlyNotification(
+                user,
+                partner,
+                calcNextYearTrigger(new Date(eventData.date)),
+                calcNextYear(new Date(eventData.date)),
+                eventData.notifications.offset,
+            );
+
+            eventData.notifications.yearlyOffset = notificationId;
+        }
+
+        if (eventData.notifications.hundredDaysExact) {
+            const notificationId = await scheduleHundredDaysNotification(
+                user,
+                partner,
+                calcNext100DaysTrigger(new Date(eventData.date)),
+                calcNext100Days(new Date(eventData.date)),
+                {
+                    day: 0,
+                    hour: eventData.notifications.offset.hour,
+                    minute: eventData.notifications.offset.minute,
+                },
+            );
+
+            eventData.notifications.hundredDaysExact = notificationId;
+        }
+
+        if (eventData.notifications.hundredDaysOffset) {
+            const notificationId = await scheduleHundredDaysNotification(
+                user,
+                partner,
+                calcNext100DaysTrigger(new Date(eventData.date)),
+                calcNext100Days(new Date(eventData.date)),
+                eventData.notifications.offset,
+            );
+
+            eventData.notifications.hundredDaysOffset = notificationId;
+        }
+
+        updatedEvents.push(eventData);
     }
+
+    await saveEvents(updatedEvents);
+}
+
+export async function scheduleAwaitingEventNotifications(
+    eventDate: number,
+    notifications: EventNotifications,
+): Promise<EventNotifications> {
+    const user = (await AsyncStorage.getItem("username")) ?? "";
+    const partner = (await AsyncStorage.getItem("partnername")) ?? "";
+
+    if (notifications.hundredDaysExact === "awaiting") {
+        notifications.hundredDaysExact = await scheduleHundredDaysNotification(
+            user,
+            partner,
+            calcNext100DaysTrigger(new Date(eventDate)),
+            calcNext100Days(new Date(eventDate)),
+            {
+                day: 0,
+                hour: notifications.offset.hour,
+                minute: notifications.offset.minute,
+            },
+        );
+    }
+
+    if (
+        notifications.hundredDaysOffset === "awaiting" &&
+        notifications.offset.day > 0
+    ) {
+        notifications.hundredDaysOffset = await scheduleHundredDaysNotification(
+            user,
+            partner,
+            calcNext100DaysTrigger(new Date(eventDate)),
+            calcNext100Days(new Date(eventDate)),
+            notifications.offset,
+        );
+    }
+
+    if (notifications.yearlyExact === "awaiting") {
+        notifications.yearlyExact = await scheduleYearlyNotification(
+            user,
+            partner,
+            calcNextYearTrigger(new Date(eventDate)),
+            calcNextYear(new Date(eventDate)),
+            {
+                day: 0,
+                hour: notifications.offset.hour,
+                minute: notifications.offset.minute,
+            },
+        );
+    }
+
+    if (
+        notifications.yearlyOffset === "awaiting" &&
+        notifications.offset.day > 0
+    ) {
+        notifications.yearlyOffset = await scheduleYearlyNotification(
+            user,
+            partner,
+            calcNextYearTrigger(new Date(eventDate)),
+            calcNextYear(new Date(eventDate)),
+            notifications.offset,
+        );
+    }
+
+    return notifications;
 }
 
 export async function scheduleYearlyNotification(
@@ -54,4 +186,39 @@ export async function scheduleHundredDaysNotification(
             body: `Hey ${user}, celebrate your ${elapsed} days together with ${partner}${offset.day > 0 ? `, which will be in ${offset.day > 1 ? "s" : ""}` : ""}!`,
         },
     });
+}
+
+export function calcNext100Days(date: Date): number {
+    const currDays = Math.floor(
+        (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    return (Math.floor(currDays / 100) + 1) * 100;
+}
+
+export function calcNextYear(date: Date): number {
+    const currYear = new Date().getFullYear();
+    const givenYear = date.getFullYear();
+    const thisYearDate = new Date(
+        `${currYear}-${date.getMonth() + 1}-${date.getDate()}`,
+    );
+    const yearDiff = currYear - givenYear;
+    return thisYearDate.getTime() < new Date().getTime()
+        ? yearDiff + 1
+        : yearDiff;
+}
+
+export function calcNext100DaysTrigger(date: Date): number {
+    const nextTrigger = calcNext100Days(date);
+    return new Date(
+        date.getTime() + nextTrigger * 1000 * 24 * 60 * 60,
+    ).getTime();
+}
+
+export function calcNextYearTrigger(date: Date): number {
+    const nextYearDate = new Date(date);
+    nextYearDate.setFullYear(new Date().getFullYear());
+    if (nextYearDate.getTime() < new Date().getTime())
+        nextYearDate.setFullYear(nextYearDate.getFullYear() + 1);
+
+    return nextYearDate.getTime();
 }

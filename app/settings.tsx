@@ -18,8 +18,8 @@ import {
     validateImageUri,
     type ImageType,
 } from "../utils/imageStorage";
-import { useEvents } from "../context/EventContext";
 import { cancelAllScheduledNotificationsAsync } from "expo-notifications";
+import { scheduleAllEventsNotifications } from "../utils/notificationScheduling";
 
 export default function Settings() {
     const router = useRouter();
@@ -29,8 +29,6 @@ export default function Settings() {
     const currentTheme = colors[theme];
 
     const { tutorial } = useTutorial();
-
-    const { events, saveEvents } = useEvents();
 
     const { notificationsEnabled, saveNotificationsEnabled } =
         useNotifications();
@@ -194,15 +192,16 @@ export default function Settings() {
 
         // If notifications were not allowed, we schedule them.
         if (isNotificationEnabled && !notificationsEnabled)
-            await scheduleEventsNotifications();
+            await scheduleAllEventsNotifications(
+                username ?? "",
+                partnername ?? "",
+            );
         if (!isNotificationEnabled)
             await cancelAllScheduledNotificationsAsync();
 
         await saveNotificationsEnabled(isNotificationEnabled);
         router.replace("/");
     }
-
-    async function scheduleEventsNotifications() {}
 
     async function pickImage(imgType: string) {
         const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
