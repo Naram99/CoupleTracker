@@ -127,8 +127,7 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -243,7 +242,12 @@ export default function EventForm({
         if (
             notifs.offset.day !== eventData.notifications.offset.day ||
             notifs.offset.hour !== eventData.notifications.offset.hour ||
-            notifs.offset.minute !== eventData.notifications.offset.hour
+            notifs.offset.minute !== eventData.notifications.offset.hour ||
+            event.type !== eventData.type ||
+            date !== eventData.date ||
+            (event.type === "milestone" &&
+                eventData.type === "milestone" &&
+                name !== eventData.name)
         ) {
             if (notifs.yearlyExact && notifs.yearlyExact !== "awaiting") {
                 await Notifications.cancelScheduledNotificationAsync(
@@ -302,8 +306,7 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}

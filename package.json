@@ -1,7 +1,7 @@
 {
   "name": "couple-tracker",
   "description": "Couple Tracker app",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",

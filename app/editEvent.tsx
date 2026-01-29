@@ -7,6 +7,7 @@ import { EventData } from "../types/EventTypes";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
+import { cancelScheduledNotificationAsync } from "expo-notifications";
 
 export default function EditEvent() {
     const router = useRouter();
@@ -22,12 +23,12 @@ export default function EditEvent() {
     const handleSubmit = useCallback(
         async (event: EventData) => {
             const updatedEvents = events.map((e, index) =>
-                index === eventIndex ? event : e
+                index === eventIndex ? event : e,
             );
 
             await saveEvents(updatedEvents);
         },
-        [events, saveEvents]
+        [events, saveEvents],
     );
 
     function deleteDialog() {
@@ -42,11 +43,21 @@ export default function EditEvent() {
                     style: "destructive",
                 },
             ],
-            { cancelable: true }
+            { cancelable: true },
         );
     }
 
     function deleteEvent() {
+        const notifs = events[eventIndex].notifications;
+        if (notifs.hundredDaysExact)
+            cancelScheduledNotificationAsync(notifs.hundredDaysExact);
+        if (notifs.hundredDaysOffset)
+            cancelScheduledNotificationAsync(notifs.hundredDaysOffset);
+        if (notifs.yearlyExact)
+            cancelScheduledNotificationAsync(notifs.yearlyExact);
+        if (notifs.yearlyOffset)
+            cancelScheduledNotificationAsync(notifs.yearlyOffset);
+
         const updatedEvents = events.filter((e, index) => index !== eventIndex);
         saveEvents(updatedEvents);
         router.back();

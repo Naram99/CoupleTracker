@@ -151,11 +151,6 @@ export default function Settings() {
         getUserImageFromStorage();
         getPartnerImageFromStorage();
         getCoverImageFromStorage();
-
-        async function logAllNotif() {
-            console.log(await getAllScheduledNotificationsAsync());
-        }
-        logAllNotif();
     }, []);
 
     useEffect(() => {
