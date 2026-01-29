@@ -88,7 +88,6 @@ export async function scheduleAllEventsNotifications(
         updatedEvents.push(eventData);
     }
 
-    console.log(await getAllScheduledNotificationsAsync());
     await saveEvents(updatedEvents);
 }
 
@@ -163,7 +162,6 @@ export async function scheduleAwaitingEventNotifications(
         );
     }
 
-    console.log(await getAllScheduledNotificationsAsync());
     return notifications;
 }
 

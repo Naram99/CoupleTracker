@@ -24,7 +24,7 @@ export default function Home() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    const { tutorial } = useTutorial();
+    // const { tutorial } = useTutorial();
 
     const { events } = useEvents();
 
@@ -161,7 +161,7 @@ export default function Home() {
                 <ScrollView
                     style={styles.scroll}
                     contentContainerStyle={styles.container}>
-                    {tutorial && <Tutorial />}
+                    {/* tutorial && <Tutorial /> */}
                     <View style={styles.header}>
                         <Text
                             style={{

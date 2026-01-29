@@ -32,7 +32,7 @@ export default function Settings() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    const { tutorial } = useTutorial();
+    // const { tutorial } = useTutorial();
 
     const { events, saveEvents } = useEvents();
 
@@ -56,8 +56,7 @@ export default function Settings() {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -276,9 +275,8 @@ export default function Settings() {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
-            {tutorial && <SettingsTutorial />}
+            }}>
+            {/* tutorial && <SettingsTutorial /> */}
             <SettingsInputField
                 label="Your name:"
                 value={username ?? ""}
@@ -316,8 +314,7 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Events
                     </Text>
                 </View>
@@ -333,8 +330,7 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Themes
                     </Text>
                 </View>
@@ -345,8 +341,7 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         Info
                     </Text>
                 </View>
