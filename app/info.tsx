@@ -44,8 +44,7 @@ export default function Info() {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             <View style={styles.mainTextContainer}>
                 <Text style={{ ...styles.text, color: currentTheme.mainColor }}>
                     This app is a simple tool to help you track your
@@ -70,16 +69,14 @@ export default function Info() {
                             ...styles.linkText,
                             color: currentTheme.mainColor,
                             textDecorationColor: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         contact.coupletracker@gmail.com
                     </Text>
                 </TouchableOpacity>
             </View>
             <Text
-                style={{ ...styles.footerText, color: currentTheme.mainColor }}
-            >
-                v1.0.4 - Made by Naram99
+                style={{ ...styles.footerText, color: currentTheme.mainColor }}>
+                v1.1 - Made by Naram99
             </Text>
         </View>
     );
