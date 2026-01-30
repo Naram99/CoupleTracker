@@ -171,7 +171,7 @@ export default function EventForm({
             await onSave(updatedEvent as EventData);
         }
 
-        // console.log(await Notifications.getAllScheduledNotificationsAsync());
+        console.log(await Notifications.getAllScheduledNotificationsAsync());
         router.back();
     }, [
         event,

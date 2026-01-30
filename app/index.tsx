@@ -118,6 +118,8 @@ export default function Home() {
 
         const hoursSinceLastCheck =
             (Date.now() - parseInt(lastCheck)) / (1000 * 60 * 60);
+        console.log(hoursSinceLastCheck);
+
         return hoursSinceLastCheck >= 24; // Csak 24 óránként
     }
 
