@@ -151,6 +151,11 @@ export default function Settings() {
         getUserImageFromStorage();
         getPartnerImageFromStorage();
         getCoverImageFromStorage();
+
+        async function loadAllNotifs() {
+            console.log(await getAllScheduledNotificationsAsync());
+        }
+        loadAllNotifs();
     }, []);
 
     useEffect(() => {

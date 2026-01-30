@@ -1,4 +1,5 @@
 import {
+    cancelAllScheduledNotificationsAsync,
     getAllScheduledNotificationsAsync,
     SchedulableTriggerInputTypes,
     scheduleNotificationAsync,
@@ -262,4 +263,26 @@ export function calcNextYearTrigger(date: Date): number {
         nextYearDate.setFullYear(nextYearDate.getFullYear() + 1);
 
     return nextYearDate.getTime();
+}
+
+export async function checkIfTriggered(
+    events: EventData[],
+    saveEvents: (events: EventData[]) => Promise<void>,
+    user: string,
+    partner: string,
+) {
+    const scheduledNotifications = await getAllScheduledNotificationsAsync();
+    let neededNotifications = 0;
+
+    for (const event of events) {
+        if (event.notifications.hundredDaysExact) neededNotifications++;
+        if (event.notifications.yearlyExact) neededNotifications++;
+        if (event.notifications.hundredDaysOffset) neededNotifications++;
+        if (event.notifications.yearlyOffset) neededNotifications++;
+    }
+
+    if (scheduledNotifications.length !== neededNotifications) {
+        await cancelAllScheduledNotificationsAsync();
+        await scheduleAllEventsNotifications(events, saveEvents, user, partner);
+    }
 }

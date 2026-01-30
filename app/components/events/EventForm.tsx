@@ -72,34 +72,106 @@ export default function EventForm({
     const [notificationEnabled, setNotificationEnabled] =
         useState<boolean>(notificationsEnabled);
 
-    const scheduleNotifications = useCallback(async () => {
-        const notifs = await scheduleAwaitingEventNotifications(
-            date,
-            event.notifications,
-            event.type,
-            event.type === "milestone" ? name : undefined,
-        );
+    const setupEventNotifications = useCallback(async () => {
+        const notifs: EventNotifications = { ...event.notifications };
 
-        setEvent((prev) => ({
-            ...prev,
-            notifications: notifs,
-        }));
-    }, [event, date, name, setEvent]);
+        if (
+            notifs.offset.day !== eventData.notifications.offset.day ||
+            notifs.offset.hour !== eventData.notifications.offset.hour ||
+            notifs.offset.minute !== eventData.notifications.offset.hour ||
+            event.type !== eventData.type ||
+            date !== eventData.date ||
+            (event.type === "milestone" &&
+                eventData.type === "milestone" &&
+                name !== eventData.name)
+        ) {
+            if (notifs.yearlyExact && notifs.yearlyExact !== "awaiting") {
+                await Notifications.cancelScheduledNotificationAsync(
+                    notifs.yearlyExact,
+                );
 
-    const handleSubmit = useCallback(async () => {
-        const notifs = await setupEventNotifications();
-        setEvent((prev) => ({
-            ...prev,
-            notifications: notifs,
-        }));
+                notifs.yearlyExact = "awaiting";
+            }
 
-        if (notificationsEnabled) await scheduleNotifications();
-        if (event.type === "milestone") {
-            await onSave({ ...event, name: name, date: date });
-        } else {
-            await onSave({ ...event, date: date } as EventData);
+            if (
+                notifs.hundredDaysExact &&
+                notifs.hundredDaysExact !== "awaiting"
+            ) {
+                await Notifications.cancelScheduledNotificationAsync(
+                    notifs.hundredDaysExact,
+                );
+
+                notifs.hundredDaysExact = "awaiting";
+            }
+
+            if (notifs.offset.day === 0) {
+                if (notifs.yearlyOffset)
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.yearlyOffset,
+                    );
+
+                if (notifs.hundredDaysOffset)
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.hundredDaysOffset,
+                    );
+
+                notifs.yearlyOffset = null;
+                notifs.hundredDaysOffset = null;
+            } else {
+                if (notifs.yearlyOffset) {
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.yearlyOffset,
+                    );
+                }
+                notifs.yearlyOffset = "awaiting";
+
+                if (notifs.hundredDaysOffset) {
+                    await Notifications.cancelScheduledNotificationAsync(
+                        notifs.hundredDaysOffset,
+                    );
+                }
+                notifs.hundredDaysOffset = "awaiting";
+            }
         }
 
+        setEvent((prev) => ({ ...prev, notifications: notifs }));
+        return notifs;
+    }, [event, date, name]);
+
+    const scheduleNotifications = useCallback(
+        async (notifications: EventNotifications) => {
+            const notifs = await scheduleAwaitingEventNotifications(
+                date,
+                notifications,
+                event.type,
+                event.type === "milestone" ? name : undefined,
+            );
+
+            setEvent((prev) => ({
+                ...prev,
+                notifications: notifs,
+            }));
+            return notifs;
+        },
+        [event, date, name, setEvent],
+    );
+
+    const handleSubmit = useCallback(async () => {
+        const setupNotifs = await setupEventNotifications();
+
+        let finalNotifs = setupNotifs;
+        if (notificationsEnabled) {
+            finalNotifs = await scheduleNotifications(setupNotifs);
+        }
+
+        const updatedEvent = { ...event, notifications: finalNotifs, date };
+        if (event.type === "milestone") {
+            await onSave({ ...updatedEvent, name });
+        } else {
+            await onSave(updatedEvent as EventData);
+        }
+
+        // console.log(await Notifications.getAllScheduledNotificationsAsync());
         router.back();
     }, [
         event,
@@ -109,6 +181,7 @@ export default function EventForm({
         router,
         scheduleNotifications,
         setupEventNotifications,
+        notificationsEnabled,
     ]);
 
     useLayoutEffect(() => {
@@ -234,71 +307,6 @@ export default function EventForm({
                     prev.notifications.offset.day > 0 ? value : null,
             },
         }));
-    }
-
-    async function setupEventNotifications() {
-        const notifs: EventNotifications = { ...event.notifications };
-
-        if (
-            notifs.offset.day !== eventData.notifications.offset.day ||
-            notifs.offset.hour !== eventData.notifications.offset.hour ||
-            notifs.offset.minute !== eventData.notifications.offset.hour ||
-            event.type !== eventData.type ||
-            date !== eventData.date ||
-            (event.type === "milestone" &&
-                eventData.type === "milestone" &&
-                name !== eventData.name)
-        ) {
-            if (notifs.yearlyExact && notifs.yearlyExact !== "awaiting") {
-                await Notifications.cancelScheduledNotificationAsync(
-                    notifs.yearlyExact,
-                );
-
-                notifs.yearlyExact = "awaiting";
-            }
-
-            if (
-                notifs.hundredDaysExact &&
-                notifs.hundredDaysExact !== "awaiting"
-            ) {
-                await Notifications.cancelScheduledNotificationAsync(
-                    notifs.hundredDaysExact,
-                );
-
-                notifs.hundredDaysExact = "awaiting";
-            }
-
-            if (notifs.offset.day === 0) {
-                if (notifs.yearlyOffset)
-                    await Notifications.cancelScheduledNotificationAsync(
-                        notifs.yearlyOffset,
-                    );
-
-                if (notifs.hundredDaysOffset)
-                    await Notifications.cancelScheduledNotificationAsync(
-                        notifs.hundredDaysOffset,
-                    );
-
-                notifs.yearlyOffset = null;
-                notifs.hundredDaysOffset = null;
-            } else {
-                if (notifs.yearlyOffset) {
-                    await Notifications.cancelScheduledNotificationAsync(
-                        notifs.yearlyOffset,
-                    );
-                }
-                notifs.yearlyOffset = "awaiting";
-
-                if (notifs.hundredDaysOffset) {
-                    await Notifications.cancelScheduledNotificationAsync(
-                        notifs.hundredDaysOffset,
-                    );
-                }
-                notifs.hundredDaysOffset = "awaiting";
-            }
-        }
-
-        return notifs;
     }
 
     return (

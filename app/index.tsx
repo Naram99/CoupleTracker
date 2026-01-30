@@ -19,6 +19,9 @@ import { useTutorial } from "../context/TutorialContext";
 import { useEvents } from "../context/EventContext";
 import EventsDisplay from "./components/home/EventsDisplay";
 import { validateImageUri } from "../utils/imageStorage";
+import { checkIfTriggered } from "../utils/notificationScheduling";
+
+const LAST_CHECK_KEY = "lastNotificationCheck";
 
 export default function Home() {
     const { theme } = useTheme();
@@ -26,7 +29,7 @@ export default function Home() {
 
     // const { tutorial } = useTutorial();
 
-    const { events } = useEvents();
+    const { events, saveEvents } = useEvents();
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -109,6 +112,28 @@ export default function Home() {
         }
     }
 
+    async function shouldCheckNotifications() {
+        const lastCheck = await AsyncStorage.getItem(LAST_CHECK_KEY);
+        if (!lastCheck) return true;
+
+        const hoursSinceLastCheck =
+            (Date.now() - parseInt(lastCheck)) / (1000 * 60 * 60);
+        return hoursSinceLastCheck >= 24; // Csak 24 óránként
+    }
+
+    async function checkNotificationsTriggered() {
+        if (!(await shouldCheckNotifications())) return;
+
+        await checkIfTriggered(
+            events,
+            saveEvents,
+            username ?? "",
+            partnername ?? "",
+        );
+
+        await AsyncStorage.setItem(LAST_CHECK_KEY, Date.now().toString());
+    }
+
     // Async storage data loading
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -136,6 +161,7 @@ export default function Home() {
             getUserImageFromStorage();
             getPartnerImageFromStorage();
             getCoverImageFromStorage();
+            checkNotificationsTriggered();
         }, []),
     );
 
