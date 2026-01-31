@@ -6,18 +6,21 @@ import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { TutorialProvider } from "../context/TutorialContext";
 import { EventsProvider } from "../context/EventContext";
 import { NotificationsProvider } from "../context/NotificationsContext";
+import { DimensionsProvider } from "../context/DimensionsContext";
 
 const RootLayout = () => {
     return (
-        <ThemeProvider>
-            <TutorialProvider>
-                <EventsProvider>
-                    <NotificationsProvider>
-                        <AppContent />
-                    </NotificationsProvider>
-                </EventsProvider>
-            </TutorialProvider>
-        </ThemeProvider>
+        <DimensionsProvider>
+            <ThemeProvider>
+                <TutorialProvider>
+                    <EventsProvider>
+                        <NotificationsProvider>
+                            <AppContent />
+                        </NotificationsProvider>
+                    </EventsProvider>
+                </TutorialProvider>
+            </ThemeProvider>
+        </DimensionsProvider>
     );
 };
 
@@ -31,7 +34,8 @@ const AppContent = () => {
                 style={{
                     flex: 1,
                     backgroundColor: colors.light.mainBackground,
-                }}>
+                }}
+            >
                 {/* Loading screen here if needed */}
             </View>
         );
@@ -42,7 +46,8 @@ const AppContent = () => {
             screenOptions={{
                 headerStyle: { backgroundColor: currentTheme.mainBackground },
                 headerTintColor: currentTheme.mainColor,
-            }}>
+            }}
+        >
             <Stack.Screen
                 name="index"
                 options={{ title: "Home", headerShown: false }}

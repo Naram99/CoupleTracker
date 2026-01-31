@@ -5,6 +5,7 @@ import {
     Text,
     View,
     ScrollView,
+    useWindowDimensions,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
@@ -20,10 +21,13 @@ import { useEvents } from "../context/EventContext";
 import EventsDisplay from "./components/home/EventsDisplay";
 import { validateImageUri } from "../utils/imageStorage";
 import { checkIfTriggered } from "../utils/notificationScheduling";
+import { useDimensions } from "../context/DimensionsContext";
 
 const LAST_CHECK_KEY = "lastNotificationCheck";
 
 export default function Home() {
+    const { isLandscape, isTablet } = useDimensions();
+
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
@@ -185,17 +189,20 @@ export default function Home() {
                     ...styles.safeArea,
                     backgroundColor: currentTheme.mainBackground,
                 }}
-                edges={["top"]}>
+                edges={["top"]}
+            >
                 <ScrollView
                     style={styles.scroll}
-                    contentContainerStyle={styles.container}>
+                    contentContainerStyle={styles.container}
+                >
                     {/* tutorial && <Tutorial /> */}
                     <View style={styles.header}>
                         <Text
                             style={{
                                 ...styles.title,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             Couple Tracker
                         </Text>
                         <Link href={"/settings"}>
@@ -235,7 +242,8 @@ export default function Home() {
                         <View style={styles.personsCt}>
                             <Pressable
                                 style={styles.personCt}
-                                onPress={() => showPicture(userImage)}>
+                                onPress={() => showPicture(userImage)}
+                            >
                                 <Image
                                     source={{
                                         uri:
@@ -254,13 +262,15 @@ export default function Home() {
                                     style={{
                                         ...styles.personName,
                                         color: currentTheme.mainColor,
-                                    }}>
+                                    }}
+                                >
                                     {username ?? "Name"}
                                 </Text>
                             </Pressable>
                             <Pressable
                                 style={styles.personCt}
-                                onPress={() => showPicture(partnerImage)}>
+                                onPress={() => showPicture(partnerImage)}
+                            >
                                 <Image
                                     source={{
                                         uri:
@@ -279,7 +289,8 @@ export default function Home() {
                                     style={{
                                         ...styles.personName,
                                         color: currentTheme.mainColor,
-                                    }}>
+                                    }}
+                                >
                                     {partnername ?? "Name"}
                                 </Text>
                             </Pressable>
@@ -289,7 +300,8 @@ export default function Home() {
                     {imgPopupOpen && imgPopupSrc && (
                         <Pressable
                             style={styles.imgPopupCt}
-                            onPress={hidePicture}>
+                            onPress={hidePicture}
+                        >
                             <Image
                                 style={styles.imgPopup}
                                 source={{ uri: imgPopupSrc }}

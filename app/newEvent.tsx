@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback } from "react";
 import EventForm from "./components/events/EventForm";
 import { useEvents } from "../context/EventContext";
@@ -30,11 +29,9 @@ export default function NewEvent() {
                 },
                 order: events.length,
                 type: "dating",
-                showOnMainPage: false,
+                showOnMainPage: true,
             }}
             onSave={handleSave}
         />
     );
 }
-
-const styles = StyleSheet.create({});

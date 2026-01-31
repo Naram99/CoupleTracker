@@ -4,7 +4,7 @@
         "slug": "CoupleTracker",
         "scheme": "coupletracker",
         "version": "1.1",
-        "orientation": "portrait",
+        "orientation": "default",
         "icon": "./assets/testicon.png",
         "userInterfaceStyle": "dark",
         "newArchEnabled": true,
