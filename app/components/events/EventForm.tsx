@@ -200,7 +200,8 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -314,7 +315,8 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -348,6 +350,14 @@ export default function EventForm({
                     minimumDate={new Date(1900, 0, 1)}
                 />
             )}
+            <Text
+                style={{
+                    ...styles.notificationsLabel,
+                    color: currentTheme.mainColor,
+                }}
+            >
+                Notifications:
+            </Text>
             <YearlyNotifications
                 enabled={event.notifications.yearlyExact !== null}
                 onChange={(value: string | null) => {
@@ -385,5 +395,10 @@ const styles = StyleSheet.create({
     },
     settingsCt: {
         flex: 1,
+    },
+    notificationsLabel: {
+        width: "100%",
+        fontWeight: "bold",
+        padding: 10,
     },
 });

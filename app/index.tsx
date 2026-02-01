@@ -33,7 +33,7 @@ export default function Home() {
 
     // const { tutorial } = useTutorial();
 
-    const { events, saveEvents } = useEvents();
+    const { events, isLoading, saveEvents } = useEvents();
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -128,7 +128,15 @@ export default function Home() {
     }
 
     async function checkNotificationsTriggered() {
-        if (!(await shouldCheckNotifications())) return;
+        console.log(events);
+
+        const shouldCheck = await shouldCheckNotifications();
+        console.log(shouldCheck);
+
+        if (!shouldCheck) return;
+        console.log("Check after 24 hours");
+
+        console.log("event count: ", events.length);
 
         await checkIfTriggered(
             events,
@@ -167,8 +175,8 @@ export default function Home() {
             getUserImageFromStorage();
             getPartnerImageFromStorage();
             getCoverImageFromStorage();
-            checkNotificationsTriggered();
-        }, []),
+            if (!isLoading) checkNotificationsTriggered();
+        }, [isLoading, events]),
     );
 
     function showPicture(picture: string | null) {

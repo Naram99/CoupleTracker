@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     },
     settingsLabel: {
         padding: 10,
+        paddingLeft: 20,
         fontWeight: "bold",
     },
 });
