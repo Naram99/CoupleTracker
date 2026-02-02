@@ -56,7 +56,8 @@ export default function Settings() {
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -275,7 +276,8 @@ export default function Settings() {
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             {/* tutorial && <SettingsTutorial /> */}
             <SettingsInputField
                 label="Your name:"
@@ -314,7 +316,8 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Events
                     </Text>
                 </View>
@@ -330,7 +333,8 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Themes
                     </Text>
                 </View>
@@ -341,7 +345,8 @@ export default function Settings() {
                         style={{
                             ...styles.settingsLabel,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         Info
                     </Text>
                 </View>

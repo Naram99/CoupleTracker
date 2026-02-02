@@ -190,17 +190,20 @@ export default function Home() {
                     ...styles.safeArea,
                     backgroundColor: currentTheme.mainBackground,
                 }}
-                edges={["top"]}>
+                edges={["top"]}
+            >
                 <ScrollView
                     style={styles.scroll}
-                    contentContainerStyle={styles.container}>
+                    contentContainerStyle={styles.container}
+                >
                     {/* tutorial && <Tutorial /> */}
                     <View style={styles.header}>
                         <Text
                             style={{
                                 ...styles.title,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             Couple Tracker
                         </Text>
                         <Link href={"/settings"}>
@@ -214,8 +217,16 @@ export default function Home() {
                             />
                         </Link>
                     </View>
-                    <View style={styles.mainCt}>
-                        <View style={styles.coverImgCt}>
+                    <View
+                        style={isLandscape ? styles.mainCtLand : styles.mainCt}
+                    >
+                        <View
+                            style={
+                                isLandscape
+                                    ? styles.coverImgCtLand
+                                    : styles.coverImgCt
+                            }
+                        >
                             <Image
                                 source={{
                                     uri:
@@ -223,7 +234,11 @@ export default function Home() {
                                             ? coverImage
                                             : "../assets/avatar.jpg",
                                 }}
-                                style={styles.coverImg}
+                                style={
+                                    isLandscape
+                                        ? styles.coverImgLand
+                                        : styles.coverImg
+                                }
                                 onError={() => setCoverImageError(true)}
                             />
                             <LinearGradient
@@ -240,7 +255,8 @@ export default function Home() {
                         <View style={styles.personsCt}>
                             <Pressable
                                 style={styles.personCt}
-                                onPress={() => showPicture(userImage)}>
+                                onPress={() => showPicture(userImage)}
+                            >
                                 <Image
                                     source={{
                                         uri:
@@ -259,13 +275,15 @@ export default function Home() {
                                     style={{
                                         ...styles.personName,
                                         color: currentTheme.mainColor,
-                                    }}>
+                                    }}
+                                >
                                     {username ?? "Name"}
                                 </Text>
                             </Pressable>
                             <Pressable
                                 style={styles.personCt}
-                                onPress={() => showPicture(partnerImage)}>
+                                onPress={() => showPicture(partnerImage)}
+                            >
                                 <Image
                                     source={{
                                         uri:
@@ -284,17 +302,22 @@ export default function Home() {
                                     style={{
                                         ...styles.personName,
                                         color: currentTheme.mainColor,
-                                    }}>
+                                    }}
+                                >
                                     {partnername ?? "Name"}
                                 </Text>
                             </Pressable>
                         </View>
-                        <EventsDisplay eventsData={events} />
+                        <EventsDisplay
+                            eventsData={events}
+                            isLandscape={isLandscape}
+                        />
                     </View>
                     {imgPopupOpen && imgPopupSrc && (
                         <Pressable
                             style={styles.imgPopupCt}
-                            onPress={hidePicture}>
+                            onPress={hidePicture}
+                        >
                             <Image
                                 style={styles.imgPopup}
                                 source={{ uri: imgPopupSrc }}
@@ -342,6 +365,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         gap: 30,
     },
+    mainCtLand: {
+        position: "relative",
+        flexDirection: "row",
+        flex: 1,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 30,
+    },
     coverImgCt: {
         position: "absolute",
         top: 0,
@@ -349,10 +381,25 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "50%",
     },
+    coverImgCtLand: {
+        // position: "absolute",
+        top: 0,
+        left: 0,
+        // width: "50%",
+        // height: "100%",
+        flex: 1,
+    },
     coverImg: {
         flex: 1,
         resizeMode: "cover",
         zIndex: 1,
+    },
+    coverImgLand: {
+        // width: "100%",
+        // height: "100%",
+        flex: 1,
+        zIndex: 1,
+        resizeMode: "cover",
     },
     gradient: {
         position: "absolute",

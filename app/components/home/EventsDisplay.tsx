@@ -5,13 +5,16 @@ import { EventData } from "../../../types/EventTypes";
 
 export default function EventsDisplay({
     eventsData,
+    isLandscape,
 }: {
     eventsData: EventData[];
+    isLandscape: boolean;
 }) {
     return (
         <ScrollView
-            style={styles.eventsCt}
-            contentContainerStyle={styles.events}>
+            style={isLandscape ? styles.eventsCtLand : styles.eventsCt}
+            contentContainerStyle={styles.events}
+        >
             {eventsData
                 .filter((e) => e.showOnMainPage)
                 .map((event) => (
@@ -23,6 +26,14 @@ export default function EventsDisplay({
 
 const styles = StyleSheet.create({
     eventsCt: {
+        flex: 1,
+    },
+    eventsCtLand: {
+        // position: "absolute",
+        // top: 0,
+        // right: 0,
+        // width: "50%",
+        // height: "100%",
         flex: 1,
     },
     events: {},
