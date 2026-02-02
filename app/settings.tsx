@@ -152,10 +152,10 @@ export default function Settings() {
         getPartnerImageFromStorage();
         getCoverImageFromStorage();
 
-        async function loadAllNotifs() {
-            console.log(await getAllScheduledNotificationsAsync());
-        }
-        loadAllNotifs();
+        // async function loadAllNotifs() {
+        //     console.log(await getAllScheduledNotificationsAsync());
+        // }
+        // loadAllNotifs();
     }, []);
 
     useEffect(() => {

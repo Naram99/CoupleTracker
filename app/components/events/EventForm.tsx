@@ -171,7 +171,6 @@ export default function EventForm({
             await onSave(updatedEvent as EventData);
         }
 
-        console.log(await Notifications.getAllScheduledNotificationsAsync());
         router.back();
     }, [
         event,
@@ -200,8 +199,7 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}
-                    >
+                        }}>
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -315,8 +313,7 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}
-        >
+            }}>
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -354,8 +351,7 @@ export default function EventForm({
                 style={{
                     ...styles.notificationsLabel,
                     color: currentTheme.mainColor,
-                }}
-            >
+                }}>
                 Notifications:
             </Text>
             <YearlyNotifications
@@ -382,6 +378,7 @@ export default function EventForm({
                 theme={currentTheme}
                 onChangeValue={toggleShowOnMainPage}
                 value={event.showOnMainPage}
+                isIndented={false}
             />
         </ScrollView>
     );

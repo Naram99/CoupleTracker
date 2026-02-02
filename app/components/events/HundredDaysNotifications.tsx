@@ -53,6 +53,7 @@ const HundredDaysNotifications = ({
             value={enabled}
             onChangeValue={checkNotifications}
             theme={theme}
+            isIndented={true}
         />
     );
 };

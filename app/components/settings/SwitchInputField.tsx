@@ -7,6 +7,7 @@ interface SwitchInputFieldProps {
     value: boolean;
     onChangeValue: (value: boolean) => void;
     theme: ColorScheme;
+    isIndented: boolean;
 }
 
 const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
@@ -14,9 +15,14 @@ const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
     value,
     onChangeValue,
     theme,
+    isIndented,
 }) => (
     <View style={styles.inputGroup}>
-        <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>
+        <Text
+            style={[
+                { ...styles.settingsLabel, color: theme.mainColor },
+                isIndented && { paddingLeft: 20 },
+            ]}>
             {label}
         </Text>
         <Switch
@@ -36,7 +42,6 @@ const styles = StyleSheet.create({
     },
     settingsLabel: {
         padding: 10,
-        paddingLeft: 20,
         fontWeight: "bold",
     },
 });
