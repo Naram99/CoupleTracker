@@ -22,6 +22,7 @@ import EventsDisplay from "./components/home/EventsDisplay";
 import { validateImageUri } from "../utils/imageStorage";
 import { checkIfTriggered } from "../utils/notificationScheduling";
 import { useDimensions } from "../context/DimensionsContext";
+import PersonsContainer from "./components/home/PersonsContainer";
 
 const LAST_CHECK_KEY = "lastNotificationCheck";
 
@@ -183,6 +184,11 @@ export default function Home() {
         setImgPopupOpen(false);
     }
 
+    function onImgError(errorType: "user" | "partner") {
+        if (errorType === "user") setUserImageError(true);
+        if (errorType === "partner") setPartnerImageError(true);
+    }
+
     return (
         <SafeAreaProvider>
             <SafeAreaView
@@ -192,9 +198,9 @@ export default function Home() {
                 }}
                 edges={["top"]}
             >
-                <ScrollView
+                <View
                     style={styles.scroll}
-                    contentContainerStyle={styles.container}
+                    // contentContainerStyle={styles.container}
                 >
                     {/* tutorial && <Tutorial /> */}
                     <View style={styles.header}>
@@ -251,63 +257,35 @@ export default function Home() {
                                 locations={[0, 0.1, 0.75, 1]}
                                 style={styles.gradient}
                             />
-                        </View>
-                        <View style={styles.personsCt}>
-                            <Pressable
-                                style={styles.personCt}
-                                onPress={() => showPicture(userImage)}
-                            >
-                                <Image
-                                    source={{
-                                        uri:
-                                            userImage && !userImageError
-                                                ? userImage
-                                                : "../assets/avatar.jpg",
-                                    }}
-                                    style={{
-                                        ...styles.avatar,
-                                        borderColor:
-                                            currentTheme.secondaryColor,
-                                    }}
-                                    onError={() => setUserImageError(true)}
+                            {isLandscape && (
+                                <PersonsContainer
+                                    username={username}
+                                    userImg={userImage}
+                                    userError={userImageError}
+                                    partnername={partnername}
+                                    partnerImg={partnerImage}
+                                    partnerError={partnerImageError}
+                                    onPress={showPicture}
+                                    onError={onImgError}
+                                    theme={currentTheme}
+                                    isLandscape={isLandscape}
                                 />
-                                <Text
-                                    style={{
-                                        ...styles.personName,
-                                        color: currentTheme.mainColor,
-                                    }}
-                                >
-                                    {username ?? "Name"}
-                                </Text>
-                            </Pressable>
-                            <Pressable
-                                style={styles.personCt}
-                                onPress={() => showPicture(partnerImage)}
-                            >
-                                <Image
-                                    source={{
-                                        uri:
-                                            partnerImage && !partnerImageError
-                                                ? partnerImage
-                                                : "../assets/avatar.jpg",
-                                    }}
-                                    style={{
-                                        ...styles.avatar,
-                                        borderColor:
-                                            currentTheme.secondaryColor,
-                                    }}
-                                    onError={() => setPartnerImageError(true)}
-                                />
-                                <Text
-                                    style={{
-                                        ...styles.personName,
-                                        color: currentTheme.mainColor,
-                                    }}
-                                >
-                                    {partnername ?? "Name"}
-                                </Text>
-                            </Pressable>
+                            )}
                         </View>
+                        {!isLandscape && (
+                            <PersonsContainer
+                                username={username}
+                                userImg={userImage}
+                                userError={userImageError}
+                                partnername={partnername}
+                                partnerImg={partnerImage}
+                                partnerError={partnerImageError}
+                                onPress={showPicture}
+                                onError={onImgError}
+                                theme={currentTheme}
+                                isLandscape={isLandscape}
+                            />
+                        )}
                         <EventsDisplay
                             eventsData={events}
                             isLandscape={isLandscape}
@@ -328,7 +306,7 @@ export default function Home() {
                             />
                         </Pressable>
                     )}
-                </ScrollView>
+                </View>
             </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -369,7 +347,7 @@ const styles = StyleSheet.create({
         position: "relative",
         flexDirection: "row",
         flex: 1,
-        width: "100%",
+        // width: "100%",
         alignItems: "center",
         justifyContent: "center",
         gap: 30,
@@ -383,8 +361,8 @@ const styles = StyleSheet.create({
     },
     coverImgCtLand: {
         // position: "absolute",
-        top: 0,
-        left: 0,
+        // top: 0,
+        // left: 0,
         // width: "50%",
         // height: "100%",
         flex: 1,
@@ -409,16 +387,6 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 2,
     },
-    personsCt: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        width: "100%",
-        marginTop: "70%",
-        zIndex: 3,
-    },
-    personCt: {
-        gap: 10,
-    },
     dateDiffCt: {
         width: "100%",
         textAlign: "center",
@@ -429,19 +397,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight: "bold",
         fontSize: 20,
-    },
-    avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        borderWidth: 2,
-        resizeMode: "cover",
-    },
-    personName: {
-        fontSize: 15,
-        fontWeight: "bold",
-        width: "100%",
-        textAlign: "center",
     },
     imgPopupCt: {
         position: "absolute",

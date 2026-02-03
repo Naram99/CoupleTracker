@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import colors from "../constants/colors";
 import { useTheme } from "../context/ThemeContext";
@@ -15,22 +15,25 @@ export default function Themes() {
     }
 
     return (
-        <View
+        <ScrollView
             style={{
                 ...styles.container,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <Pressable onPress={() => handleThemeChange("default")}>
                 <View
                     style={{
                         ...styles.themeContainer,
                         borderBottomColor: currentTheme.secondaryColor,
-                    }}>
+                    }}
+                >
                     <Text
                         style={{
                             ...styles.themeText,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         System Default
                     </Text>
                     {savedTheme === "default" && (
@@ -48,17 +51,20 @@ export default function Themes() {
             {Object.entries(colors).map(([color, scheme]) => (
                 <Pressable
                     key={color}
-                    onPress={() => handleThemeChange(color as SchemeName)}>
+                    onPress={() => handleThemeChange(color as SchemeName)}
+                >
                     <View
                         style={{
                             ...styles.themeContainer,
                             borderBottomColor: currentTheme.secondaryColor,
-                        }}>
+                        }}
+                    >
                         <Text
                             style={{
                                 ...styles.themeText,
                                 color: currentTheme.mainColor,
-                            }}>
+                            }}
+                        >
                             {color}
                         </Text>
                         {savedTheme === color ? (
@@ -76,7 +82,7 @@ export default function Themes() {
                     </View>
                 </Pressable>
             ))}
-        </View>
+        </ScrollView>
     );
 }
 
