@@ -12,10 +12,14 @@ const colors: { [index in SchemeName]: ColorScheme } = {
         secondaryBackground: "#FFB8E0",
     },
     blue: {
-        mainColor: "hsl(212, 96%, 90%)",
-        secondaryColor: "hsl(212, 96%, 70%)",
-        mainBackground: "hsl(212, 96%, 30%)",
-        secondaryBackground: "hsl(212, 96%, 40%)",
+        // mainColor: "hsl(212, 96%, 90%)",
+        mainColor: "#cde4fe",
+        // secondaryColor: "hsl(212, 96%, 70%)",
+        secondaryColor: "#69aefc",
+        // mainBackground: "hsl(212, 96%, 30%)",
+        mainBackground: "#034896",
+        // secondaryBackground: "hsl(212, 96%, 40%)",
+        secondaryBackground: "#045fc8",
     },
     lightblue: {
         mainColor: "hsl(212, 96%, 30%)",
