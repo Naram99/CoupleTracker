@@ -7,6 +7,7 @@ import { TutorialProvider } from "../context/TutorialContext";
 import { EventsProvider } from "../context/EventContext";
 import { NotificationsProvider } from "../context/NotificationsContext";
 import { DimensionsProvider } from "../context/DimensionsContext";
+import WidgetSync from "./components/WidgetSync";
 
 const RootLayout = () => {
     return (
@@ -15,6 +16,7 @@ const RootLayout = () => {
                 <TutorialProvider>
                     <EventsProvider>
                         <NotificationsProvider>
+                            <WidgetSync />
                             <AppContent />
                         </NotificationsProvider>
                     </EventsProvider>

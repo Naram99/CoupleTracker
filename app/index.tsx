@@ -12,7 +12,11 @@ import { Link, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import {
+    SafeAreaProvider,
+    SafeAreaView,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import Tutorial from "./components/tutorial/Tutorial";
@@ -35,6 +39,8 @@ export default function Home() {
     // const { tutorial } = useTutorial();
 
     const { events, isLoading, saveEvents } = useEvents();
+
+    const insets = useSafeAreaInsets();
 
     const [username, setUsername] = useState<string | null>(null);
     const [partnername, setPartnername] = useState<string | null>(null);
@@ -196,7 +202,7 @@ export default function Home() {
                     ...styles.safeArea,
                     backgroundColor: currentTheme.mainBackground,
                 }}
-                edges={["top"]}
+                edges={undefined}
             >
                 <View
                     style={styles.scroll}
@@ -297,7 +303,11 @@ export default function Home() {
                             onPress={hidePicture}
                         >
                             <Image
-                                style={styles.imgPopup}
+                                style={
+                                    isLandscape
+                                        ? styles.imgPopupLand
+                                        : styles.imgPopup
+                                }
                                 source={{ uri: imgPopupSrc }}
                                 onError={() => {
                                     hidePicture();
@@ -412,6 +422,11 @@ const styles = StyleSheet.create({
     imgPopup: {
         width: "100%",
         height: "auto",
+        aspectRatio: "1 / 1",
+    },
+    imgPopupLand: {
+        height: "100%",
+        width: "auto",
         aspectRatio: "1 / 1",
     },
 });

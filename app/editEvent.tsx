@@ -8,6 +8,7 @@ import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { useTheme } from "../context/ThemeContext";
 import colors from "../constants/colors";
 import { cancelScheduledNotificationAsync } from "expo-notifications";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditEvent() {
     const router = useRouter();
@@ -64,41 +65,57 @@ export default function EditEvent() {
     }
 
     return (
-        <View
-            style={{
-                ...styles.formCt,
-                backgroundColor: currentTheme.mainBackground,
-            }}>
-            <EventForm eventData={events[eventIndex]} onSave={handleSubmit} />
-            {eventId && (
-                <Pressable
-                    onPress={deleteDialog}
+        <SafeAreaProvider>
+            <SafeAreaView
+                style={{
+                    ...styles.safeArea,
+                    backgroundColor: currentTheme.mainBackground,
+                }}
+            >
+                <View
                     style={{
-                        ...styles.deleteBtn,
-                        backgroundColor: currentTheme.mainColor,
-                    }}>
-                    <FontAwesome6
-                        name="trash"
-                        iconStyle="solid"
-                        style={{
-                            ...styles.deleteBtnIcon,
-                            color: currentTheme.mainBackground,
-                        }}
+                        ...styles.formCt,
+                        backgroundColor: currentTheme.mainBackground,
+                    }}
+                >
+                    <EventForm
+                        eventData={events[eventIndex]}
+                        onSave={handleSubmit}
                     />
-                    <Text
-                        style={{
-                            ...styles.deleteBtnText,
-                            color: currentTheme.mainBackground,
-                        }}>
-                        Delete event
-                    </Text>
-                </Pressable>
-            )}
-        </View>
+                    {eventId && (
+                        <Pressable
+                            onPress={deleteDialog}
+                            style={{
+                                ...styles.deleteBtn,
+                                backgroundColor: currentTheme.mainColor,
+                            }}
+                        >
+                            <FontAwesome6
+                                name="trash"
+                                iconStyle="solid"
+                                style={{
+                                    ...styles.deleteBtnIcon,
+                                    color: currentTheme.mainBackground,
+                                }}
+                            />
+                            <Text
+                                style={{
+                                    ...styles.deleteBtnText,
+                                    color: currentTheme.mainBackground,
+                                }}
+                            >
+                                Delete event
+                            </Text>
+                        </Pressable>
+                    )}
+                </View>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: { flex: 1 },
     formCt: {
         flex: 1,
         justifyContent: "space-between",

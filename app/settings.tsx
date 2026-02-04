@@ -24,6 +24,7 @@ import {
 } from "expo-notifications";
 import { scheduleAllEventsNotifications } from "../utils/notificationScheduling";
 import { useEvents } from "../context/EventContext";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Settings() {
     const router = useRouter();
@@ -272,90 +273,100 @@ export default function Settings() {
     }
 
     return (
-        <ScrollView
-            style={{
-                ...styles.container,
-                backgroundColor: currentTheme.mainBackground,
-            }}
-        >
-            {/* tutorial && <SettingsTutorial /> */}
-            <SettingsInputField
-                label="Your name:"
-                value={username ?? ""}
-                onChangeText={setUsername}
-                theme={currentTheme}
-            />
-            <ImagePickerField
-                type="User"
-                label="Your"
-                imageUri={userImage}
-                onPick={pickImage}
-                theme={currentTheme}
-            />
-            <SettingsInputField
-                label="Partner name:"
-                value={partnername ?? ""}
-                onChangeText={setPartnername}
-                theme={currentTheme}
-            />
-            <ImagePickerField
-                type="Partner"
-                imageUri={partnerImage}
-                onPick={pickImage}
-                theme={currentTheme}
-            />
-            <ImagePickerField
-                type="Cover"
-                imageUri={coverImage}
-                onPick={pickImage}
-                theme={currentTheme}
-            />
-            <Link href="/events" style={styles.inputGroup}>
-                <View style={styles.linkContainer}>
-                    <Text
-                        style={{
-                            ...styles.settingsLabel,
-                            color: currentTheme.mainColor,
-                        }}
-                    >
-                        Events
-                    </Text>
-                </View>
-            </Link>
-            <NotificationsSwitch
-                enabled={isNotificationEnabled}
-                onChange={toggleNotification}
-                theme={currentTheme}
-            />
-            <Link href="/themes" style={styles.inputGroup}>
-                <View style={styles.linkContainer}>
-                    <Text
-                        style={{
-                            ...styles.settingsLabel,
-                            color: currentTheme.mainColor,
-                        }}
-                    >
-                        Themes
-                    </Text>
-                </View>
-            </Link>
-            <Link href="/info" style={styles.inputGroup}>
-                <View style={styles.linkContainer}>
-                    <Text
-                        style={{
-                            ...styles.settingsLabel,
-                            color: currentTheme.mainColor,
-                        }}
-                    >
-                        Info
-                    </Text>
-                </View>
-            </Link>
-        </ScrollView>
+        <SafeAreaProvider>
+            <SafeAreaView
+                style={{
+                    ...styles.safeArea,
+                    backgroundColor: currentTheme.mainBackground,
+                }}
+            >
+                <ScrollView
+                    style={{
+                        ...styles.container,
+                        backgroundColor: currentTheme.mainBackground,
+                    }}
+                >
+                    {/* tutorial && <SettingsTutorial /> */}
+                    <SettingsInputField
+                        label="Your name:"
+                        value={username ?? ""}
+                        onChangeText={setUsername}
+                        theme={currentTheme}
+                    />
+                    <ImagePickerField
+                        type="User"
+                        label="Your"
+                        imageUri={userImage}
+                        onPick={pickImage}
+                        theme={currentTheme}
+                    />
+                    <SettingsInputField
+                        label="Partner name:"
+                        value={partnername ?? ""}
+                        onChangeText={setPartnername}
+                        theme={currentTheme}
+                    />
+                    <ImagePickerField
+                        type="Partner"
+                        imageUri={partnerImage}
+                        onPick={pickImage}
+                        theme={currentTheme}
+                    />
+                    <ImagePickerField
+                        type="Cover"
+                        imageUri={coverImage}
+                        onPick={pickImage}
+                        theme={currentTheme}
+                    />
+                    <Link href="/events" style={styles.inputGroup}>
+                        <View style={styles.linkContainer}>
+                            <Text
+                                style={{
+                                    ...styles.settingsLabel,
+                                    color: currentTheme.mainColor,
+                                }}
+                            >
+                                Events
+                            </Text>
+                        </View>
+                    </Link>
+                    <NotificationsSwitch
+                        enabled={isNotificationEnabled}
+                        onChange={toggleNotification}
+                        theme={currentTheme}
+                    />
+                    <Link href="/themes" style={styles.inputGroup}>
+                        <View style={styles.linkContainer}>
+                            <Text
+                                style={{
+                                    ...styles.settingsLabel,
+                                    color: currentTheme.mainColor,
+                                }}
+                            >
+                                Themes
+                            </Text>
+                        </View>
+                    </Link>
+                    <Link href="/info" style={styles.inputGroup}>
+                        <View style={styles.linkContainer}>
+                            <Text
+                                style={{
+                                    ...styles.settingsLabel,
+                                    color: currentTheme.mainColor,
+                                }}
+                            >
+                                Info
+                            </Text>
+                        </View>
+                    </Link>
+                </ScrollView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: { flex: 1 },
     container: {
         flex: 1,
     },

@@ -5,6 +5,7 @@ import colors from "../constants/colors";
 import { useRouter } from "expo-router";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { useEvents } from "../context/EventContext";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Events() {
     const router = useRouter();
@@ -51,154 +52,169 @@ export default function Events() {
     }
 
     return (
-        <ScrollView
-            style={{
-                ...styles.container,
-                backgroundColor: currentTheme.mainBackground,
-            }}
-        >
-            {events.map((event, index) => (
-                <View style={styles.eventWrapper} key={event.id}>
-                    <Pressable
-                        key={event.date}
-                        style={{
-                            ...styles.eventCt,
-                            borderBottomColor: currentTheme.mainColor,
-                        }}
-                        onPress={() => editEvent(index)}
-                    >
-                        <View style={styles.mainDataCt}>
-                            <Text
-                                style={{
-                                    ...styles.eventName,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                {event.type === "milestone"
-                                    ? event.name
-                                    : event.type}
-                            </Text>
-                            <Text
-                                style={{
-                                    ...styles.eventDate,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                {new Date(event.date).toLocaleDateString()}
-                            </Text>
-                            <FontAwesome6
-                                name="pen"
-                                iconStyle="solid"
-                                style={{
-                                    ...styles.editIcon,
-                                    color: currentTheme.mainColor,
-                                }}
-                            />
-                        </View>
-                        <View style={styles.secondaryDataCt}>
-                            <Text
-                                style={{
-                                    ...styles.notificationText,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                Notifications: yearly -{" "}
-                                {event.notifications.yearlyExact !== null
-                                    ? "on"
-                                    : "off"}
-                                , every 100 days -{" "}
-                                {event.notifications.hundredDaysExact !== null
-                                    ? "on"
-                                    : "off"}
-                            </Text>
-                            <Text
-                                style={{
-                                    ...styles.showMainPageText,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                Show on main page:{" "}
-                                {event.showOnMainPage ? "yes" : "no"}
-                            </Text>
-                        </View>
-                    </Pressable>
-                    <View
-                        style={{
-                            ...styles.orderControlCt,
-                            backgroundColor: currentTheme.secondaryBackground,
-                            borderBottomColor: currentTheme.mainColor,
-                        }}
-                    >
-                        <Pressable
-                            onPress={() => {
-                                index !== 0 ? moveEventUp(index) : 0;
-                            }}
-                        >
-                            <FontAwesome6
-                                name="caret-up"
-                                iconStyle="solid"
-                                style={{
-                                    ...styles.orderIcon,
-                                    color: currentTheme.mainColor,
-                                }}
-                            />
-                        </Pressable>
-                        <Text
-                            style={{
-                                ...styles.orderControlLabel,
-                                color: currentTheme.mainColor,
-                            }}
-                        >
-                            Order
-                        </Text>
-                        <Pressable
-                            onPress={() => {
-                                index !== events.length - 1
-                                    ? moveEventDown(index)
-                                    : 0;
-                            }}
-                        >
-                            <FontAwesome6
-                                name="caret-down"
-                                iconStyle="solid"
-                                style={{
-                                    ...styles.orderIcon,
-                                    color: currentTheme.mainColor,
-                                }}
-                            />
-                        </Pressable>
-                    </View>
-                </View>
-            ))}
-            <Pressable
-                onPress={newEvent}
+        <SafeAreaProvider>
+            <SafeAreaView
                 style={{
-                    ...styles.newBtn,
-                    backgroundColor: currentTheme.mainColor,
+                    ...styles.safeArea,
+                    backgroundColor: currentTheme.mainBackground,
                 }}
             >
-                <FontAwesome6
-                    name="plus"
-                    iconStyle="solid"
+                <ScrollView
                     style={{
-                        ...styles.newBtnIcon,
-                        color: currentTheme.mainBackground,
-                    }}
-                />
-                <Text
-                    style={{
-                        ...styles.newBtnText,
-                        color: currentTheme.mainBackground,
+                        ...styles.container,
+                        backgroundColor: currentTheme.mainBackground,
                     }}
                 >
-                    Add new event
-                </Text>
-            </Pressable>
-        </ScrollView>
+                    {events.map((event, index) => (
+                        <View style={styles.eventWrapper} key={event.id}>
+                            <Pressable
+                                key={event.date}
+                                style={{
+                                    ...styles.eventCt,
+                                    borderBottomColor: currentTheme.mainColor,
+                                }}
+                                onPress={() => editEvent(index)}
+                            >
+                                <View style={styles.mainDataCt}>
+                                    <Text
+                                        style={{
+                                            ...styles.eventName,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    >
+                                        {event.type === "milestone"
+                                            ? event.name
+                                            : event.type}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            ...styles.eventDate,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    >
+                                        {new Date(
+                                            event.date,
+                                        ).toLocaleDateString()}
+                                    </Text>
+                                    <FontAwesome6
+                                        name="pen"
+                                        iconStyle="solid"
+                                        style={{
+                                            ...styles.editIcon,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    />
+                                </View>
+                                <View style={styles.secondaryDataCt}>
+                                    <Text
+                                        style={{
+                                            ...styles.notificationText,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    >
+                                        Notifications: yearly -{" "}
+                                        {event.notifications.yearlyExact !==
+                                        null
+                                            ? "on"
+                                            : "off"}
+                                        , every 100 days -{" "}
+                                        {event.notifications
+                                            .hundredDaysExact !== null
+                                            ? "on"
+                                            : "off"}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            ...styles.showMainPageText,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    >
+                                        Show on main page:{" "}
+                                        {event.showOnMainPage ? "yes" : "no"}
+                                    </Text>
+                                </View>
+                            </Pressable>
+                            <View
+                                style={{
+                                    ...styles.orderControlCt,
+                                    backgroundColor:
+                                        currentTheme.secondaryBackground,
+                                    borderBottomColor: currentTheme.mainColor,
+                                }}
+                            >
+                                <Pressable
+                                    onPress={() => {
+                                        index !== 0 ? moveEventUp(index) : 0;
+                                    }}
+                                >
+                                    <FontAwesome6
+                                        name="caret-up"
+                                        iconStyle="solid"
+                                        style={{
+                                            ...styles.orderIcon,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    />
+                                </Pressable>
+                                <Text
+                                    style={{
+                                        ...styles.orderControlLabel,
+                                        color: currentTheme.mainColor,
+                                    }}
+                                >
+                                    Order
+                                </Text>
+                                <Pressable
+                                    onPress={() => {
+                                        index !== events.length - 1
+                                            ? moveEventDown(index)
+                                            : 0;
+                                    }}
+                                >
+                                    <FontAwesome6
+                                        name="caret-down"
+                                        iconStyle="solid"
+                                        style={{
+                                            ...styles.orderIcon,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    />
+                                </Pressable>
+                            </View>
+                        </View>
+                    ))}
+                    <Pressable
+                        onPress={newEvent}
+                        style={{
+                            ...styles.newBtn,
+                            backgroundColor: currentTheme.mainColor,
+                        }}
+                    >
+                        <FontAwesome6
+                            name="plus"
+                            iconStyle="solid"
+                            style={{
+                                ...styles.newBtnIcon,
+                                color: currentTheme.mainBackground,
+                            }}
+                        />
+                        <Text
+                            style={{
+                                ...styles.newBtnText,
+                                color: currentTheme.mainBackground,
+                            }}
+                        >
+                            Add new event
+                        </Text>
+                    </Pressable>
+                </ScrollView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: { flex: 1 },
     container: {
         flex: 1,
     },
