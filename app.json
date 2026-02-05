@@ -22,6 +22,9 @@
             "icon": "./assets/testicon.png"
         },
         "android": {
+            "minSdkVersion": 24,
+            "targetSdkVersion": 34,
+            "compileSdkVersion": 34,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon-main.png",
                 "backgroundColor": "#ffffff"
