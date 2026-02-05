@@ -1,41 +1,41 @@
 {
-  "name": "couple-tracker",
-  "description": "Couple Tracker app",
-  "version": "1.1",
-  "main": "expo-router/entry",
-  "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web"
-  },
-  "dependencies": {
-    "@expo/config-plugins": "^54.0.4",
-    "@expo/metro-runtime": "~6.1.2",
-    "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-community/datetimepicker": "8.4.4",
-    "@react-native-picker/picker": "^2.11.4",
-    "@react-native-vector-icons/fontawesome6": "^12.2.0",
-    "expo": "54.0.12",
-    "expo-constants": "~18.0.0",
-    "expo-dev-client": "~6.0.13",
-    "expo-file-system": "~19.0.16",
-    "expo-image-picker": "~17.0.0",
-    "expo-linear-gradient": "~15.0.0",
-    "expo-linking": "~8.0.0",
-    "expo-notifications": "~0.32.12",
-    "expo-router": "~6.0.10",
-    "expo-status-bar": "~3.0.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-native": "0.81.4",
-    "react-native-safe-area-context": "~5.6.0",
-    "react-native-screens": "~4.16.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@types/react": "~19.1.10",
-    "typescript": "~5.9.2"
-  },
-  "private": true
+    "name": "couple-tracker",
+    "description": "Couple Tracker app",
+    "version": "1.2",
+    "main": "expo-router/entry",
+    "scripts": {
+        "start": "expo start",
+        "android": "expo run:android",
+        "ios": "expo run:ios",
+        "web": "expo start --web"
+    },
+    "dependencies": {
+        "@expo/config-plugins": "^54.0.4",
+        "@expo/metro-runtime": "~6.1.2",
+        "@react-native-async-storage/async-storage": "2.2.0",
+        "@react-native-community/datetimepicker": "8.4.4",
+        "@react-native-picker/picker": "^2.11.4",
+        "@react-native-vector-icons/fontawesome6": "^12.2.0",
+        "expo": "54.0.12",
+        "expo-constants": "~18.0.0",
+        "expo-dev-client": "~6.0.13",
+        "expo-file-system": "~19.0.16",
+        "expo-image-picker": "~17.0.0",
+        "expo-linear-gradient": "~15.0.0",
+        "expo-linking": "~8.0.0",
+        "expo-notifications": "~0.32.12",
+        "expo-router": "~6.0.10",
+        "expo-status-bar": "~3.0.0",
+        "react": "19.1.0",
+        "react-dom": "19.1.0",
+        "react-native": "0.81.4",
+        "react-native-safe-area-context": "~5.6.0",
+        "react-native-screens": "~4.16.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.25.2",
+        "@types/react": "~19.1.10",
+        "typescript": "~5.9.2"
+    },
+    "private": true
 }
