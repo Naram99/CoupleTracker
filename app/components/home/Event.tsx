@@ -49,7 +49,8 @@ export default function Event({ eventData }: { eventData: EventData }) {
                         style={{
                             ...styles.dateDiffText,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         {dateToggle === 0
                             ? `${dayDiff} days`
                             : `${YMDDiff.years} years ${YMDDiff.months} months ${YMDDiff.days} days`}
@@ -57,7 +58,9 @@ export default function Event({ eventData }: { eventData: EventData }) {
                 </View>
             </Pressable>
             <Text
-                style={{ ...styles.sinceText, color: currentTheme.mainColor }}>
+                style={{ ...styles.sinceText, color: currentTheme.mainColor }}
+                numberOfLines={1}
+            >
                 since{" "}
                 {eventData.type === "milestone"
                     ? eventData.name
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     sinceText: {
-        width: "100%",
+        flex: 1,
         textAlign: "center",
     },
 });

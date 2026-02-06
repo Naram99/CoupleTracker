@@ -81,6 +81,7 @@ export default function Events() {
                                             ...styles.eventName,
                                             color: currentTheme.mainColor,
                                         }}
+                                        numberOfLines={1}
                                     >
                                         {event.type === "milestone"
                                             ? event.name
@@ -244,6 +245,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textTransform: "capitalize",
         fontWeight: "bold",
+        maxWidth: "50%",
     },
     eventDate: {
         fontSize: 18,
