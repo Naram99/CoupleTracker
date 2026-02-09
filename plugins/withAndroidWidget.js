@@ -11,7 +11,7 @@ module.exports = function withAndroidWidget(config) {
 
         mainApplication.receiver.push({
             $: {
-                "android:name": ".DateWidgetProvider",
+                "android:name": ".widget.DateWidgetProvider",
                 "android:exported": "true",
             },
             "intent-filter": [
