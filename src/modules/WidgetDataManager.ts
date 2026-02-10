@@ -29,7 +29,6 @@ export class WidgetDataManager {
         };
 
         await AsyncStorage.setItem("widget_data", JSON.stringify(widgetData));
-        // console.log(widgetData);
 
         if (WidgetModule?.updateWidget) {
             await WidgetModule.updateWidget(JSON.stringify(widgetData));
