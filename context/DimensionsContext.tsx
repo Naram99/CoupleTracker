@@ -13,6 +13,7 @@ type DimensionsContextType = {
     isPortrait: boolean;
     isLandscape: boolean;
     isTablet: boolean;
+    isOpenFoldable: boolean;
 };
 
 const DimensionsContext = createContext<DimensionsContextType | undefined>(
@@ -50,6 +51,9 @@ export function DimensionsProvider({ children }: { children: ReactNode }) {
         isPortrait: dimensions.height > dimensions.width,
         isLandscape: dimensions.width > dimensions.height,
         isTablet: Math.min(dimensions.height, dimensions.width) >= 600,
+        isOpenFoldable:
+            dimensions.width / dimensions.height > 0.8 &&
+            dimensions.width / dimensions.height < 1.2,
     };
 
     return (

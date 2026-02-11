@@ -19,8 +19,8 @@ import {
 } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
-import Tutorial from "./components/tutorial/Tutorial";
-import { useTutorial } from "../context/TutorialContext";
+// import Tutorial from "./components/tutorial/Tutorial";
+// import { useTutorial } from "../context/TutorialContext";
 import { useEvents } from "../context/EventContext";
 import EventsDisplay from "./components/home/EventsDisplay";
 import { validateImageUri } from "../utils/imageStorage";
@@ -31,7 +31,7 @@ import PersonsContainer from "./components/home/PersonsContainer";
 const LAST_CHECK_KEY = "lastNotificationCheck";
 
 export default function Home() {
-    const { isLandscape, isTablet } = useDimensions();
+    const { isLandscape, isOpenFoldable } = useDimensions();
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
@@ -202,8 +202,7 @@ export default function Home() {
                     ...styles.safeArea,
                     backgroundColor: currentTheme.mainBackground,
                 }}
-                edges={undefined}
-            >
+                edges={undefined}>
                 <View
                     style={styles.scroll}
                     // contentContainerStyle={styles.container}
@@ -214,8 +213,7 @@ export default function Home() {
                             style={{
                                 ...styles.title,
                                 color: currentTheme.mainColor,
-                            }}
-                        >
+                            }}>
                             Couple Tracker
                         </Text>
                         <Link href={"/settings"}>
@@ -230,15 +228,17 @@ export default function Home() {
                         </Link>
                     </View>
                     <View
-                        style={isLandscape ? styles.mainCtLand : styles.mainCt}
-                    >
+                        style={
+                            isLandscape || isOpenFoldable
+                                ? styles.mainCtLand
+                                : styles.mainCt
+                        }>
                         <View
                             style={
-                                isLandscape
+                                isLandscape || isOpenFoldable
                                     ? styles.coverImgCtLand
                                     : styles.coverImgCt
-                            }
-                        >
+                            }>
                             <Image
                                 source={{
                                     uri:
@@ -247,7 +247,7 @@ export default function Home() {
                                             : "../assets/avatar.jpg",
                                 }}
                                 style={
-                                    isLandscape
+                                    isLandscape || isOpenFoldable
                                         ? styles.coverImgLand
                                         : styles.coverImg
                                 }
@@ -263,7 +263,7 @@ export default function Home() {
                                 locations={[0, 0.1, 0.75, 1]}
                                 style={styles.gradient}
                             />
-                            {isLandscape && (
+                            {(isLandscape || isOpenFoldable) && (
                                 <PersonsContainer
                                     username={username}
                                     userImg={userImage}
@@ -274,11 +274,11 @@ export default function Home() {
                                     onPress={showPicture}
                                     onError={onImgError}
                                     theme={currentTheme}
-                                    isLandscape={isLandscape}
+                                    isLandscape={true}
                                 />
                             )}
                         </View>
-                        {!isLandscape && (
+                        {!isLandscape && !isOpenFoldable && (
                             <PersonsContainer
                                 username={username}
                                 userImg={userImage}
@@ -289,22 +289,21 @@ export default function Home() {
                                 onPress={showPicture}
                                 onError={onImgError}
                                 theme={currentTheme}
-                                isLandscape={isLandscape}
+                                isLandscape={false}
                             />
                         )}
                         <EventsDisplay
                             eventsData={events}
-                            isLandscape={isLandscape}
+                            isLandscape={isLandscape || isOpenFoldable}
                         />
                     </View>
                     {imgPopupOpen && imgPopupSrc && (
                         <Pressable
                             style={styles.imgPopupCt}
-                            onPress={hidePicture}
-                        >
+                            onPress={hidePicture}>
                             <Image
                                 style={
-                                    isLandscape
+                                    isLandscape || isOpenFoldable
                                         ? styles.imgPopupLand
                                         : styles.imgPopup
                                 }
