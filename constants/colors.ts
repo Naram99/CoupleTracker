@@ -72,10 +72,10 @@ const colors: { [index in SchemeName]: ColorScheme } = {
         secondaryBackground: "#491603",
     },
     crimson: {
-        mainColor: "#b1a7a6",
-        secondaryColor: "#f5f3f4",
+        mainColor: "#f5f3f4",
+        secondaryColor: "#b1a7a6",
         mainBackground: "#800f2f",
-        secondaryBackground: "#ba181b",
+        secondaryBackground: "#660708",
     },
 
     // HEX color declaration is needed for the widget!
