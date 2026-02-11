@@ -71,6 +71,14 @@ const colors: { [index in SchemeName]: ColorScheme } = {
         // secondaryBackground: "hsla(16, 92%, 15%, 1.00)",
         secondaryBackground: "#491603",
     },
+    crimson: {
+        mainColor: "#b1a7a6",
+        secondaryColor: "#f5f3f4",
+        mainBackground: "#800f2f",
+        secondaryBackground: "#ba181b",
+    },
+
+    // HEX color declaration is needed for the widget!
 };
 
 export default colors;
@@ -83,7 +91,8 @@ export type SchemeName =
     | "forest"
     | "black"
     | "white"
-    | "halloween";
+    | "halloween"
+    | "crimson";
 
 export type ColorScheme = {
     mainColor: string;
