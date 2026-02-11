@@ -95,7 +95,8 @@ class DateWidgetProvider : AppWidgetProvider() {
 
             // Layout típus meghatározása
             val layoutType = when {
-                cellWidth == 1 && cellHeight == 1 -> LayoutType.COMPACT
+                // cellWidth == 1 && cellHeight == 1 -> LayoutType.COMPACT
+                cellWidth == 1 -> LayoutType.COMPACT
                 cellWidth <= 1 || cellHeight <= 1 -> LayoutType.SMALL
                 else -> LayoutType.NORMAL
             }

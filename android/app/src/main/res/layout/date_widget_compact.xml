@@ -13,7 +13,7 @@
         android:id="@+id/days_count_compact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:text="150"/>
 
