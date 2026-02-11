@@ -16,8 +16,8 @@
         "ios": {
             "supportsTablet": true,
             "infoPlist": {
-                "NSPhotoLibraryUsageDescription": "A képek kiválasztásához a fotógalériából.",
-                "NSUserTrackingUsageDescription": "Szükséges az értesítésekhez."
+                "NSPhotoLibraryUsageDescription": "Selecting pictures from photo gallery.",
+                "NSUserTrackingUsageDescription": "Necessary for notifications."
             },
             "icon": "./assets/testicon.png"
         },
@@ -36,7 +36,7 @@
                 "android.permission.NOTIFICATIONS"
             ],
             "package": "com.naram99.coupletracker",
-            "versionCode": 5
+            "versionCode": 12
         },
         "web": {
             "favicon": "./assets/testicon.png"
