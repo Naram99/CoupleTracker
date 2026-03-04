@@ -14,6 +14,8 @@ type DimensionsContextType = {
     isLandscape: boolean;
     isTablet: boolean;
     isOpenFoldable: boolean;
+    isExtraSmall: boolean;
+    isUnusable: boolean;
 };
 
 const DimensionsContext = createContext<DimensionsContextType | undefined>(
@@ -54,6 +56,8 @@ export function DimensionsProvider({ children }: { children: ReactNode }) {
         isOpenFoldable:
             dimensions.width / dimensions.height > 0.8 &&
             dimensions.width / dimensions.height < 1.2,
+        isExtraSmall: dimensions.width < 300 && dimensions.height < 300,
+        isUnusable: dimensions.width < 100 || dimensions.height < 100,
     };
 
     return (
