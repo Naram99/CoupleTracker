@@ -12,7 +12,7 @@ import android.widget.RemoteViews
 import com.naram99.coupletracker.MainActivity
 import com.naram99.coupletracker.R
 import android.util.Log
-import java.util.concurrent.TimeUnit
+// import java.util.concurrent.TimeUnit
 
 class DateWidgetProvider : AppWidgetProvider() {
 
@@ -244,9 +244,22 @@ class DateWidgetProvider : AppWidgetProvider() {
         }
 
         private fun calculateDaysSince(timestamp: Long): Long {
-            val now = System.currentTimeMillis()
-            val diff = now - timestamp
-            return TimeUnit.MILLISECONDS.toDays(diff)
+            val eventCalendar = java.util.Calendar.getInstance().apply {
+                timeInMillis = timestamp
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }
+
+            val todayCalendar = java.util.Calendar.getInstance().apply {
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }
+
+            return ((todayCalendar.timeInMillis - eventCalendar.timeInMillis) / (1000L * 60L * 60L * 24L))
         }
 
         private fun createDateItemView(

@@ -32,6 +32,7 @@ import HundredDaysNotifications from "./HundredDaysNotifications";
 import OffsetSelector from "./OffsetSelector";
 import SwitchInputField from "../settings/SwitchInputField";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNotifications } from "../../../context/NotificationsContext";
 import * as Notifications from "expo-notifications";
 import { scheduleAwaitingEventNotifications } from "../../../utils/notificationScheduling";
@@ -139,11 +140,17 @@ export default function EventForm({
     }, [event, date, name]);
 
     const scheduleNotifications = useCallback(
-        async (notifications: EventNotifications) => {
+        async (
+            notifications: EventNotifications,
+            userName: string,
+            partnerName: string,
+        ) => {
             const notifs = await scheduleAwaitingEventNotifications(
                 date,
                 notifications,
                 event.type,
+                userName,
+                partnerName,
                 event.type === "milestone" ? name : undefined,
             );
 
@@ -159,9 +166,21 @@ export default function EventForm({
     const handleSubmit = useCallback(async () => {
         const setupNotifs = await setupEventNotifications();
 
+        const [storedUserName, storedPartnerName] = await Promise.all([
+            AsyncStorage.getItem("username"),
+            AsyncStorage.getItem("partnername"),
+        ]);
+
+        const userName = storedUserName ?? "";
+        const partnerName = storedPartnerName ?? "";
+
         let finalNotifs = setupNotifs;
         if (notificationsEnabled) {
-            finalNotifs = await scheduleNotifications(setupNotifs);
+            finalNotifs = await scheduleNotifications(
+                setupNotifs,
+                userName,
+                partnerName,
+            );
         }
 
         const updatedEvent = { ...event, notifications: finalNotifs, date };
@@ -199,7 +218,8 @@ export default function EventForm({
                         style={{
                             ...styles.saveBtn,
                             color: currentTheme.mainColor,
-                        }}>
+                        }}
+                    >
                         <FontAwesome6
                             name="floppy-disk"
                             iconStyle="solid"
@@ -313,7 +333,8 @@ export default function EventForm({
             style={{
                 ...styles.settingsCt,
                 backgroundColor: currentTheme.mainBackground,
-            }}>
+            }}
+        >
             <ModalSelector<EventTypes>
                 value={event.type}
                 options={EventOptions}
@@ -351,7 +372,8 @@ export default function EventForm({
                 style={{
                     ...styles.notificationsLabel,
                     color: currentTheme.mainColor,
-                }}>
+                }}
+            >
                 Notifications:
             </Text>
             <YearlyNotifications

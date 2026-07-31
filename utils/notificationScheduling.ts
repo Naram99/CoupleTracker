@@ -96,15 +96,18 @@ export async function scheduleAwaitingEventNotifications(
     eventDate: number,
     notifications: EventNotifications,
     type: EventTypes,
+    user?: string,
+    partner?: string,
     name?: string,
 ): Promise<EventNotifications> {
-    const user = (await AsyncStorage.getItem("username")) ?? "";
-    const partner = (await AsyncStorage.getItem("partnername")) ?? "";
+    const resolvedUser = user ?? (await AsyncStorage.getItem("username")) ?? "";
+    const resolvedPartner =
+        partner ?? (await AsyncStorage.getItem("partnername")) ?? "";
 
     if (notifications.hundredDaysExact === "awaiting") {
         notifications.hundredDaysExact = await scheduleHundredDaysNotification(
-            user,
-            partner,
+            resolvedUser,
+            resolvedPartner,
             calcNext100DaysTrigger(new Date(eventDate)),
             calcNext100Days(new Date(eventDate)),
             {
@@ -122,8 +125,8 @@ export async function scheduleAwaitingEventNotifications(
         notifications.offset.day > 0
     ) {
         notifications.hundredDaysOffset = await scheduleHundredDaysNotification(
-            user,
-            partner,
+            resolvedUser,
+            resolvedPartner,
             calcNext100DaysTrigger(new Date(eventDate)),
             calcNext100Days(new Date(eventDate)),
             notifications.offset,
@@ -134,8 +137,8 @@ export async function scheduleAwaitingEventNotifications(
 
     if (notifications.yearlyExact === "awaiting") {
         notifications.yearlyExact = await scheduleYearlyNotification(
-            user,
-            partner,
+            resolvedUser,
+            resolvedPartner,
             calcNextYearTrigger(new Date(eventDate)),
             calcNextYear(new Date(eventDate)),
             {
@@ -153,8 +156,8 @@ export async function scheduleAwaitingEventNotifications(
         notifications.offset.day > 0
     ) {
         notifications.yearlyOffset = await scheduleYearlyNotification(
-            user,
-            partner,
+            resolvedUser,
+            resolvedPartner,
             calcNextYearTrigger(new Date(eventDate)),
             calcNextYear(new Date(eventDate)),
             notifications.offset,
@@ -286,3 +289,4 @@ export async function checkIfTriggered(
         await scheduleAllEventsNotifications(events, saveEvents, user, partner);
     }
 }
+
