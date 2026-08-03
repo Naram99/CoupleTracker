@@ -3,7 +3,7 @@
         "name": "CoupleTracker",
         "slug": "CoupleTracker",
         "scheme": "coupletracker",
-        "version": "1.2",
+        "version": "1.2.1",
         "orientation": "default",
         "icon": "./assets/testicon.png",
         "userInterfaceStyle": "dark",

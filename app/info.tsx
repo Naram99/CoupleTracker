@@ -110,7 +110,7 @@ export default function Info() {
                             color: currentTheme.mainColor,
                         }}
                     >
-                        v1.1 - Made by Naram99
+                        v1.2.1 - Made by Naram99
                     </Text>
                 </View>
             </SafeAreaView>
