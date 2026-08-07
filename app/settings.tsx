@@ -10,8 +10,6 @@ import ImagePickerField from "./components/settings/ImagePickerField";
 import SettingsInputField from "./components/settings/SettingsInputField";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import NotificationsSwitch from "./components/settings/NotificationsSwitch";
-import { useTutorial } from "../context/TutorialContext";
-import SettingsTutorial from "./components/tutorial/SettingsTutorial";
 import { useNotifications } from "../context/NotificationsContext";
 import {
     saveImageToPermanentStorage,
@@ -32,8 +30,6 @@ export default function Settings() {
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
-
-    // const { tutorial } = useTutorial();
 
     const { events, saveEvents } = useEvents();
 
@@ -286,7 +282,6 @@ export default function Settings() {
                         backgroundColor: currentTheme.mainBackground,
                     }}
                 >
-                    {/* tutorial && <SettingsTutorial /> */}
                     <SettingsInputField
                         label="Your name:"
                         value={username ?? ""}

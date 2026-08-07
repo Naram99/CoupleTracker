@@ -19,8 +19,8 @@ import {
 } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
-// import Tutorial from "./components/tutorial/Tutorial";
-// import { useTutorial } from "../context/TutorialContext";
+import Tutorial from "./components/tutorial/Tutorial";
+import { useTutorial } from "../context/TutorialContext";
 import { useEvents } from "../context/EventContext";
 import EventsDisplay from "./components/home/EventsDisplay";
 import { validateImageUri } from "../utils/imageStorage";
@@ -36,7 +36,7 @@ export default function Home() {
     const { theme } = useTheme();
     const currentTheme = colors[theme];
 
-    // const { tutorial } = useTutorial();
+    const { tutorial, isReady } = useTutorial();
 
     const { events, isLoading, saveEvents } = useEvents();
 
@@ -148,30 +148,31 @@ export default function Home() {
         await AsyncStorage.setItem(LAST_CHECK_KEY, Date.now().toString());
     }
 
-    // Async storage data loading
+    async function getUsernameFromStorage() {
+        try {
+            setUsername(await AsyncStorage.getItem("username"));
+        } catch {
+            setUsername(null);
+        }
+    }
+
+    async function getPartnernameFromStorage() {
+        try {
+            setPartnername(await AsyncStorage.getItem("partnername"));
+        } catch {
+            setPartnername(null);
+        }
+    }
+
     useEffect(() => {
-        async function getUsernameFromStorage() {
-            try {
-                setUsername(await AsyncStorage.getItem("username"));
-            } catch {
-                setUsername(null);
-            }
-        }
-
-        async function getPartnernameFromStorage() {
-            try {
-                setPartnername(await AsyncStorage.getItem("partnername"));
-            } catch {
-                setPartnername(null);
-            }
-        }
-
         getUsernameFromStorage();
         getPartnernameFromStorage();
     }, []);
 
     useFocusEffect(
         useCallback(() => {
+            getUsernameFromStorage();
+            getPartnernameFromStorage();
             getUserImageFromStorage();
             getPartnerImageFromStorage();
             getCoverImageFromStorage();
@@ -207,7 +208,7 @@ export default function Home() {
                     style={styles.scroll}
                     // contentContainerStyle={styles.container}
                 >
-                    {/* tutorial && <Tutorial /> */}
+                    {isReady && tutorial && <Tutorial />}
                     <View style={styles.header}>
                         <Text
                             style={{

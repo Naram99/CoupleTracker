@@ -9,13 +9,15 @@ import {
 
 type TutorialContextType = {
     tutorial: boolean;
+    isReady: boolean;
     step: number;
-    nextStep: (step: number) => void;
+    nextStep: () => void;
+    prevStep: () => void;
     finish: () => Promise<void>;
 };
 
 export const TutorialContext = createContext<TutorialContextType | undefined>(
-    undefined
+    undefined,
 );
 
 export function useTutorial() {
@@ -28,6 +30,7 @@ export function useTutorial() {
 
 export function TutorialProvider({ children }: { children: ReactNode }) {
     const [tutorial, setTutorial] = useState(false);
+    const [isReady, setIsReady] = useState(false);
     const [step, setStep] = useState(0);
 
     useEffect(() => {
@@ -35,12 +38,32 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     }, []);
 
     async function loadTutorial() {
-        // If tutorial exists in AsyncStorage, it is not needed
-        setTutorial((await AsyncStorage.getItem("tutorial")) ? false : true);
+        try {
+            const [username, eventsJson, tutorialFlag] = await Promise.all([
+                AsyncStorage.getItem("username"),
+                AsyncStorage.getItem("events"),
+                AsyncStorage.getItem("tutorial"),
+            ]);
+
+            const events = eventsJson ? JSON.parse(eventsJson) : [];
+            const isExistingUser =
+                !!username?.trim() ||
+                (Array.isArray(events) && events.length > 0);
+
+            setTutorial(!isExistingUser && !tutorialFlag);
+        } catch {
+            setTutorial(false);
+        } finally {
+            setIsReady(true);
+        }
     }
 
-    function nextStep(step: number) {
-        setStep(step + 1);
+    function nextStep() {
+        setStep((prev) => prev + 1);
+    }
+
+    function prevStep() {
+        setStep((prev) => Math.max(0, prev - 1));
     }
 
     async function finish() {
@@ -49,7 +72,9 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <TutorialContext.Provider value={{ tutorial, step, nextStep, finish }}>
+        <TutorialContext.Provider
+            value={{ tutorial, isReady, step, nextStep, prevStep, finish }}
+        >
             {children}
         </TutorialContext.Provider>
     );
