@@ -3,10 +3,11 @@ import { Pressable, Text, View, Image, StyleSheet } from "react-native";
 
 interface ImagePickerFieldProps {
     type: string;
-    label?: string,
+    label?: string;
     imageUri: string | null;
     onPick: (imgType: string) => void;
     theme: any;
+    isWide?: boolean;
 }
 
 const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
@@ -15,10 +16,13 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
     imageUri,
     onPick,
     theme,
+    isWide = false,
 }) => (
-    <View style={styles.imagePickerGroup}>
+    <View
+        style={isWide ? styles.imagePickerGroupWide : styles.imagePickerGroup}
+    >
         <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>
-            {label ? label : type} image:
+            {label ? label : type} image
         </Text>
         <Pressable onPress={() => onPick(type)} style={styles.imagePressable}>
             {imageUri ? (
@@ -33,7 +37,8 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
             ) : (
                 <View
                     style={{
-                        ...[styles.avatar, styles.avatarPlaceholder],
+                        ...styles.avatar,
+                        ...styles.avatarPlaceholder,
                         borderColor: theme.secondaryColor,
                     }}
                 >
@@ -43,7 +48,7 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
                             color: theme.secondaryColor,
                         }}
                     >
-                        Pick Image
+                        Tap to add
                     </Text>
                 </View>
             )}
@@ -53,34 +58,41 @@ const ImagePickerField: React.FC<ImagePickerFieldProps> = ({
 
 const styles = StyleSheet.create({
     imagePickerGroup: {
+        flexDirection: "column",
+        marginBottom: 16,
+        alignItems: "flex-start",
+    },
+    imagePickerGroupWide: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10,
         justifyContent: "space-between",
+        marginBottom: 16,
     },
     imagePressable: {
-        width: 80,
-        height: 80,
+        width: 100,
+        height: 100,
         justifyContent: "center",
         alignItems: "center",
     },
     avatar: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
         borderWidth: 2,
         resizeMode: "cover",
-    },
-    avatarPlaceholder: {
         justifyContent: "center",
         alignItems: "center",
     },
+    avatarPlaceholder: {
+        backgroundColor: "rgba(255,255,255,0.08)",
+    },
     settingsLabel: {
-        padding: 10,
         fontWeight: "bold",
+        marginBottom: 10,
     },
     placeholderText: {
         textAlign: "center",
+        paddingHorizontal: 8,
     },
 });
 

@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../context/ThemeContext";
@@ -16,13 +16,17 @@ import {
     validateImageUri,
     type ImageType,
 } from "../utils/imageStorage";
-import {
-    cancelAllScheduledNotificationsAsync,
-    getAllScheduledNotificationsAsync,
-} from "expo-notifications";
+import { cancelAllScheduledNotificationsAsync } from "expo-notifications";
 import { scheduleAllEventsNotifications } from "../utils/notificationScheduling";
 import { useEvents } from "../context/EventContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useDimensions } from "../context/DimensionsContext";
+
+const linkPages = [
+    { label: "Events", path: "/events" },
+    { label: "Themes", path: "/themes" },
+    { label: "Info", path: "/info" },
+];
 
 export default function Settings() {
     const router = useRouter();
@@ -30,6 +34,8 @@ export default function Settings() {
 
     const { theme } = useTheme();
     const currentTheme = colors[theme];
+    const { width, isLandscape, isTablet, isOpenFoldable } = useDimensions();
+    const isWide = isLandscape || isOpenFoldable || isTablet || width >= 760;
 
     const { events, saveEvents } = useEvents();
 
@@ -68,7 +74,7 @@ export default function Settings() {
                 </Pressable>
             ),
         });
-    });
+    }, [navigation, currentTheme.mainColor, handleSubmit]);
 
     useEffect(() => {
         async function getUsernameFromStorage() {
@@ -91,13 +97,10 @@ export default function Settings() {
             try {
                 const storedUri = await AsyncStorage.getItem("userImage");
                 const validatedUri = validateImageUri(storedUri);
-
-                // Add cache busting timestamp when setting state
                 const uriWithCacheBust = validatedUri
                     ? `${validatedUri}?t=${Date.now()}`
                     : null;
                 setUserImage(uriWithCacheBust);
-                // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
                     await AsyncStorage.removeItem("userImage");
                 }
@@ -110,13 +113,10 @@ export default function Settings() {
             try {
                 const storedUri = await AsyncStorage.getItem("partnerImage");
                 const validatedUri = validateImageUri(storedUri);
-
-                // Add cache busting timestamp when setting state
                 const uriWithCacheBust = validatedUri
                     ? `${validatedUri}?t=${Date.now()}`
                     : null;
                 setPartnerImage(uriWithCacheBust);
-                // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
                     await AsyncStorage.removeItem("partnerImage");
                 }
@@ -129,13 +129,10 @@ export default function Settings() {
             try {
                 const storedUri = await AsyncStorage.getItem("coverImage");
                 const validatedUri = validateImageUri(storedUri);
-
-                // Add cache busting timestamp when setting state
                 const uriWithCacheBust = validatedUri
                     ? `${validatedUri}?t=${Date.now()}`
                     : null;
                 setCoverImage(uriWithCacheBust);
-                // If validation failed, clear the invalid URI from storage
                 if (storedUri && !validatedUri) {
                     await AsyncStorage.removeItem("coverImage");
                 }
@@ -149,11 +146,6 @@ export default function Settings() {
         getUserImageFromStorage();
         getPartnerImageFromStorage();
         getCoverImageFromStorage();
-
-        // async function loadAllNotifs() {
-        //     console.log(await getAllScheduledNotificationsAsync());
-        // }
-        // loadAllNotifs();
     }, []);
 
     useEffect(() => {
@@ -170,7 +162,6 @@ export default function Settings() {
 
     async function setUserImageToStorage() {
         if (userImage) {
-            // Remove cache busting query param before saving
             const cleanUri = userImage.split("?")[0];
             await AsyncStorage.setItem("userImage", cleanUri);
         }
@@ -178,7 +169,6 @@ export default function Settings() {
 
     async function setPartnerImageToStorage() {
         if (partnerImage) {
-            // Remove cache busting query param before saving
             const cleanUri = partnerImage.split("?")[0];
             await AsyncStorage.setItem("partnerImage", cleanUri);
         }
@@ -186,7 +176,6 @@ export default function Settings() {
 
     async function setCoverImageToStorage() {
         if (coverImage) {
-            // Remove cache busting query param before saving
             const cleanUri = coverImage.split("?")[0];
             await AsyncStorage.setItem("coverImage", cleanUri);
         }
@@ -199,7 +188,6 @@ export default function Settings() {
         await setPartnerImageToStorage();
         await setCoverImageToStorage();
 
-        // If notifications were not allowed, we schedule them.
         if (isNotificationEnabled && !notificationsEnabled)
             await scheduleAllEventsNotifications(
                 events,
@@ -235,7 +223,6 @@ export default function Settings() {
         if (!result.canceled && result.assets && result.assets.length > 0) {
             try {
                 const sourceUri = result.assets[0].uri;
-                // Map imgType string to ImageType
                 const imageTypeMap: Record<string, ImageType> = {
                     User: "user",
                     Partner: "partner",
@@ -244,13 +231,10 @@ export default function Settings() {
                 const imageType = imageTypeMap[imgType];
 
                 if (imageType) {
-                    // Save to permanent storage (this also deletes old image)
                     const permanentUri = saveImageToPermanentStorage(
                         sourceUri,
                         imageType,
                     );
-
-                    // Update state with permanent URI (add timestamp for cache busting)
                     const uriWithCacheBust = `${permanentUri}?t=${Date.now()}`;
                     if (imgType === "User") setUserImage(uriWithCacheBust);
                     if (imgType === "Partner")
@@ -281,79 +265,159 @@ export default function Settings() {
                         ...styles.container,
                         backgroundColor: currentTheme.mainBackground,
                     }}
+                    contentContainerStyle={styles.contentContainer}
                 >
-                    <SettingsInputField
-                        label="Your name:"
-                        value={username ?? ""}
-                        onChangeText={setUsername}
-                        theme={currentTheme}
-                    />
-                    <ImagePickerField
-                        type="User"
-                        label="Your"
-                        imageUri={userImage}
-                        onPick={pickImage}
-                        theme={currentTheme}
-                    />
-                    <SettingsInputField
-                        label="Partner name:"
-                        value={partnername ?? ""}
-                        onChangeText={setPartnername}
-                        theme={currentTheme}
-                    />
-                    <ImagePickerField
-                        type="Partner"
-                        imageUri={partnerImage}
-                        onPick={pickImage}
-                        theme={currentTheme}
-                    />
-                    <ImagePickerField
-                        type="Cover"
-                        imageUri={coverImage}
-                        onPick={pickImage}
-                        theme={currentTheme}
-                    />
-                    <Link href="/events" style={styles.inputGroup}>
-                        <View style={styles.linkContainer}>
-                            <Text
-                                style={{
-                                    ...styles.settingsLabel,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                Events
-                            </Text>
+                    <Text
+                        style={{
+                            ...styles.pageTitle,
+                            color: currentTheme.mainColor,
+                        }}
+                    >
+                        Settings
+                    </Text>
+
+                    <View
+                        style={[
+                            styles.sectionCard,
+                            {
+                                backgroundColor:
+                                    currentTheme.secondaryBackground,
+                                borderColor: currentTheme.mainColor,
+                            },
+                        ]}
+                    >
+                        <Text
+                            style={{
+                                ...styles.sectionTitle,
+                                color: currentTheme.mainColor,
+                            }}
+                        >
+                            Personal details
+                        </Text>
+                        <View
+                            style={
+                                isWide
+                                    ? styles.sectionRowWide
+                                    : styles.sectionColumn
+                            }
+                        >
+                            <View style={styles.sectionColumn}>
+                                <SettingsInputField
+                                    label="Your name"
+                                    value={username ?? ""}
+                                    onChangeText={setUsername}
+                                    theme={currentTheme}
+                                    isWide={isWide}
+                                />
+                                <ImagePickerField
+                                    type="User"
+                                    label="Your"
+                                    imageUri={userImage}
+                                    onPick={pickImage}
+                                    theme={currentTheme}
+                                    isWide={isWide}
+                                />
+                            </View>
+                            <View style={styles.sectionColumn}>
+                                <SettingsInputField
+                                    label="Partner name"
+                                    value={partnername ?? ""}
+                                    onChangeText={setPartnername}
+                                    theme={currentTheme}
+                                    isWide={isWide}
+                                />
+                                <ImagePickerField
+                                    type="Partner"
+                                    label="Partner"
+                                    imageUri={partnerImage}
+                                    onPick={pickImage}
+                                    theme={currentTheme}
+                                    isWide={isWide}
+                                />
+                            </View>
                         </View>
-                    </Link>
-                    <NotificationsSwitch
-                        enabled={isNotificationEnabled}
-                        onChange={toggleNotification}
-                        theme={currentTheme}
-                    />
-                    <Link href="/themes" style={styles.inputGroup}>
-                        <View style={styles.linkContainer}>
-                            <Text
-                                style={{
-                                    ...styles.settingsLabel,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                Themes
-                            </Text>
+                    </View>
+
+                    <View
+                        style={[
+                            styles.sectionCard,
+                            {
+                                backgroundColor:
+                                    currentTheme.secondaryBackground,
+                                borderColor: currentTheme.mainColor,
+                            },
+                        ]}
+                    >
+                        <Text
+                            style={{
+                                ...styles.sectionTitle,
+                                color: currentTheme.mainColor,
+                            }}
+                        >
+                            Cover photo
+                        </Text>
+                        <ImagePickerField
+                            type="Cover"
+                            label="Cover"
+                            imageUri={coverImage}
+                            onPick={pickImage}
+                            theme={currentTheme}
+                            isWide={isWide}
+                        />
+                    </View>
+
+                    <View
+                        style={[
+                            styles.sectionCard,
+                            {
+                                backgroundColor:
+                                    currentTheme.secondaryBackground,
+                                borderColor: currentTheme.mainColor,
+                            },
+                        ]}
+                    >
+                        <Text
+                            style={{
+                                ...styles.sectionTitle,
+                                color: currentTheme.mainColor,
+                            }}
+                        >
+                            Preferences
+                        </Text>
+                        <NotificationsSwitch
+                            enabled={isNotificationEnabled}
+                            onChange={toggleNotification}
+                            theme={currentTheme}
+                            isWide={isWide}
+                        />
+                        <View
+                            style={isWide ? styles.linkRowWide : styles.linkRow}
+                        >
+                            {linkPages.map((page) => (
+                                <Pressable
+                                    key={page.label}
+                                    onPress={() => router.push(page.path)}
+                                    style={[
+                                        styles.linkCard,
+                                        {
+                                            borderColor: currentTheme.mainColor,
+                                            backgroundColor:
+                                                currentTheme.mainBackground,
+                                        },
+                                    ]}
+                                >
+                                    <Text
+                                        style={{
+                                            ...styles.linkText,
+                                            color: currentTheme.mainColor,
+                                        }}
+                                    >
+                                        {page.label}
+                                    </Text>
+                                </Pressable>
+                            ))}
                         </View>
-                    </Link>
-                    <Link href="/info" style={styles.inputGroup}>
-                        <View style={styles.linkContainer}>
-                            <Text
-                                style={{
-                                    ...styles.settingsLabel,
-                                    color: currentTheme.mainColor,
-                                }}
-                            >
-                                Info
-                            </Text>
-                        </View>
-                    </Link>
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
@@ -365,32 +429,61 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    contentContainer: {
+        padding: 20,
+        paddingBottom: 48,
+    },
     saveBtn: {
-        fontWeight: "medium",
-        fontSize: 20,
+        fontWeight: "600",
+        fontSize: 18,
         padding: 5,
     },
-    imagePickerGroup: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 10,
-        justifyContent: "space-between",
-    },
-    imagePressable: {
-        width: 80,
-        height: 80,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    inputGroup: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 10,
-    },
-    linkContainer: {
-        padding: 10,
-    },
-    settingsLabel: {
+    pageTitle: {
+        fontSize: 28,
         fontWeight: "bold",
+        marginBottom: 20,
+    },
+    sectionCard: {
+        borderWidth: 1,
+        borderRadius: 18,
+        padding: 18,
+        marginBottom: 18,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginBottom: 14,
+    },
+    sectionRowWide: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        gap: 20,
+    },
+    sectionColumn: {
+        flex: 1,
+    },
+    linkRow: {
+        flexDirection: "column",
+        gap: 10,
+    },
+    linkRowWide: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        gap: 10,
+        flexWrap: "wrap",
+    },
+    linkCard: {
+        borderWidth: 1,
+        borderRadius: 14,
+        padding: 16,
+        marginBottom: 10,
+        minWidth: 110,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    linkText: {
+        fontWeight: "bold",
+        fontSize: 16,
     },
 });

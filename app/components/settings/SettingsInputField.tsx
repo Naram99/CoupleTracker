@@ -7,6 +7,7 @@ interface SettingsInputFieldProps {
     onChangeText: (text: string) => void;
     theme: any;
     placeholder?: string;
+    isWide?: boolean;
 }
 
 const SettingsInputField: React.FC<SettingsInputFieldProps> = ({
@@ -15,8 +16,9 @@ const SettingsInputField: React.FC<SettingsInputFieldProps> = ({
     onChangeText,
     theme,
     placeholder,
+    isWide = false,
 }) => (
-    <View style={styles.inputGroup}>
+    <View style={[styles.inputGroup, isWide && styles.inputGroupWide]}>
         <Text style={{ ...styles.settingsLabel, color: theme.mainColor }}>
             {label}
         </Text>
@@ -26,6 +28,7 @@ const SettingsInputField: React.FC<SettingsInputFieldProps> = ({
                 ...styles.input,
                 color: theme.secondaryColor,
                 borderBottomColor: theme.secondaryColor,
+                width: isWide ? "65%" : "100%",
             }}
             onChangeText={onChangeText}
             placeholder={placeholder}
@@ -36,18 +39,22 @@ const SettingsInputField: React.FC<SettingsInputFieldProps> = ({
 
 const styles = StyleSheet.create({
     inputGroup: {
+        flexDirection: "column",
+        marginBottom: 16,
+    },
+    inputGroupWide: {
         flexDirection: "row",
+        alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 10,
     },
     input: {
         borderBottomWidth: 1,
         fontWeight: "bold",
-        width: "50%",
-        textAlign: "center",
+        fontSize: 16,
+        paddingVertical: 8,
     },
     settingsLabel: {
-        padding: 10,
+        marginBottom: 8,
         fontWeight: "bold",
     },
 });

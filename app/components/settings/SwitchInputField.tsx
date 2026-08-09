@@ -8,6 +8,7 @@ interface SwitchInputFieldProps {
     onChangeValue: (value: boolean) => void;
     theme: ColorScheme;
     isIndented: boolean;
+    isWide?: boolean;
 }
 
 const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
@@ -16,13 +17,15 @@ const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
     onChangeValue,
     theme,
     isIndented,
+    isWide = false,
 }) => (
-    <View style={styles.inputGroup}>
+    <View style={[styles.inputGroup, isWide && styles.inputGroupWide]}>
         <Text
             style={[
                 { ...styles.settingsLabel, color: theme.mainColor },
-                isIndented && { paddingLeft: 20 },
-            ]}>
+                isIndented && styles.indentedLabel,
+            ]}
+        >
             {label}
         </Text>
         <Switch
@@ -36,13 +39,20 @@ const SwitchInputField: React.FC<SwitchInputFieldProps> = ({
 
 const styles = StyleSheet.create({
     inputGroup: {
+        flexDirection: "column",
+        marginBottom: 16,
+    },
+    inputGroupWide: {
         flexDirection: "row",
+        alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 10,
     },
     settingsLabel: {
-        padding: 10,
         fontWeight: "bold",
+        marginBottom: 10,
+    },
+    indentedLabel: {
+        paddingLeft: 20,
     },
 });
 

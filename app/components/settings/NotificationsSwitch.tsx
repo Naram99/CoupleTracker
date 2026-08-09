@@ -8,10 +8,12 @@ const NotificationsSwitch = ({
     enabled,
     onChange,
     theme,
+    isWide = false,
 }: {
     enabled: boolean;
     onChange: () => void;
     theme: ColorScheme;
+    isWide?: boolean;
 }) => {
     useEffect(() => {
         const requestPermissions = async () => {
@@ -43,6 +45,7 @@ const NotificationsSwitch = ({
             onChangeValue={onChange}
             theme={theme}
             isIndented={false}
+            isWide={isWide}
         />
     );
 };
